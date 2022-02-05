@@ -1,0 +1,70 @@
+name: Desktop
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev/**'
+    paths-ignore:
+      - '.github/workflows/assemble-android.yml'
+      - '.github/workflows/deploy-server.yml'
+      - 'android-app/**'
+      - 'dev-env/**'
+      - 'server/**'
+      - 'README.md'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [ ubuntu-18.04, windows-2019 ]
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout to push branch
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Build distribution file
+        if: job.status == 'success'
+        run: |
+          export GRADLE_USER_HOME=$(pwd)/.gradle
+          export DESKTOP_CLIENT_API_HOST=${{ secrets.API_HOST }}
+          export REST_CLIENT_API_SCHEME=http
+          export WEBSOCKET_CLIENT_API_SCHEME=ws
+          chmod +x ./gradlew
+          ./gradlew desktop-app:package
+        shell: bash
+
+      - name: Upload deb artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.5.0-1_amd64.deb') != ''
+        with:
+          name: MiniGames-1.5.0.deb
+          path: desktop-app/build/compose/binaries/main/deb/minigames_1.5.0-1_amd64.deb
+      - name: Release deb artifact file
+        uses: "marvinpinto/action-automatic-releases@latest"
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.5.0-1_amd64.deb') != ''
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "Linux-MiniGames-1.5.0"
+          files: desktop-app/build/compose/binaries/main/deb/minigames_1.5.0-1_amd64.deb
+
+      - name: Upload msi artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.5.0.msi') != ''
+        with:
+          name: MiniGames-1.5.0.msi
+          path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.5.0.msi
+      - name: Release msi artifact file
+        uses: "marvinpinto/action-automatic-releases@latest"
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.5.0.msi') != ''
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "Windows-MiniGames-1.5.0"
+          files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.5.0.msi

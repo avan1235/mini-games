@@ -1,0 +1,77 @@
+name: Android
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev/**'
+    paths-ignore:
+      - '.github/workflows/assemble-desktop.yml'
+      - '.github/workflows/deploy-server.yml'
+      - 'desktop-app/**'
+      - 'dev-env/**'
+      - 'server/**'
+      - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout to push branch
+        uses: actions/checkout@master
+        with:
+          ref: ${{ github.ref }}
+      - name: Set up JDK 15
+        uses: actions/setup-java@v1
+        with:
+          java-version: 15
+      - name: Decode Keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'mini-games.jks'
+          encodedString: ${{ secrets.KEYSTORE }}
+      - name: Build APK file
+        if: job.status == 'success'
+        run: |
+          export GRADLE_USER_HOME=$(pwd)/.gradle
+          export ANDROID_CLIENT_API_HOST=${{ secrets.API_HOST }}
+          export REST_CLIENT_API_SCHEME=http
+          export WEBSOCKET_CLIENT_API_SCHEME=ws
+          chmod +x ./gradlew
+          ./gradlew android-app:assembleDebug
+          ./gradlew android-app:assembleRelease android-app:bundleRelease -Pandroid.injected.signing.store.file=$SIGNING_STORE_FILE -Pandroid.injected.signing.store.password=$SIGNING_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$SIGNING_KEY_ALIAS -Pandroid.injected.signing.key.password=$SIGNING_KEY_PASSWORD
+        env:
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_STORE_FILE: ${{ steps.decode_keystore.outputs.filePath }}
+
+      - name: Upload debug artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        with:
+          name: MiniGames-Debug-1.5.0.apk
+          path: android-app/build/outputs/apk/debug/android-app-debug.apk
+
+      - name: Upload release artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        with:
+          name: MiniGames-Release-1.5.0.apk
+          path: android-app/build/outputs/apk/release/android-app-release.apk
+
+      - name: Upload release bundle file to workflow run results
+        uses: actions/upload-artifact@v2
+        with:
+          name: MiniGames-Release-1.5.0.aab
+          path: android-app/build/outputs/bundle/release/android-app-release.aab
+
+      - name: Release debug artifact artifact file
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "Android-MiniGames-1.5.0"
+          files: |
+            android-app/build/outputs/apk/debug/android-app-debug.apk
+            android-app/build/outputs/apk/release/android-app-release.apk
+            android-app/build/outputs/bundle/release/android-app-release.aab
