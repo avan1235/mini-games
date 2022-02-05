@@ -1,0 +1,38 @@
+name: Deploy Server
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'dev/**'
+    paths-ignore:
+      - '.github/workflows/assemble-android.yml'
+      - '.github/workflows/assemble-desktop.yml'
+      - 'android-app/**'
+      - 'desktop-app/**'
+      - 'shared-client/**'
+      - 'dev-env/**'
+      - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Deploy to Heroku
+        if: job.status == 'success'
+        run: |
+          rm -rf .git
+          cd ..
+          git clone https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/mini-games-api.git
+          cd mini-games-api
+          find . -maxdepth 1 ! -path './.git' ! -path '.' -exec rm -rf {} +
+          git config --global user.email "${{ secrets.HEROKU_DEPLOY_EMAIL }}"
+          git config --global user.name "${{ secrets.HEROKU_DEPLOY_NAME }}"
+          git commit . -m "Cleaned old version"
+          cd ..
+          cp -rT ./mini-games ./mini-games-api
+          cd mini-games-api
+          git add .
+          git commit . -m "Deploy new version from ${{ github.ref }}"
+          git push

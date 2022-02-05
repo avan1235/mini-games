@@ -1,0 +1,8 @@
+*.iml
+.gradle/
+gradle/wrapper/dists/
+build/
+.idea/
+.idea/httpRequests
+.DS_STORE
+local.properties

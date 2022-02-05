@@ -1,0 +1,143 @@
+package ml.dev.kotlin.minigames.shared.ui.screen
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import ml.dev.kotlin.minigames.shared.ui.GAMES
+import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
+import ml.dev.kotlin.minigames.shared.ui.component.*
+import ml.dev.kotlin.minigames.shared.ui.theme.Fonts
+import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
+import ml.dev.kotlin.minigames.shared.ui.theme.Typography
+import ml.dev.kotlin.minigames.shared.ui.theme.capitals
+import ml.dev.kotlin.minigames.shared.ui.util.Navigator
+import ml.dev.kotlin.minigames.shared.ui.util.navigate
+import ml.dev.kotlin.minigames.shared.ui.util.set
+import ml.dev.kotlin.minigames.shared.util.on
+import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
+import ml.dev.kotlin.minigames.shared.viewmodel.LogInViewModel
+import ml.dev.kotlin.minigames.shared.viewmodel.message
+
+@Composable
+fun LogInScreen(
+  navigator: Navigator<ScreenRoute>,
+  vm: LogInViewModel
+) {
+  ToastScreen {
+    LoadingScreen(
+      loadingText = "Logging in",
+      loadingInitState = false,
+      loadingAction = { loading ->
+        vm.loginUser().on(
+          ok = { toast("Logged in" then { vm.navigateGame(navigator) }) },
+          err = { toast(it.reason.message() then { loading.value = false }) },
+          empty = { toast(CONNECT_ERROR_MESSAGE then { loading.value = false }) }
+        )
+      },
+      loadedScreen = { loading ->
+        Box(
+          modifier = Modifier.fillMaxSize(),
+          contentAlignment = Alignment.BottomEnd
+        ) {
+          ProportionKeeper {
+            Column(
+              modifier = Modifier.fillMaxSize(),
+              verticalArrangement = Arrangement.Center,
+            ) {
+              Column(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+              ) {
+                Text(
+                  text = "Mini Games",
+                  modifier = Modifier.fillMaxWidth(),
+                  textAlign = TextAlign.Center,
+                  style = Typography.h3.copy(
+                    fontFeatureSettings = capitals,
+                    fontFamily = Fonts.leckerliOne()
+                  ),
+                )
+                Spacer(Modifier.size(16.dp))
+                DropdownMenu(vm.gameState, GAMES)
+                Spacer(Modifier.size(8.dp))
+                FormField("Game Server Name", vm.gameNameState, vm.gameNameErrorState) {
+                  IconButton(onClick = vm::shuffleGameName) {
+                    Icon(imageVector = Icons.Default.Shuffle, contentDescription = "shuffle")
+                  }
+                }
+                Spacer(Modifier.size(8.dp))
+                FormField("Username", vm.usernameState, vm.usernameErrorState)
+                Spacer(Modifier.size(8.dp))
+                FormField(
+                  "Password",
+                  vm.passwordState,
+                  vm.passwordErrorState,
+                  password = true,
+                  buttonType = FormFieldButtonType.Done
+                )
+                Spacer(Modifier.size(8.dp))
+                RememberCheckBox(vm)
+                Spacer(Modifier.size(8.dp))
+                RegisterButton(onClick = { navigator.navigate(ScreenRoute.RegisterScreen) })
+              }
+            }
+          }
+          CircleButton(
+            icon = Icons.Filled.ArrowForward,
+            contentDescription = "login",
+            onClick = {
+              when {
+                vm.gameName.isEmpty() -> true.set(vm.gameNameErrorState)
+                vm.username.isEmpty() -> true.set(vm.usernameErrorState)
+                vm.password.isEmpty() -> true.set(vm.passwordErrorState)
+                else -> {
+                  false.set(vm.gameNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
+                  loading.value = true
+                }
+              }
+            }
+          )
+        }
+      }
+    )
+  }
+}
+
+@Composable
+private fun RegisterButton(onClick: () -> Unit) {
+  Box(
+    modifier = Modifier.fillMaxWidth(),
+    contentAlignment = Alignment.Center
+  ) {
+    TextButton(
+      onClick = onClick,
+      shape = Shapes.medium,
+    ) {
+      Text(text = "Register")
+    }
+  }
+}
+
+@Composable
+private fun RememberCheckBox(vm: LogInViewModel) {
+  Row(
+    modifier = Modifier.fillMaxWidth(),
+    horizontalArrangement = Arrangement.Start,
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Checkbox(
+      checked = vm.rememberUserLogin,
+      onCheckedChange = { vm.rememberUserLogin = !vm.rememberUserLogin }
+    )
+    Text(text = "Remember", style = Typography.subtitle2)
+  }
+}
