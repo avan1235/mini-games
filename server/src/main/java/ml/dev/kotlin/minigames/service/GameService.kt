@@ -10,6 +10,7 @@ import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.GameJson
 import ml.dev.kotlin.minigames.shared.util.now
+import ml.dev.kotlin.minigames.shared.util.tryOrNull
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -97,19 +98,21 @@ class GameService(
   private fun updateInBackground(delayMillis: Long): Job = CoroutineScope(Dispatchers.IO).launch {
     var now = 0L
     do {
-      serverGamesStates.keys.toList().forEach { serverName ->
-        val updateGameState = timeUpdateGameState(serverName) ?: return@forEach
-        val snapshots = ComputedMap<Username, GameSnapshot> { updateGameState.snapshot(it) }
-        serverConnections[serverName].forEach { connection ->
-          val snapshot = snapshots[connection.username]
-          val message = GameStateSnapshotServerMessage(snapshot, timestamp = now())
-          connection.session.sendJson(message)
+      tryOrNull {
+        serverGamesStates.keys.toList().forEach { serverName ->
+          val updateGameState = timeUpdateGameState(serverName) ?: return@forEach
+          val snapshots = ComputedMap<Username, GameSnapshot> { updateGameState.snapshot(it) }
+          serverConnections[serverName].toList().forEach { connection ->
+            val snapshot = snapshots[connection.username]
+            val message = GameStateSnapshotServerMessage(snapshot, timestamp = now())
+            connection.session.sendJson(message)
+          }
         }
+        val last = now
+        now = now()
+        val passedMillis = now - last
+        delay(delayMillis - passedMillis)
       }
-      val last = now
-      now = now()
-      val passedMillis = now - last
-      delay(delayMillis - passedMillis)
     } while (isActive)
   }
 }
