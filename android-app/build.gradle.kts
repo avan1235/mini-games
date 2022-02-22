@@ -14,7 +14,7 @@ android {
     applicationId = "ml.dev.kotlin.minigames"
     minSdk = Constants.Android.minSdk
     targetSdk = Constants.Android.targetSdk
-    versionCode = 1
+    versionCode = 2
     versionName = "1.0"
   }
   buildTypes {
