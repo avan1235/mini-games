@@ -69,7 +69,7 @@ fun LogInScreen(
                 Spacer(Modifier.size(16.dp))
                 DropdownMenu(vm.gameState, GAMES)
                 Spacer(Modifier.size(8.dp))
-                FormField("Game Server Name", vm.gameNameState, vm.gameNameErrorState) {
+                FormField("Game Server Name", vm.serverNameState, vm.serverNameErrorState) {
                   IconButton(onClick = vm::shuffleGameName) {
                     Icon(imageVector = Icons.Default.Shuffle, contentDescription = "shuffle")
                   }
@@ -96,11 +96,11 @@ fun LogInScreen(
             contentDescription = "login",
             onClick = {
               when {
-                vm.gameName.isEmpty() -> true.set(vm.gameNameErrorState)
+                vm.serverName.isEmpty() -> true.set(vm.serverNameErrorState)
                 vm.username.isEmpty() -> true.set(vm.usernameErrorState)
                 vm.password.isEmpty() -> true.set(vm.passwordErrorState)
                 else -> {
-                  false.set(vm.gameNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
+                  false.set(vm.serverNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
                   loading.value = true
                 }
               }

@@ -30,16 +30,16 @@ abstract class GameViewModel<Snapshot : GameSnapshot>(
   suspend fun approve(
     username: Username,
     clientMessages: MutableStateFlow<GameClientMessage?>
-  ): Unit = userAction(username, UserActionClientMessage.UserAction.Approve, clientMessages)
+  ): Unit = userAction(username, UserAction.Approve, clientMessages)
 
   suspend fun discard(
     username: Username,
     clientMessages: MutableStateFlow<GameClientMessage?>
-  ): Unit = userAction(username, UserActionClientMessage.UserAction.Discard, clientMessages)
+  ): Unit = userAction(username, UserAction.Discard, clientMessages)
 
   private suspend fun userAction(
     username: Username,
-    action: UserActionClientMessage.UserAction,
+    action: UserAction,
     clientMessages: MutableStateFlow<GameClientMessage?>
   ) {
     val message = UserActionClientMessage(username, action, timestamp = now())

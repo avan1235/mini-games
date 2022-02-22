@@ -22,17 +22,17 @@ class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewMod
 
   private val client: UserClient = ctx.keeper.getOrCreate { UserClient() }
 
-  val gameNameState: MutableState<String> = mutableStateOf("")
+  val serverNameState: MutableState<String> = mutableStateOf("")
   val usernameState: MutableState<String> = mutableStateOf("")
   val passwordState: MutableState<String> = mutableStateOf("")
 
   val usernameErrorState: MutableState<Boolean> = mutableStateOf(false)
   val passwordErrorState: MutableState<Boolean> = mutableStateOf(false)
-  val gameNameErrorState: MutableState<Boolean> = mutableStateOf(false)
+  val serverNameErrorState: MutableState<Boolean> = mutableStateOf(false)
 
   val gameState: MutableState<Game> = mutableStateOf(Game.values().first())
 
-  var gameName: String by gameNameState
+  var serverName: String by serverNameState
 
   var username: String by usernameState
   var password: String by passwordState
@@ -46,12 +46,12 @@ class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewMod
   }
 
   fun navigateGame(navigator: Navigator<ScreenRoute>): Unit = when (gameState.value) {
-    Game.Set -> navigator.navigate(ScreenRoute.SetGameScreen(gameName, username, password))
-    Game.SnakeIO -> navigator.navigate(ScreenRoute.SnakeGameScreen(gameName, username, password))
+    Game.Set -> navigator.navigate(ScreenRoute.SetGameScreen(serverName, username, password))
+    Game.SnakeIO -> navigator.navigate(ScreenRoute.SnakeGameScreen(serverName, username, password))
   }
 
   fun shuffleGameName() {
-    gameName = gameState.value.name + "-" + Random.nextInt(0, 1000)
+    serverName = gameState.value.name + "-" + Random.nextInt(0, 1000)
   }
 
   suspend fun loginUser(): Res<UserError, JwtToken>? {

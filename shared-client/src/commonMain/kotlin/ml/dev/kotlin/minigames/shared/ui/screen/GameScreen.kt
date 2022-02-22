@@ -7,15 +7,10 @@ import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.*
-import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
-import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
 import ml.dev.kotlin.minigames.shared.ui.component.Players
 import ml.dev.kotlin.minigames.shared.ui.component.ScrollScreen
-import ml.dev.kotlin.minigames.shared.ui.component.set.SetBoard
 import ml.dev.kotlin.minigames.shared.ui.component.toast
-import ml.dev.kotlin.minigames.shared.ui.util.navigate
 import ml.dev.kotlin.minigames.shared.util.takeTyped
 import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
 import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
@@ -59,6 +54,10 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
     when (val message = serverMessage.value) {
       is GameStateSnapshotServerMessage -> snapshot = message.snapshot.takeTyped()
       is UnapprovedGameStateUpdateServerMessage -> toast("Wait for approval")
+      is UserActionServerMessage -> when (message.action) {
+        UserAction.Approve -> "Approved"
+        UserAction.Discard -> "Discarded"
+      }.let { toast(it) }
       null -> Unit
     }
 

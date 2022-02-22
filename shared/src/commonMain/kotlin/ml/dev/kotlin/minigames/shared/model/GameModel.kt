@@ -31,22 +31,23 @@ abstract class GameState {
   open fun addUser(username: Username, role: UserRole): GameState = when (users[username]?.role) {
     UserRole.Admin -> this
     else -> {
-      val state = if (role == UserRole.Admin) UserState.Approved else UserState.WaitingForApproval
-      val updatedData = users[username] ?: UserData(role = role, state = state)
+      val enterState = if (role == UserRole.Admin) UserState.Approved else UserState.WaitingForApproval
+      val updatedData = users[username] ?: UserData(role = role, state = enterState)
       val updatedUserData = username to updatedData
-      val updatedPoints = username to 0
-      updateWith(users = users + updatedUserData, points = points + updatedPoints)
+      val updatedPoints = points[username] ?: 0
+      val updatedUserPoints = username to updatedPoints
+      updateWith(users = users + updatedUserData, points = points + updatedUserPoints)
     }
   }
 
-  open fun changeUserState(byUser: Username, forUser: Username, action: UserActionClientMessage.UserAction): GameState {
+  open fun changeUserState(byUser: Username, forUser: Username, action: UserAction): GameState {
     if (byUser == forUser) return this
     val byUserData = users[byUser]
     if (byUserData?.role != UserRole.Admin) return this
     val forUserData = users[forUser] ?: return this
     val updatedState = when (action) {
-      UserActionClientMessage.UserAction.Approve -> UserState.Approved
-      UserActionClientMessage.UserAction.Discard -> UserState.WaitingForApproval
+      UserAction.Approve -> UserState.Approved
+      UserAction.Discard -> UserState.WaitingForApproval
     }
     val updatedData = forUserData.copy(state = updatedState)
     val updatedUserData = forUser to updatedData

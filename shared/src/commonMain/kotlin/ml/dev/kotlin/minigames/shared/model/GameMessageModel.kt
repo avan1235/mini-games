@@ -10,12 +10,18 @@ sealed class GameServerMessage {
 @Serializable
 data class GameStateSnapshotServerMessage(
   val snapshot: GameSnapshot,
-  override val timestamp: Long
+  override val timestamp: Long,
 ) : GameServerMessage()
 
 @Serializable
 data class UnapprovedGameStateUpdateServerMessage(
-  override val timestamp: Long
+  override val timestamp: Long,
+) : GameServerMessage()
+
+@Serializable
+data class UserActionServerMessage(
+  val action: UserAction,
+  override val timestamp: Long,
 ) : GameServerMessage()
 
 @Serializable
@@ -26,19 +32,22 @@ sealed class GameClientMessage {
 @Serializable
 data class GameStateUpdateClientMessage(
   val update: GameUpdate,
-  override val timestamp: Long
+  override val timestamp: Long,
 ) : GameClientMessage()
 
 @Serializable
 data class HeartBeatClientMessage(
-  override val timestamp: Long
+  override val timestamp: Long,
 ) : GameClientMessage()
 
 @Serializable
 data class UserActionClientMessage(
   val username: Username,
   val action: UserAction,
-  override val timestamp: Long
+  override val timestamp: Long,
 ) : GameClientMessage() {
-  enum class UserAction { Approve, Discard }
+
 }
+
+@Serializable
+enum class UserAction { Approve, Discard }

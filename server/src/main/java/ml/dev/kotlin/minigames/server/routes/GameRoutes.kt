@@ -23,8 +23,8 @@ private val SNAKE_GAME_HANDLER =
     .let(::GameHandler)
 
 fun Application.gameSockets() = routing {
-  authJwtWebSocket(SET_GAME_WEBSOCKET("{$GAME_NAME}"), SET_GAME_HANDLER::handleGame)
-  authJwtWebSocket(SNAKE_GAME_WEBSOCKET("{$GAME_NAME}"), SNAKE_GAME_HANDLER::handleGame)
+  authJwtWebSocket(SET_GAME_WEBSOCKET("{$SERVER_NAME}"), SET_GAME_HANDLER::handleGame)
+  authJwtWebSocket(SNAKE_GAME_WEBSOCKET("{$SERVER_NAME}"), SNAKE_GAME_HANDLER::handleGame)
 }
 
 private class GameHandler(
@@ -33,62 +33,65 @@ private class GameHandler(
   suspend fun handleGame(session: DefaultWebSocketServerSession, user: Jwt.User): Unit =
     with(session) {
       GameConnection(session, user.username).run {
-        val gameName = call.parameters[GAME_NAME]?.gameName ?: return
+        val serverName = call.parameters[SERVER_NAME]?.serverName ?: return
         val username = user.username
-        service.addConnection(gameName, username, this)
+        service.addConnection(serverName, username, this)
 
         try {
-          sendAllUpdatedGameState(gameName, service[gameName])
+          sendAllUpdatedGameState(serverName, service.state(serverName))
 
           for (frame in incoming) {
             frame as? Frame.Text ?: continue
             val clientMessage = GameJson.decodeFromString<GameClientMessage>(frame.readText())
-            updateGameStateWithClientMessage(gameName, username, clientMessage)
+            updateGameStateWithClientMessage(serverName, username, clientMessage)
           }
         } catch (e: Exception) {
           eprintln(e.localizedMessage)
         } finally {
-          service.removeConnection(gameName, this)
+          service.removeConnection(serverName, this)
         }
       }
     }
 
   private suspend fun GameConnection.updateGameStateWithClientMessage(
-    gameName: GameName, username: Username, msg: GameClientMessage
+    serverName: ServerName, username: Username, msg: GameClientMessage
   ): Unit = when (msg) {
-    is HeartBeatClientMessage -> service[gameName].let(gameStateServerMessage(username))
+    is HeartBeatClientMessage -> service.state(serverName)
+      .let(gameStateServerMessage(username))
       .let { session.sendJson(it) }
-    is GameStateUpdateClientMessage -> service.updateGameState(gameName, username, msg.update)
-      ?.let { sendGameStateUpdate(gameName, it) }
+    is GameStateUpdateClientMessage -> service
+      .updateGameState(serverName, username, msg.update)
+      ?.let { sendGameStateUpdate(serverName, it) }
     is UserActionClientMessage -> service.updateGameState(
-      gameName,
+      serverName = serverName,
       byUser = username,
       forUser = msg.username,
       action = msg.action
-    )?.let { sendAllUpdatedGameState(gameName, it) }
+    )?.let { gameState ->
+      val message = UserActionServerMessage(action = msg.action, timestamp = now())
+      service.connections(serverName, msg.username).forEach { it.session.sendJson(message) }
+      sendAllUpdatedGameState(serverName, gameState)
+    }
   } ?: Unit
 
   private suspend fun sendAllUpdatedGameState(
-    gameName: GameName, gameState: GameState
-  ): Unit = service.connections(gameName).forEach {
+    serverName: ServerName, gameState: GameState
+  ): Unit = service.connections(serverName).forEach {
     val message = gameState.let(gameStateServerMessage(it.username))
     it.session.sendJson(message)
   }
 
   private suspend fun GameConnection.sendGameStateUpdate(
-    gameName: GameName,
+    serverName: ServerName,
     updateResult: GameStateUpdateResult,
   ): Unit = when (updateResult) {
-    UnapprovedGameStateUpdate -> UnapprovedGameStateUpdateServerMessage(timestamp = now()).let {
-      session.sendJson(
-        it
-      )
-    }
-    is UpdatedGameState -> sendAllUpdatedGameState(gameName, updateResult.gameState)
+    UnapprovedGameStateUpdate -> UnapprovedGameStateUpdateServerMessage(timestamp = now())
+      .let { session.sendJson(it) }
+    is UpdatedGameState -> sendAllUpdatedGameState(serverName, updateResult.gameState)
   }
 }
 
-private const val GAME_NAME = "gameName"
+private const val SERVER_NAME = "serverName"
 
 private fun gameStateServerMessage(forUser: Username) =
   { state: GameState -> GameStateSnapshotServerMessage(state.snapshot(forUser), timestamp = now()) }

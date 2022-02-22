@@ -6,7 +6,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.animation.child.crossfadeScale
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import ml.dev.kotlin.minigames.shared.model.UserLogin
@@ -37,12 +36,12 @@ fun MiniGamesRoutes(context: ViewModelContext) {
         RegisterScreen(navigator, vm)
       }
       is ScreenRoute.SetGameScreen -> {
-        val accessData = GameAccessData(conf.gameName, UserLogin(conf.username, conf.password))
+        val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
         val vm = remember(accessData) { SetGameViewModel(context, accessData) }
         GameScreen(vm) { snapshot, messages -> SetGamePlay(navigator, vm, snapshot, messages) }
       }
       is ScreenRoute.SnakeGameScreen -> {
-        val accessData = GameAccessData(conf.gameName, UserLogin(conf.username, conf.password))
+        val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
         val vm = remember(context, accessData) {
           SnakeGameViewModel(context, accessData)
         }
@@ -60,11 +59,11 @@ sealed interface ScreenRoute : Parcelable {
   object RegisterScreen : ScreenRoute
 
   @Parcelize
-  data class SetGameScreen(val gameName: String, val username: Username, val password: String) :
+  data class SetGameScreen(val serverName: String, val username: Username, val password: String) :
     ScreenRoute
 
   @Parcelize
-  data class SnakeGameScreen(val gameName: String, val username: Username, val password: String) :
+  data class SnakeGameScreen(val serverName: String, val username: Username, val password: String) :
     ScreenRoute
 }
 

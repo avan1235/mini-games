@@ -38,7 +38,7 @@ class GameClient(
       .on(ok = { it }, err = { null }, empty = { null })
     if (jwtToken == null) onErrorLogin()
     else wsClient.webSocket(
-      path = gamePath(accessData.gameName),
+      path = gamePath(accessData.serverName),
       jwtToken = jwtToken,
       outputMessages = { processServerMessages(serverMessages, onErrorReceive) },
       inputMessages = { processClientMessages(clientMessages, onErrorSend) }
@@ -53,7 +53,7 @@ class GameClient(
   override fun onDestroy(): Unit = close()
 }
 
-data class GameAccessData(val gameName: String, val userLogin: UserLogin)
+data class GameAccessData(val serverName: String, val userLogin: UserLogin)
 
 private suspend fun DefaultClientWebSocketSession.processClientMessages(
   clientMessages: MutableStateFlow<GameClientMessage?>,
