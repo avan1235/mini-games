@@ -34,7 +34,7 @@ fun ToastOverlay(
         modifier = Modifier
           .padding(24.dp)
           .clip(CircleShape)
-          .background(MaterialTheme.colors.onBackground.copy(alpha = 0.7f))
+          .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
           .padding(16.dp)
       ) {
         Text(
