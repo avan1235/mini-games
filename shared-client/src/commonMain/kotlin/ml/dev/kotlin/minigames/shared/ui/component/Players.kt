@@ -24,7 +24,7 @@ fun <Snapshot : GameSnapshot> Players(
 ) {
   val listState = rememberLazyListState()
   val scope = rememberCoroutineScope()
-  val toastContext = LocalToastContext?.current
+  val toastContext = LocalToastContext.current
   val users = snapshot.users.entries
     .map { IndexedUserData(it.key, it.value) }.let {
       if (vm.username in snapshot.users) it
