@@ -30,86 +30,94 @@ fun LogInScreen(
   navigator: Navigator<ScreenRoute>,
   vm: LogInViewModel
 ) {
-  ToastScreen {
-    LoadingScreen(
-      loadingText = "Logging in",
-      loadingInitState = false,
-      loadingAction = { loading ->
-        vm.loginUser().on(
-          ok = { toast("Logged in" then { vm.navigateGame(navigator) }) },
-          err = { toast(it.reason.message() then { loading.value = false }) },
-          empty = { toast(CONNECT_ERROR_MESSAGE then { loading.value = false }) }
-        )
-      },
-      loadedScreen = { loading ->
-        Box(
-          modifier = Modifier.fillMaxSize(),
-          contentAlignment = Alignment.BottomEnd
-        ) {
-          ProportionKeeper {
+  val toastContext = LocalToastContext.current
+  LoadingScreen(
+    loadingText = "Logging in",
+    loadingInitState = false,
+    loadingAction = { loading ->
+      vm.loginUser().on(
+        ok = {
+          toastContext?.toast("Logged in")
+          vm.navigateGame(navigator)
+        },
+        err = {
+          toastContext?.toast(it.reason.message())
+          loading.value = false
+        },
+        empty = {
+          toastContext?.toast(CONNECT_ERROR_MESSAGE)
+          loading.value = false
+        }
+      )
+    },
+    loadedScreen = { loading ->
+      Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd
+      ) {
+        ProportionKeeper {
+          Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+          ) {
             Column(
-              modifier = Modifier.fillMaxSize(),
+              modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
               verticalArrangement = Arrangement.Center,
             ) {
-              Column(
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-              ) {
-                Text(
-                  text = "Mini Games",
-                  modifier = Modifier.fillMaxWidth(),
-                  textAlign = TextAlign.Center,
-                  style = Typography.h3.copy(
-                    fontFeatureSettings = capitals,
-                    fontFamily = Fonts.leckerliOne()
-                  ),
-                )
-                Spacer(Modifier.size(16.dp))
-                DropdownMenu(vm.gameState, GAMES)
-                Spacer(Modifier.size(8.dp))
-                FormField("Game Server Name", vm.serverNameState, vm.serverNameErrorState) {
-                  IconButton(onClick = vm::shuffleGameName) {
-                    Icon(imageVector = Icons.Default.Shuffle, contentDescription = "shuffle")
-                  }
+              Text(
+                text = "Mini Games",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = Typography.h3.copy(
+                  fontFeatureSettings = capitals,
+                  fontFamily = Fonts.leckerliOne()
+                ),
+              )
+              Spacer(Modifier.size(16.dp))
+              DropdownMenu(vm.gameState, GAMES)
+              Spacer(Modifier.size(8.dp))
+              FormField("Game Server Name", vm.serverNameState, vm.serverNameErrorState) {
+                IconButton(onClick = vm::shuffleGameName) {
+                  Icon(imageVector = Icons.Default.Shuffle, contentDescription = "shuffle")
                 }
-                Spacer(Modifier.size(8.dp))
-                FormField("Username", vm.usernameState, vm.usernameErrorState)
-                Spacer(Modifier.size(8.dp))
-                FormField(
-                  "Password",
-                  vm.passwordState,
-                  vm.passwordErrorState,
-                  password = true,
-                  buttonType = FormFieldButtonType.Done
-                )
-                Spacer(Modifier.size(8.dp))
-                RememberCheckBox(vm)
-                Spacer(Modifier.size(8.dp))
-                RegisterButton(onClick = { navigator.navigate(ScreenRoute.RegisterScreen) })
+              }
+              Spacer(Modifier.size(8.dp))
+              FormField("Username", vm.usernameState, vm.usernameErrorState)
+              Spacer(Modifier.size(8.dp))
+              FormField(
+                "Password",
+                vm.passwordState,
+                vm.passwordErrorState,
+                password = true,
+                buttonType = FormFieldButtonType.Done
+              )
+              Spacer(Modifier.size(8.dp))
+              RememberCheckBox(vm)
+              Spacer(Modifier.size(8.dp))
+              RegisterButton(onClick = { navigator.navigate(ScreenRoute.RegisterScreen) })
+            }
+          }
+        }
+        CircleButton(
+          icon = Icons.Filled.ArrowForward,
+          contentDescription = "login",
+          onClick = {
+            when {
+              vm.serverName.isEmpty() -> true.set(vm.serverNameErrorState)
+              vm.username.isEmpty() -> true.set(vm.usernameErrorState)
+              vm.password.isEmpty() -> true.set(vm.passwordErrorState)
+              else -> {
+                false.set(vm.serverNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
+                loading.value = true
               }
             }
           }
-          CircleButton(
-            icon = Icons.Filled.ArrowForward,
-            contentDescription = "login",
-            onClick = {
-              when {
-                vm.serverName.isEmpty() -> true.set(vm.serverNameErrorState)
-                vm.username.isEmpty() -> true.set(vm.usernameErrorState)
-                vm.password.isEmpty() -> true.set(vm.passwordErrorState)
-                else -> {
-                  false.set(vm.serverNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
-                  loading.value = true
-                }
-              }
-            }
-          )
-        }
+        )
       }
-    )
-  }
+    }
+  )
 }
 
 @Composable

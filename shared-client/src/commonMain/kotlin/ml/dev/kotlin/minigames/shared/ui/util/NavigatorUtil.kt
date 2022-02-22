@@ -77,8 +77,7 @@ fun rememberStateKeeper(): StateKeeper {
   return dispatcher
 }
 
-val LocalBackPressedHandler: ProvidableCompositionLocal<BackPressedHandler?> =
-  staticCompositionLocalOf { null }
+val LocalBackPressedHandler: ProvidableCompositionLocal<BackPressedHandler?> = staticCompositionLocalOf { null }
 
 private const val KEY_STATE = "MINI_GAMES_STATE"
 

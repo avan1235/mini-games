@@ -24,50 +24,49 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
     messages: MutableStateFlow<GameClientMessage?>
   ) -> Unit
 ) {
-  ToastScreen {
-    val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
-    val clientMessages = remember { MutableStateFlow<GameClientMessage?>(null) }
-    var snapshot by remember { mutableStateOf<Snapshot?>(null) }
+  val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
+  val clientMessages = remember { MutableStateFlow<GameClientMessage?>(null) }
+  var snapshot by remember { mutableStateOf<Snapshot?>(null) }
 
-    val gameAccessData = vm.gameAccessData
-    val serverMessage = serverMessages.collectAsState()
-    val connectError = { toast(CONNECT_ERROR_MESSAGE) }
+  val gameAccessData = vm.gameAccessData
+  val serverMessage = serverMessages.collectAsState()
+  val toastContext = LocalToastContext.current
+  val connectError = { toastContext?.toast(CONNECT_ERROR_MESSAGE) }
 
-    LaunchedEffect(gameAccessData) {
-      vm.client.startPlayingGame(
-        gameAccessData,
-        serverMessages,
-        clientMessages,
-        onErrorLogin = { connectError() },
-        onErrorReceive = { connectError() },
-        onErrorSend = { connectError() },
-      )
+  when (val message = serverMessage.value) {
+    is GameStateSnapshotServerMessage -> snapshot = message.snapshot.takeTyped()
+    is UnapprovedGameStateUpdateServerMessage -> toastContext?.toast("Wait for approval")
+    is UserActionServerMessage -> when (message.action) {
+      UserAction.Approve -> "Approved"
+      UserAction.Discard -> "Discarded"
+    }.let { toastContext?.toast(it) }
+    null -> Unit
+  }
+
+  LaunchedEffect(gameAccessData) {
+    vm.client.startPlayingGame(
+      gameAccessData,
+      serverMessages,
+      clientMessages,
+      onErrorLogin = { connectError() },
+      onErrorReceive = { connectError() },
+      onErrorSend = { connectError() },
+    )
+  }
+
+  LaunchedEffect(gameAccessData) {
+    while (isActive) {
+      delay(HEARTBEAT_DELAY_MILLIS)
+      clientMessages.emit(vm.heartBeat())
     }
+  }
 
-    LaunchedEffect(gameAccessData) {
-      while (isActive) {
-        delay(HEARTBEAT_DELAY_MILLIS)
-        clientMessages.emit(vm.heartBeat())
-      }
-    }
-
-    when (val message = serverMessage.value) {
-      is GameStateSnapshotServerMessage -> snapshot = message.snapshot.takeTyped()
-      is UnapprovedGameStateUpdateServerMessage -> toast("Wait for approval")
-      is UserActionServerMessage -> when (message.action) {
-        UserAction.Approve -> "Approved"
-        UserAction.Discard -> "Discarded"
-      }.let { toast(it) }
-      null -> Unit
-    }
-
-    when(val state = snapshot){
-      null -> LoadingScreen("Loading game")
-      else -> ScrollScreen(
-        up = { gamePlay(state, clientMessages) },
-        down = { Players(vm, state, clientMessages) },
-        icon = Icons.Default.PeopleAlt,
-      )
-    }
+  when (val state = snapshot) {
+    null -> LoadingScreen("Loading game")
+    else -> ScrollScreen(
+      up = { gamePlay(state, clientMessages) },
+      down = { Players(vm, state, clientMessages) },
+      icon = Icons.Default.PeopleAlt,
+    )
   }
 }

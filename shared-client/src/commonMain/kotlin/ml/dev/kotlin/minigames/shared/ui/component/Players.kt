@@ -13,7 +13,7 @@ import ml.dev.kotlin.minigames.shared.model.GameClientMessage
 import ml.dev.kotlin.minigames.shared.model.GameSnapshot
 import ml.dev.kotlin.minigames.shared.model.UserData
 import ml.dev.kotlin.minigames.shared.model.Username
-import ml.dev.kotlin.minigames.shared.ui.screen.ToastScreen
+import ml.dev.kotlin.minigames.shared.ui.screen.LocalToastContext
 import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
 
 @Composable
@@ -22,35 +22,34 @@ fun <Snapshot : GameSnapshot> Players(
   snapshot: Snapshot,
   clientMessages: MutableStateFlow<GameClientMessage?>
 ) {
-  ToastScreen {
-    val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
-    val users = snapshot.users.entries
-      .map { IndexedUserData(it.key, it.value) }.let {
-        if (vm.username in snapshot.users) it
-        else it + IndexedUserData(vm.username, UserData.default())
-      }
+  val listState = rememberLazyListState()
+  val scope = rememberCoroutineScope()
+  val toastContext = LocalToastContext?.current
+  val users = snapshot.users.entries
+    .map { IndexedUserData(it.key, it.value) }.let {
+      if (vm.username in snapshot.users) it
+      else it + IndexedUserData(vm.username, UserData.default())
+    }
 
-    LazyColumn(
-      modifier = Modifier.fillMaxWidth(),
-      state = listState
-    ) {
-      items(items = users, key = { it.username }) { data ->
-        UserDataRow(
-          username = data.username,
-          userData = data.userData,
-          userPoints = vm.points(data.username, snapshot),
-          canEdit = vm.canEditUser(data.username, snapshot),
-          onApprove = {
-            toast("Approving ${data.username}")
-            scope.launch { vm.approve(data.username, clientMessages) }
-          },
-          onDiscard = {
-            toast("Discarding ${data.username}")
-            scope.launch { vm.discard(data.username, clientMessages) }
-          },
-        )
-      }
+  LazyColumn(
+    modifier = Modifier.fillMaxWidth(),
+    state = listState
+  ) {
+    items(items = users, key = { it.username }) { data ->
+      UserDataRow(
+        username = data.username,
+        userData = data.userData,
+        userPoints = vm.points(data.username, snapshot),
+        canEdit = vm.canEditUser(data.username, snapshot),
+        onApprove = {
+          toastContext?.toast("Approving ${data.username}")
+          scope.launch { vm.approve(data.username, clientMessages) }
+        },
+        onDiscard = {
+          toastContext?.toast("Discarding ${data.username}")
+          scope.launch { vm.discard(data.username, clientMessages) }
+        },
+      )
     }
   }
 }
