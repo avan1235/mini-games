@@ -31,5 +31,6 @@ data class V2(val x: Float, val y: Float) {
     val ONE: V2 = V2(x = 1f, y = 1f)
     val ZERO_ONE: V2 = V2(x = 0f, y = 1f)
     val ONE_ZERO: V2 = V2(x = 1f, y = 0f)
+    fun random(xRange: FloatRange, yRange: FloatRange): V2 = V2(x = xRange.random(), y = yRange.random())
   }
 }
