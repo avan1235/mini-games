@@ -21,10 +21,9 @@ fun <Snapshot : GameSnapshot> Players(
   vm: GameViewModel<Snapshot>,
   snapshot: Snapshot,
   clientMessages: MutableStateFlow<GameClientMessage?>
-) {
+): Unit = with(LocalToastContext.current) {
   val listState = rememberLazyListState()
   val scope = rememberCoroutineScope()
-  val toastContext = LocalToastContext.current
   val users = snapshot.users.entries
     .map { IndexedUserData(it.key, it.value) }.let {
       if (vm.username in snapshot.users) it
@@ -42,11 +41,11 @@ fun <Snapshot : GameSnapshot> Players(
         userPoints = vm.points(data.username, snapshot),
         canEdit = vm.canEditUser(data.username, snapshot),
         onApprove = {
-          toastContext?.toast("Approving ${data.username}")
+          toast("Approving ${data.username}")
           scope.launch { vm.approve(data.username, clientMessages) }
         },
         onDiscard = {
-          toastContext?.toast("Discarding ${data.username}")
+          toast("Discarding ${data.username}")
           scope.launch { vm.discard(data.username, clientMessages) }
         },
       )

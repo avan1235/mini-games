@@ -1,46 +1,55 @@
 package ml.dev.kotlin.minigames.shared.ui.component
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowUpward
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ScrollScreen(
   up: @Composable BoxScope.() -> Unit,
-  down: @Composable BoxScope.() -> Unit,
-  icon: ImageVector? = null,
+  leftScreen: @Composable BoxScope.() -> Unit,
+  centerScreen: @Composable BoxScope.() -> Unit,
+  rightScreen: @Composable BoxScope.() -> Unit,
+  leftIcon: ImageVector,
+  leftIconSelected: ImageVector,
+  centerIcon: ImageVector,
+  centerIconSelected: ImageVector,
+  rightIcon: ImageVector,
+  rightIconSelected: ImageVector,
   threshold: Float = 0.3f,
   scrollIconSize: Dp = 24.dp,
-  padding: Dp = 8.dp,
+  iconPadding: Dp = 12.dp,
 ): Unit = with(LocalDensity.current) {
   BoxWithConstraints {
     val fullHeight = maxHeight
-    val height = maxHeight - scrollIconSize - (padding * 2)
-    val swipeState = rememberSwipeableState(1)
-    val anchors = mapOf(0f to 0, height.toPx() to 1)
-    val progress = swipeState.progress
-    val rotDegrees = when {
-      icon != null -> 0f
-      progress.from == 1 && progress.to == 1 -> 0f
-      progress.from == 1 && progress.to == 0 -> progress.fraction * 180f
-      progress.from == 0 && progress.to == 1 -> (1f - progress.fraction) * 180f
-      else -> 180f
-    }
+    val fullWidth = maxWidth
+    val height = fullHeight - scrollIconSize - (iconPadding * 2)
+    val swipeState = rememberSwipeableState(UP_SCREEN)
+    val scope = rememberCoroutineScope()
+    var selectedScreen by remember { mutableStateOf(SelectedScreen.CENTER) }
+    val screens = remember { listOf(leftScreen, centerScreen, rightScreen) }
+    val iconScreens = when (selectedScreen) {
+      SelectedScreen.LEFT -> listOf(leftIconSelected, centerIcon, rightIcon)
+      SelectedScreen.CENTER -> listOf(leftIcon, centerIconSelected, rightIcon)
+      SelectedScreen.RIGHT -> listOf(leftIcon, centerIcon, rightIconSelected)
+    }.zip(SelectedScreen.values())
+
+    val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.ordinal)
+
     Box(
       modifier = Modifier
         .fillMaxWidth()
@@ -61,44 +70,70 @@ fun ScrollScreen(
           .background(MaterialTheme.colors.surface)
           .swipeable(
             state = swipeState,
-            anchors = anchors,
+            anchors = mapOf(0f to DOWN_SCREEN, height.toPx() to UP_SCREEN),
             thresholds = { _, _ -> FractionalThreshold(threshold) },
             orientation = Orientation.Vertical
           )
       ) {
-        BoxWithConstraints {
-          val downHeight = maxHeight
-          Column(modifier = Modifier.fillMaxSize()) {
-            Surface(
+        Column(modifier = Modifier.fillMaxSize()) {
+          Surface(modifier = Modifier.shadow(elevation = 2.dp)) {
+            Row(
               modifier = Modifier
-                .fillMaxWidth()
-                .shadow(elevation = 2.dp),
+                .background(MaterialTheme.colors.background)
+                .fillMaxWidth(),
+              horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-              Box(
-                modifier = Modifier
-                  .fillMaxWidth()
-                  .background(MaterialTheme.colors.background)
-                  .padding(padding),
-                contentAlignment = Alignment.TopCenter
-              ) {
-                Box(modifier = Modifier.rotate(rotDegrees)) {
-                  ShadowIcon(
-                    imageVector = icon ?: Icons.Default.ArrowUpward,
-                    contentDescription = "scrollDown",
-                    size = scrollIconSize
-                  )
+              iconScreens.forEach { (icon, screen) ->
+                BottomIcon(icon, iconPadding, scrollIconSize) {
+                  selectedScreen = screen
+                  if (swipeState.targetValue == UP_SCREEN) scope.launch { swipeState.animateTo(DOWN_SCREEN) }
                 }
               }
             }
-            Box(
-              modifier = Modifier
-                .fillMaxWidth()
-                .height(downHeight),
-              content = down
-            )
+          }
+          Row(
+            modifier = Modifier
+              .offset(scrollOffset)
+              .wrapContentWidth(unbounded = true, align = Alignment.Start)
+          ) {
+            screens.forEach {
+              Box(
+                modifier = Modifier
+                  .width(fullWidth)
+                  .height(height),
+                content = it
+              )
+            }
           }
         }
       }
     }
   }
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun BottomIcon(
+  icon: ImageVector,
+  padding: Dp,
+  iconsSize: Dp,
+  onClick: () -> Unit,
+) {
+  CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+    IconButton(
+      onClick = onClick,
+      modifier = Modifier.padding(padding)
+    ) {
+      ShadowIcon(
+        imageVector = icon,
+        contentDescription = "selectIcon",
+        size = iconsSize
+      )
+    }
+  }
+}
+
+private enum class SelectedScreen { LEFT, CENTER, RIGHT }
+
+private const val UP_SCREEN: Int = 1
+private const val DOWN_SCREEN: Int = 0

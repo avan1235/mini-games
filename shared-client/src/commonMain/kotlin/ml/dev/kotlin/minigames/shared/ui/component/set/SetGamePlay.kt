@@ -34,7 +34,7 @@ fun SetGamePlay(
       role = vm.userRole(gameState),
       onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
     )
-    ProportionKeeper(maxWidthToHeight = 0.75f) {
+    ProportionKeeper(maxWidthToHeight = 0.66f) {
       SetBoard(
         setGame = gameState,
         onProposal = { scope.launch { vm.emitSetProposal(it, clientMessages) } }

@@ -23,23 +23,22 @@ import ml.dev.kotlin.minigames.shared.viewmodel.message
 fun RegisterScreen(
   navigator: Navigator<ScreenRoute>,
   vm: RegisterViewModel,
-) {
-  val toastContext = LocalToastContext.current
+): Unit = with(LocalToastContext.current) {
   LoadingScreen(
     loadingText = "Registering user",
     loadingInitState = false,
     loadingAction = { loading ->
       vm.createUser()?.on(
         ok = {
-          toastContext?.toast("Verify your email")
+          toast("Verify your email")
           navigator.navigate(ScreenRoute.LogInScreen, dropAll = true)
         },
         err = {
-          toastContext?.toast(it.reason.message())
+          toast(it.reason.message())
           loading.value = false
         },
         empty = {
-          toastContext?.toast(CONNECT_ERROR_MESSAGE)
+          toast(CONNECT_ERROR_MESSAGE)
           loading.value = false
         }
       )
@@ -83,7 +82,7 @@ fun RegisterScreen(
                 vm.confirmPassword.isEmpty() -> true.set(vm.confirmPasswordErrorState)
                 vm.password != vm.confirmPassword -> {
                   true.set(vm.passwordErrorState, vm.confirmPasswordErrorState)
-                  toastContext?.toast("Passwords don't match")
+                  toast("Passwords don't match")
                 }
                 else -> {
                   false.set(

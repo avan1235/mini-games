@@ -29,23 +29,22 @@ import ml.dev.kotlin.minigames.shared.viewmodel.message
 fun LogInScreen(
   navigator: Navigator<ScreenRoute>,
   vm: LogInViewModel
-) {
-  val toastContext = LocalToastContext.current
+): Unit = with(LocalToastContext.current) {
   LoadingScreen(
     loadingText = "Logging in",
     loadingInitState = false,
     loadingAction = { loading ->
       vm.loginUser().on(
         ok = {
-          toastContext?.toast("Logged in")
+          toast("Logged in")
           vm.navigateGame(navigator)
         },
         err = {
-          toastContext?.toast(it.reason.message())
+          toast(it.reason.message())
           loading.value = false
         },
         empty = {
-          toastContext?.toast(CONNECT_ERROR_MESSAGE)
+          toast(CONNECT_ERROR_MESSAGE)
           loading.value = false
         }
       )

@@ -46,11 +46,10 @@ fun UserDataRow(
 
   @Composable
   fun UserDataRaw() {
+    val elevation by animateDpAsState(targetValue = if (dismissState.dismissDirection != null) 4.dp else 0.dp)
     Card(
       modifier = Modifier.fillMaxWidth(),
-      elevation = animateDpAsState(
-        targetValue = if (dismissState.dismissDirection != null) 4.dp else 0.dp
-      ).value,
+      elevation = elevation,
       shape = Shapes.small,
     ) {
       Row(

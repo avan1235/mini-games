@@ -57,8 +57,8 @@ data class ToastBuffer(val state: MutableState<ToastMessage?>)
 
 data class ToastMessage(val message: String)
 
-fun ToastBuffer.toast(message: ToastMessage) {
-  state.value = message
+fun ToastBuffer?.toast(message: ToastMessage) {
+  this?.state?.value = message
 }
 
-fun ToastBuffer.toast(message: String): Unit = toast(ToastMessage(message))
+fun ToastBuffer?.toast(message: String): Unit = toast(ToastMessage(message))
