@@ -1,10 +1,10 @@
 package ml.dev.kotlin.minigames.server
 
-import ml.dev.kotlin.minigames.util.envVar
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.auth.*
 import ml.dev.kotlin.minigames.shared.model.JwtToken
+import ml.dev.kotlin.minigames.util.envVar
 import java.util.*
 
 object Jwt {

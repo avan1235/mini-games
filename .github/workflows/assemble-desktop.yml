@@ -36,7 +36,7 @@ jobs:
           export REST_CLIENT_API_SCHEME=https
           export WEBSOCKET_CLIENT_API_SCHEME=wss
           chmod +x ./gradlew
-          ./gradlew desktop-app:package
+          ./gradlew desktop-app:package desktop-app:packageUberJarForCurrentOS
         shell: bash
       - name: Upload deb artifact file to workflow run results
         uses: actions/upload-artifact@v2
@@ -44,12 +44,12 @@ jobs:
         with:
           name: MiniGames-1.0.0.deb
           path: desktop-app/build/compose/binaries/main/deb/minigames_1.0.0-1_amd64.deb
-      - name: Upload dmg artifact file to workflow run results
+      - name: Upload linux jar artifact file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.0.0.dmg') != ''
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-linux-x64-1.0.0.jar') != ''
         with:
-          name: MiniGames-1.0.0.dmg
-          path: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.0.0.dmg
+          name: MiniGames-Linux-1.0.0.jar
+          path: desktop-app/build/compose/jars/MiniGames-linux-x64-1.0.0.jar
       - name: Upload msi artifact file to workflow run results
         uses: actions/upload-artifact@v2
         if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.0.0.msi') != ''
@@ -64,14 +64,14 @@ jobs:
           prerelease: false
           automatic_release_tag: "MiniGames-1.0.0.deb"
           files: desktop-app/build/compose/binaries/main/deb/minigames_1.0.0-1_amd64.deb
-      - name: Release dmg artifact file
+      - name: Release linux jar artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.0.0.dmg') != ''
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-linux-x64-1.0.0.jar') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "MiniGames-1.0.0.dmg"
-          files: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.0.0.dmg
+          automatic_release_tag: "MiniGames-Linux-1.0.0.jar"
+          files: desktop-app/build/compose/jars/MiniGames-linux-x64-1.0.0.jar
       - name: Release msi artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
         if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.0.0.msi') != ''

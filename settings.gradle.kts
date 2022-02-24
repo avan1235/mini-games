@@ -13,7 +13,6 @@ pluginManagement {
     val composeVersion by System.getProperties()
 
     kotlin("multiplatform") version "$kotlinVersion"
-    kotlin("jvm") version "$kotlinVersion"
     kotlin("plugin.parcelize") version "$kotlinVersion"
     kotlin("plugin.serialization") version "$kotlinVersion"
     id("com.android.base") version "$agpVersion"
@@ -21,6 +20,7 @@ pluginManagement {
     id("com.android.library") version "$agpVersion"
     id("org.jetbrains.compose") version "$composeVersion"
     id("com.codingfeline.buildkonfig") version "0.11.0"
+    id("com.github.johnrengelman.shadow") version "7.0.0"
   }
 }
 

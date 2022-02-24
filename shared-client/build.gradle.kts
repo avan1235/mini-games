@@ -76,10 +76,6 @@ buildkonfig {
   }
 }
 
-kotlin.sourceSets.all {
-  languageSettings.optIn("kotlin.RequiresOptIn")
-}
-
 android {
   compileSdk = Constants.Android.compileSdk
 
@@ -98,8 +94,6 @@ android {
     }
   }
 }
-
-loadEnv()
 
 inline fun <reified T> TargetConfigDsl.buildConfigField(name: String) {
   val value = ENV[name] ?: throw IllegalStateException("$name not defined")

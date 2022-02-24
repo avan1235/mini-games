@@ -26,16 +26,17 @@ compose.desktop {
     mainClass = "ml.dev.kotlin.minigames.app.MainAppKt"
 
     nativeDistributions {
-      targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+      targetFormats(TargetFormat.Msi, TargetFormat.Deb)
       packageName = "MiniGames"
 
       windows {
         menu = true
         upgradeUuid = "e60c3562-48f8-47db-91d9-ca54dfa92f35"
+        iconFile.set(project.file("icon.ico"))
       }
 
-      macOS {
-        bundleID = "ml.dev.kotlin.minigames.app"
+      linux {
+        iconFile.set(project.file("icon.png"))
       }
     }
   }

@@ -1,6 +1,7 @@
 package ml.dev.kotlin.minigames.db
 
 import kotlinx.coroutines.CoroutineDispatcher
+import ml.dev.kotlin.minigames.util.envVar
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SqlLogger
 import org.jetbrains.exposed.sql.Transaction
@@ -8,7 +9,6 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.transactions.transactionManager
-import ml.dev.kotlin.minigames.util.envVar
 
 object DbSettings {
 
