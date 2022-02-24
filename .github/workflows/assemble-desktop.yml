@@ -56,6 +56,18 @@ jobs:
         with:
           name: MiniGames-1.0.0.msi
           path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.0.0.msi
+      - name: Upload windows jar artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-windows-x64-1.0.0.jar') != ''
+        with:
+          name: MiniGames-Windows-1.0.0.jar
+          path: desktop-app/build/compose/jars/MiniGames-windows-x64-1.0.0.jar
+      - name: Upload macos jar artifact file to workflow run results
+        uses: actions/upload-artifact@v2
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-macos-x64-1.0.0.jar') != ''
+        with:
+          name: MiniGames-MacOS-1.0.0.jar
+          path: desktop-app/build/compose/jars/MiniGames-macos-x64-1.0.0.jar
       - name: Release deb artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
         if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.0.0-1_amd64.deb') != ''
@@ -80,3 +92,19 @@ jobs:
           prerelease: false
           automatic_release_tag: "MiniGames-1.0.0.msi"
           files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.0.0.msi
+      - name: Release windows jar artifact file
+        uses: "marvinpinto/action-automatic-releases@latest"
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-windows-x64-1.0.0.jar') != ''
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "MiniGames-Windows-1.0.0.jar"
+          files: desktop-app/build/compose/jars/MiniGames-windows-x64-1.0.0.jar
+      - name: Release macos jar artifact file
+        uses: "marvinpinto/action-automatic-releases@latest"
+        if: hashFiles('desktop-app/build/compose/jars/MiniGames-macos-x64-1.0.0.jar') != ''
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "MiniGames-Macos-1.0.0.jar"
+          files: desktop-app/build/compose/jars/MiniGames-macos-x64-1.0.0.jar
