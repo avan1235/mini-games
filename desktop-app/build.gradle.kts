@@ -32,11 +32,11 @@ compose.desktop {
       windows {
         menu = true
         upgradeUuid = "e60c3562-48f8-47db-91d9-ca54dfa92f35"
-        iconFile.set(project.file("icon.ico"))
+        iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.ico"))
       }
 
       linux {
-        iconFile.set(project.file("icon.png"))
+        iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.png"))
       }
     }
   }
