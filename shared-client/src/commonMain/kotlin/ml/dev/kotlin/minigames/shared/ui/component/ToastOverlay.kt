@@ -21,7 +21,6 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 @Composable
 fun ToastOverlay(
   message: MutableState<ToastMessage?>,
-  timeMillis: Long = 2_500
 ) {
   val toast = message.value ?: return
   Box(
@@ -46,7 +45,7 @@ fun ToastOverlay(
     }
     LaunchedEffect(toast) {
       visible = true
-      delay(timeMillis)
+      delay(toast.duration)
       visible = false
       message.value = null
     }
@@ -55,10 +54,10 @@ fun ToastOverlay(
 
 data class ToastBuffer(val state: MutableState<ToastMessage?>)
 
-data class ToastMessage(val message: String)
+data class ToastMessage(val message: String, val duration: Long)
 
 fun ToastBuffer?.toast(message: ToastMessage) {
   this?.state?.value = message
 }
 
-fun ToastBuffer?.toast(message: String): Unit = toast(ToastMessage(message))
+fun ToastBuffer?.toast(message: String, duration: Long = 2_500): Unit = toast(ToastMessage(message, duration))

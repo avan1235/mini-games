@@ -14,7 +14,6 @@ import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
 import ml.dev.kotlin.minigames.shared.ui.component.ProportionKeeper
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
-import ml.dev.kotlin.minigames.shared.ui.util.navigate
 import ml.dev.kotlin.minigames.shared.viewmodel.SetGameViewModel
 
 @Composable

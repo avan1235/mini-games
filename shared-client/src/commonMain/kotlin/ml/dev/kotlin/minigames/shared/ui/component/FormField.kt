@@ -47,18 +47,14 @@ fun FormField(
     modifier = Modifier
       .fillMaxWidth()
       .onKeyEvent {
-        if (it.key.keyCode == Key.Tab.keyCode) {
-          focusManager.moveFocus(FocusDirection.Down)
-          true
-        } else false
+        if (it.key.keyCode == Key.Tab.keyCode) true.also { focusManager.moveFocus(FocusDirection.Down) } else false
       },
     label = { Text(text = text) },
     shape = MaterialTheme.shapes.medium,
-    maxLines = 1,
     singleLine = true,
     visualTransformation = if (password && !showPassword.value) PasswordVisualTransformation() else VisualTransformation.None,
     keyboardOptions = (
-      if (password) KeyboardOptions(keyboardType = KeyboardType.Password)
+      if (password) KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
       else KeyboardOptions.Default
       ).copy(imeAction = buttonType.imeAction),
     keyboardActions = KeyboardActions(

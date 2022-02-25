@@ -28,10 +28,10 @@ subprojects {
   }
 
   afterEvaluate {
-    project.extensions.findByType<KotlinMultiplatformExtension>()?.sourceSets?.removeAll { sourceSet ->
-      setOf(
+    project.extensions.findByType<KotlinMultiplatformExtension>()?.sourceSets?.removeAll {
+      it.name in setOf(
         "androidAndroidTestRelease",
-      ).contains(sourceSet.name)
+      )
     }
   }
 }

@@ -18,18 +18,26 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import ml.dev.kotlin.minigames.shared.model.*
+import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
+import ml.dev.kotlin.minigames.shared.ui.component.Chat
 import ml.dev.kotlin.minigames.shared.ui.component.Players
 import ml.dev.kotlin.minigames.shared.ui.component.ScrollScreen
 import ml.dev.kotlin.minigames.shared.ui.component.toast
+import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.takeTyped
 import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
+import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
 import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
 import ml.dev.kotlin.minigames.shared.viewmodel.HEARTBEAT_DELAY_MILLIS
 
 @Composable
 inline fun <reified Snapshot : GameSnapshot> GameScreen(
-  vm: GameViewModel<Snapshot>, crossinline gamePlay: @Composable BoxScope.(
-    snapshot: Snapshot, messages: MutableStateFlow<GameClientMessage?>
+  navigator: Navigator<ScreenRoute>,
+  vm: GameViewModel<Snapshot>,
+  chatVM: ChatViewModel,
+  crossinline gamePlay: @Composable BoxScope.(
+    snapshot: Snapshot,
+    messages: MutableStateFlow<GameClientMessage?>
   ) -> Unit
 ): Unit = with(LocalToastContext.current) {
   val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
@@ -40,13 +48,14 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
   val serverMessage = serverMessages.collectAsState()
   val connectError = { toast(CONNECT_ERROR_MESSAGE) }
 
-  when (val message = serverMessage.value) {
-    is GameStateSnapshotServerMessage -> snapshot = message.snapshot.takeTyped()
+  when (val msg = serverMessage.value) {
+    is GameStateSnapshotServerMessage -> snapshot = msg.snapshot.takeTyped()
     is UnapprovedGameStateUpdateServerMessage -> toast("Wait for approval")
-    is UserActionServerMessage -> when (message.action) {
+    is UserActionServerMessage -> when (msg.action) {
       UserAction.Approve -> "Approved"
       UserAction.Discard -> "Discarded"
     }.let { toast(it) }
+    is ReceiveMessageServerMessage -> chatVM.addMessage(msg.message)
     null -> Unit
   }
 
@@ -72,7 +81,7 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
     null -> LoadingScreen("Loading game")
     else -> ScrollScreen(
       up = { gamePlay(state, clientMessages) },
-      leftScreen = { Box(modifier = Modifier.fillMaxSize().background(Color.Green)) },
+      leftScreen = { Chat(chatVM, clientMessages) },
       centerScreen = { Players(vm, state, clientMessages) },
       rightScreen = { Box(modifier = Modifier.fillMaxSize().background(Color.Red)) },
       leftIcon = Icons.Outlined.Forum,
@@ -81,6 +90,7 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
       centerIconSelected = Icons.Filled.PeopleAlt,
       rightIcon = Icons.Outlined.Notifications,
       rightIconSelected = Icons.Filled.Notifications,
+      backPressedHandler = navigator
     )
   }
 }

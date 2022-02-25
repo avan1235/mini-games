@@ -1,8 +1,25 @@
 package ml.dev.kotlin.minigames.shared.util
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlinx.datetime.*
 
 fun now(): Long = Clock.System.now().toEpochMilliseconds()
 
-fun Long.toDateTime(): Instant = Instant.fromEpochMilliseconds(this)
+fun Long.format(format: DateTimeHolder.() -> String): String = Instant
+  .fromEpochMilliseconds(this)
+  .toLocalDateTime(TimeZone.currentSystemDefault())
+  .run { DateTimeHolder(year, monthNumber, month, dayOfMonth, dayOfWeek, dayOfYear, hour, minute, second, nanosecond) }
+  .let(format)
+
+data class DateTimeHolder(
+  val year: Int,
+  val monthNumber: Int,
+  val month: Month,
+  val dayOfMonth: Int,
+  val dayOfWeek: DayOfWeek,
+  val dayOfYear: Int,
+  val hour: Int,
+  val minute: Int,
+  val second: Int,
+  val nanosecond: Int,
+)
+

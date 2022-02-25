@@ -18,7 +18,6 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 import ml.dev.kotlin.minigames.shared.ui.theme.capitals
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
-import ml.dev.kotlin.minigames.shared.ui.util.navigate
 import ml.dev.kotlin.minigames.shared.ui.util.set
 import ml.dev.kotlin.minigames.shared.util.on
 import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE

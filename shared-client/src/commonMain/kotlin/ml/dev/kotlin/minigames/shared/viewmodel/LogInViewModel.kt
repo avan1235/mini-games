@@ -14,7 +14,6 @@ import ml.dev.kotlin.minigames.shared.rest.client.UserClient
 import ml.dev.kotlin.minigames.shared.ui.Game
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
-import ml.dev.kotlin.minigames.shared.ui.util.navigate
 import ml.dev.kotlin.minigames.shared.util.Res
 import kotlin.random.Random
 

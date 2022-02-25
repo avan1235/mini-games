@@ -25,6 +25,12 @@ data class UserActionServerMessage(
 ) : GameServerMessage()
 
 @Serializable
+data class ReceiveMessageServerMessage(
+  val message: UserMessage,
+  override val timestamp: Long,
+) : GameServerMessage()
+
+@Serializable
 sealed class GameClientMessage {
   abstract val timestamp: Long
 }
@@ -45,9 +51,13 @@ data class UserActionClientMessage(
   val username: Username,
   val action: UserAction,
   override val timestamp: Long,
-) : GameClientMessage() {
-
-}
+) : GameClientMessage()
 
 @Serializable
 enum class UserAction { Approve, Discard }
+
+@Serializable
+data class SendMessageClientMessage(
+  val message: UserMessage,
+  override val timestamp: Long,
+) : GameClientMessage()

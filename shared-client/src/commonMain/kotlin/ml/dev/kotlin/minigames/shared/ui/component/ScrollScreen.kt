@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.arkivanov.essenty.backpressed.BackPressedHandler
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -30,6 +31,7 @@ fun ScrollScreen(
   centerIconSelected: ImageVector,
   rightIcon: ImageVector,
   rightIconSelected: ImageVector,
+  backPressedHandler: BackPressedHandler,
   threshold: Float = 0.3f,
   scrollIconSize: Dp = 24.dp,
   iconPadding: Dp = 12.dp,
@@ -38,7 +40,7 @@ fun ScrollScreen(
     val fullHeight = maxHeight
     val fullWidth = maxWidth
     val height = fullHeight - scrollIconSize - (iconPadding * 2)
-    val swipeState = rememberSwipeableState(UP_SCREEN)
+    val swipeState = rememberSwipeableState(ScreenLocation.UP)
     val scope = rememberCoroutineScope()
     var selectedScreen by remember { mutableStateOf(SelectedScreen.CENTER) }
     val screens = remember { listOf(leftScreen, centerScreen, rightScreen) }
@@ -49,6 +51,11 @@ fun ScrollScreen(
     }.zip(SelectedScreen.values())
 
     val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.ordinal)
+    val handler = remember { fun() = true.also { scope.launch { swipeState.animateTo(ScreenLocation.UP) } } }
+    when (swipeState.targetValue) {
+      ScreenLocation.DOWN -> backPressedHandler.register(handler)
+      ScreenLocation.UP -> backPressedHandler.unregister(handler)
+    }
 
     Box(
       modifier = Modifier
@@ -70,7 +77,7 @@ fun ScrollScreen(
           .background(MaterialTheme.colors.surface)
           .swipeable(
             state = swipeState,
-            anchors = mapOf(0f to DOWN_SCREEN, height.toPx() to UP_SCREEN),
+            anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
             thresholds = { _, _ -> FractionalThreshold(threshold) },
             orientation = Orientation.Vertical
           )
@@ -84,10 +91,12 @@ fun ScrollScreen(
               horizontalArrangement = Arrangement.SpaceEvenly
             ) {
               iconScreens.forEach { (icon, screen) ->
-                BottomIcon(icon, iconPadding, scrollIconSize) {
+                BottomIcon(icon, iconPadding, scrollIconSize, onClick = {
                   selectedScreen = screen
-                  if (swipeState.targetValue == UP_SCREEN) scope.launch { swipeState.animateTo(DOWN_SCREEN) }
-                }
+                  if (swipeState.targetValue == ScreenLocation.UP) scope.launch {
+                    swipeState.animateTo(ScreenLocation.DOWN)
+                  }
+                })
               }
             }
           }
@@ -135,5 +144,4 @@ private fun BottomIcon(
 
 private enum class SelectedScreen { LEFT, CENTER, RIGHT }
 
-private const val UP_SCREEN: Int = 1
-private const val DOWN_SCREEN: Int = 0
+private enum class ScreenLocation { UP, DOWN }

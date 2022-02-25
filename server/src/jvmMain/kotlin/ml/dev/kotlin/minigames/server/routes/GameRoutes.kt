@@ -18,9 +18,8 @@ import ml.dev.kotlin.minigames.util.eprintln
 private val SET_GAME_HANDLER = GameService { SetGameState.random() }
   .let(::GameHandler)
 
-private val SNAKE_GAME_HANDLER =
-  GameService(updateDelay = 5) { SnakeGameState.empty(items = TreeV2Set()) }
-    .let(::GameHandler)
+private val SNAKE_GAME_HANDLER = GameService(updateDelay = 5) { SnakeGameState.empty(items = TreeV2Set()) }
+  .let(::GameHandler)
 
 fun Application.gameSockets() = routing {
   authJwtWebSocket(SET_GAME_WEBSOCKET("{$SERVER_NAME}"), SET_GAME_HANDLER::handleGame)
@@ -72,12 +71,22 @@ private class GameHandler(
       service.connections(serverName, msg.username).forEach { it.session.sendJson(message) }
       sendAllUpdatedGameState(serverName, gameState)
     }
+    is SendMessageClientMessage -> sendAllUserMessage(serverName, msg.message)
   } ?: Unit
 
   private suspend fun sendAllUpdatedGameState(
-    serverName: ServerName, gameState: GameState
+    serverName: ServerName,
+    gameState: GameState
   ): Unit = service.connections(serverName).forEach {
     val message = gameState.let(gameStateServerMessage(it.username))
+    it.session.sendJson(message)
+  }
+
+  private suspend fun sendAllUserMessage(
+    serverName: ServerName,
+    userMessage: UserMessage
+  ): Unit = service.connections(serverName).forEach {
+    val message = ReceiveMessageServerMessage(userMessage, timestamp = now())
     it.session.sendJson(message)
   }
 

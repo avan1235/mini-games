@@ -38,14 +38,14 @@ fun MiniGamesRoutes(context: ViewModelContext) {
       is ScreenRoute.SetGameScreen -> {
         val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
         val vm = remember(accessData) { SetGameViewModel(context, accessData) }
-        GameScreen(vm) { snapshot, messages -> SetGamePlay(navigator, vm, snapshot, messages) }
+        val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
+        GameScreen(navigator, vm, chatVM) { snapshot, messages -> SetGamePlay(navigator, vm, snapshot, messages) }
       }
       is ScreenRoute.SnakeGameScreen -> {
         val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
-        val vm = remember(context, accessData) {
-          SnakeGameViewModel(context, accessData)
-        }
-        GameScreen(vm) { snapshot, messages -> SnakeGamePlay(navigator, vm, snapshot, messages) }
+        val vm = remember(context, accessData) { SnakeGameViewModel(context, accessData) }
+        val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
+        GameScreen(navigator, vm, chatVM) { snapshot, messages -> SnakeGamePlay(navigator, vm, snapshot, messages) }
       }
     }
   }
