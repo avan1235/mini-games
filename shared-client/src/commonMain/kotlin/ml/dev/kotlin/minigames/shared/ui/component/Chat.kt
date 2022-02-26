@@ -7,7 +7,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -54,11 +53,11 @@ fun Chat(
 ) {
   val scope = rememberCoroutineScope()
   BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-    val messageHeight = maxHeight - size
+    val messagesHeight = maxHeight - size
     Column(
       modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
     ) {
-      Messages(vm.messages, vm.username, messageHeight)
+      Messages(vm.messages, vm.username, messagesHeight)
       MessageInput(vm.userMessageTextState, size = size, onClick = { scope.launch { vm.send(clientMessages) } })
     }
   }
@@ -93,7 +92,6 @@ private fun MessageInput(
           .padding(start = padding, top = padding, bottom = padding)
           .clip(Shapes.large)
           .background(MaterialTheme.colors.surface)
-          .border(width = 1.dp, color = MaterialTheme.colors.primary, shape = Shapes.large)
           .padding(horizontal = padding * 2, vertical = padding)
           .onKeyEvent {
             if (it.key.keyCode == Key.Enter.keyCode) true.also { onClick() } else false
