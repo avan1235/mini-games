@@ -25,16 +25,14 @@ import ml.dev.kotlin.minigames.shared.ui.component.ScrollScreen
 import ml.dev.kotlin.minigames.shared.ui.component.toast
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.takeTyped
-import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
-import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
-import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
-import ml.dev.kotlin.minigames.shared.viewmodel.HEARTBEAT_DELAY_MILLIS
+import ml.dev.kotlin.minigames.shared.viewmodel.*
 
 @Composable
 inline fun <reified Snapshot : GameSnapshot> GameScreen(
   navigator: Navigator<ScreenRoute>,
   vm: GameViewModel<Snapshot>,
   chatVM: ChatViewModel,
+  notifyVM: NotificationsViewModel,
   crossinline gamePlay: @Composable BoxScope.(
     snapshot: Snapshot,
     messages: MutableStateFlow<GameClientMessage?>
@@ -52,9 +50,9 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
     is GameStateSnapshotServerMessage -> snapshot = msg.snapshot.takeTyped()
     is UnapprovedGameStateUpdateServerMessage -> toast("Wait for approval")
     is UserActionServerMessage -> when (msg.action) {
-      UserAction.Approve -> "Approved"
-      UserAction.Discard -> "Discarded"
-    }.let { toast(it) }
+      UserAction.Approve -> "Approved by Admin"
+      UserAction.Discard -> "Discarded by Admin"
+    }.also { notifyVM.addNotification(it) }.let { toast(it) }
     is ReceiveMessageServerMessage -> chatVM.addMessage(msg.message)
     null -> Unit
   }

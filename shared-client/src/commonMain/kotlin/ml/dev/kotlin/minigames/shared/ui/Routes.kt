@@ -39,13 +39,19 @@ fun MiniGamesRoutes(context: ViewModelContext) {
         val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
         val vm = remember(accessData) { SetGameViewModel(context, accessData) }
         val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
-        GameScreen(navigator, vm, chatVM) { snapshot, messages -> SetGamePlay(navigator, vm, snapshot, messages) }
+        val notifyVM = remember(accessData) { NotificationsViewModel(context) }
+        GameScreen(navigator, vm, chatVM, notifyVM) { snapshot, messages ->
+          SetGamePlay(navigator, vm, snapshot, messages)
+        }
       }
       is ScreenRoute.SnakeGameScreen -> {
         val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
         val vm = remember(context, accessData) { SnakeGameViewModel(context, accessData) }
         val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
-        GameScreen(navigator, vm, chatVM) { snapshot, messages -> SnakeGamePlay(navigator, vm, snapshot, messages) }
+        val notifyVM = remember(accessData) { NotificationsViewModel(context) }
+        GameScreen(navigator, vm, chatVM, notifyVM) { snapshot, messages ->
+          SnakeGamePlay(navigator, vm, snapshot, messages)
+        }
       }
     }
   }

@@ -16,11 +16,10 @@ private val Context.USER_LOGIN_DATA_STORE: DataStore<Preferences> by preferences
 internal actual suspend fun storeUserLogin(
   context: ViewModelContext,
   userLogin: UserLogin,
-  rememberUserLogin: Boolean
 ): Unit = with(context.androidContext) {
   USER_LOGIN_DATA_STORE.edit { preferences ->
-    preferences[USER_LOGIN_KEY] = if (rememberUserLogin) userLogin.username else ""
-    preferences[USER_PASSWORD_KEY] = if (rememberUserLogin) userLogin.password else ""
+    preferences[USER_LOGIN_KEY] = userLogin.username
+    preferences[USER_PASSWORD_KEY] = userLogin.password
   }
 }
 

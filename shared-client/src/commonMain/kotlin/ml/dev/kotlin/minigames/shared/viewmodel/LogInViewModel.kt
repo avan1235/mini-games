@@ -54,7 +54,8 @@ class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewMod
   }
 
   suspend fun loginUser(): Res<UserError, JwtToken>? {
-    storeUserLogin(ctx, userLogin, rememberUserLogin)
+    val userData = if (rememberUserLogin) userLogin else UserLogin("", "")
+    storeUserLogin(ctx, userData)
     return client.loginUser(userLogin)
   }
 }
@@ -62,7 +63,6 @@ class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewMod
 internal expect suspend fun storeUserLogin(
   context: ViewModelContext,
   userLogin: UserLogin,
-  rememberUserLogin: Boolean
 )
 
 internal expect suspend fun loadUserLogin(

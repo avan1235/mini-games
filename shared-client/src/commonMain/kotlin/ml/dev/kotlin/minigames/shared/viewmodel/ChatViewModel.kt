@@ -1,9 +1,7 @@
 package ml.dev.kotlin.minigames.shared.viewmodel
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import kotlinx.coroutines.flow.MutableStateFlow
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
 import ml.dev.kotlin.minigames.shared.model.SendMessageClientMessage
@@ -14,8 +12,7 @@ import java.util.Comparator.comparing
 
 class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
 
-  private val _messages: MutableList<UserMessage> = mutableListOf()
-
+  private val _messages: SnapshotStateList<UserMessage> get() = mutableStateListOf()
   val messages: List<UserMessage> get() = _messages
 
   val userMessageTextState: MutableState<String> = mutableStateOf("")
