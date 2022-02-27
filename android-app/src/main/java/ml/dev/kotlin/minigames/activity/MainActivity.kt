@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
       LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
       CompositionLocalProvider(LocalBackPressedHandler provides backPressedDispatcher) {
         val keeper = InstanceKeeper(viewModelStore)
-        val context = ViewModelContext(keeper, LocalContext.current)
+        val context = ViewModelContext(keeper, LocalContext.current, window)
         MiniGamesApp(context)
       }
     }

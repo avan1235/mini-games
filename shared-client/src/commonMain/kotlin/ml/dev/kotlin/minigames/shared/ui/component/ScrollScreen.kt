@@ -32,6 +32,8 @@ fun ScrollScreen(
   rightIcon: ImageVector,
   rightIconSelected: ImageVector,
   backPressedHandler: BackPressedHandler,
+  onUp: () -> Unit,
+  onDown: () -> Unit,
   threshold: Float = 0.3f,
   scrollIconSize: Dp = 24.dp,
   iconPadding: Dp = 12.dp,
@@ -53,8 +55,14 @@ fun ScrollScreen(
     val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.ordinal)
     val handler = remember { fun() = true.also { scope.launch { swipeState.animateTo(ScreenLocation.UP) } } }
     when (swipeState.targetValue) {
-      ScreenLocation.DOWN -> backPressedHandler.register(handler)
-      ScreenLocation.UP -> backPressedHandler.unregister(handler)
+      ScreenLocation.DOWN -> {
+        backPressedHandler.register(handler)
+        onDown()
+      }
+      ScreenLocation.UP -> {
+        backPressedHandler.unregister(handler)
+        onUp()
+      }
     }
 
     Box(

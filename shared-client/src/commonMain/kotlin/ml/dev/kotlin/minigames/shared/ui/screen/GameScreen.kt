@@ -1,9 +1,6 @@
 package ml.dev.kotlin.minigames.shared.ui.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Notifications
@@ -12,17 +9,12 @@ import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
-import ml.dev.kotlin.minigames.shared.ui.component.Chat
-import ml.dev.kotlin.minigames.shared.ui.component.Players
-import ml.dev.kotlin.minigames.shared.ui.component.ScrollScreen
-import ml.dev.kotlin.minigames.shared.ui.component.toast
+import ml.dev.kotlin.minigames.shared.ui.component.*
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.takeTyped
 import ml.dev.kotlin.minigames.shared.viewmodel.*
@@ -34,8 +26,7 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
   chatVM: ChatViewModel,
   notifyVM: NotificationsViewModel,
   crossinline gamePlay: @Composable BoxScope.(
-    snapshot: Snapshot,
-    messages: MutableStateFlow<GameClientMessage?>
+    snapshot: Snapshot, messages: MutableStateFlow<GameClientMessage?>
   ) -> Unit
 ): Unit = with(LocalToastContext.current) {
   val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
@@ -48,11 +39,11 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
 
   when (val msg = serverMessage.value) {
     is GameStateSnapshotServerMessage -> snapshot = msg.snapshot.takeTyped()
-    is UnapprovedGameStateUpdateServerMessage -> toast("Wait for approval")
+    is UnapprovedGameStateUpdateServerMessage -> "Wait for Admin approval".also(notifyVM::addNotification).let(::toast)
     is UserActionServerMessage -> when (msg.action) {
       UserAction.Approve -> "Approved by Admin"
       UserAction.Discard -> "Discarded by Admin"
-    }.also { notifyVM.addNotification(it) }.let { toast(it) }
+    }.also(notifyVM::addNotification).let(::toast)
     is ReceiveMessageServerMessage -> chatVM.addMessage(msg.message)
     null -> Unit
   }
@@ -81,14 +72,16 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
       up = { gamePlay(state, clientMessages) },
       leftScreen = { Chat(chatVM, clientMessages) },
       centerScreen = { Players(vm, state, clientMessages) },
-      rightScreen = { Box(modifier = Modifier.fillMaxSize().background(Color.Red)) },
+      rightScreen = { Notifications(notifyVM) },
       leftIcon = Icons.Outlined.Forum,
       leftIconSelected = Icons.Filled.Forum,
       centerIcon = Icons.Outlined.PeopleAlt,
       centerIconSelected = Icons.Filled.PeopleAlt,
       rightIcon = Icons.Outlined.Notifications,
       rightIconSelected = Icons.Filled.Notifications,
-      backPressedHandler = navigator
+      backPressedHandler = navigator,
+      onUp = { vm.ctx.adjustPan() },
+      onDown = { vm.ctx.adjustResize() },
     )
   }
 }
