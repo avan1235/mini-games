@@ -10,3 +10,5 @@ fun UserError.Reason.message(): String = when (this) {
 }
 
 const val CONNECT_ERROR_MESSAGE: String = "Error connecting to server"
+const val RECEIVE_ERROR_MESSAGE: String = "Error receiving data from server"
+const val SEND_ERROR_MESSAGE: String = "Error sending data to server"

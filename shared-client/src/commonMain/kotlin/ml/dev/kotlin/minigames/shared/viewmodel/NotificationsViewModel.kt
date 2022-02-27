@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
 
-  private val _notifications: SnapshotStateList<IndexedNotification> = mutableStateListOf()
+  private var _notifications: SnapshotStateList<IndexedNotification> = mutableStateListOf()
   val notifications: List<IndexedNotification> get() = _notifications
 
   fun addNotification(message: String) {

@@ -68,7 +68,8 @@ private class GameHandler(
       action = msg.action
     )?.let { gameState ->
       val message = UserActionServerMessage(action = msg.action, timestamp = now())
-      service.connections(serverName, msg.username).forEach { it.session.sendJson(message) }
+      val connections = service.connections(serverName, msg.username)
+      connections.forEach { it.session.sendJson(message) }
       sendAllUpdatedGameState(serverName, gameState)
     }
     is SendMessageClientMessage -> sendAllUserMessage(serverName, msg.message)

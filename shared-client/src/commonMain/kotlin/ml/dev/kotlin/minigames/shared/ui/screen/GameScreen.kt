@@ -11,6 +11,8 @@ import androidx.compose.material.icons.outlined.PeopleAlt
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.isActive
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
@@ -31,35 +33,37 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
 ): Unit = with(LocalToastContext.current) {
   val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
   val clientMessages = remember { MutableStateFlow<GameClientMessage?>(null) }
+
   var snapshot by remember { mutableStateOf<Snapshot?>(null) }
 
-  val gameAccessData = vm.gameAccessData
-  val serverMessage = serverMessages.collectAsState()
-  val connectError = { toast(CONNECT_ERROR_MESSAGE) }
-
-  when (val msg = serverMessage.value) {
-    is GameStateSnapshotServerMessage -> snapshot = msg.snapshot.takeTyped()
-    is UnapprovedGameStateUpdateServerMessage -> "Wait for Admin approval".also(notifyVM::addNotification).let(::toast)
-    is UserActionServerMessage -> when (msg.action) {
-      UserAction.Approve -> "Approved by Admin"
-      UserAction.Discard -> "Discarded by Admin"
-    }.also(notifyVM::addNotification).let(::toast)
-    is ReceiveMessageServerMessage -> chatVM.addMessage(msg.message)
-    null -> Unit
+  LaunchedEffect(Unit) {
+    serverMessages.collect {
+      when (it) {
+        is GameStateSnapshotServerMessage -> snapshot = it.snapshot.takeTyped()
+        is UnapprovedGameStateUpdateServerMessage ->
+          "Wait for Admin approval".also(notifyVM::addNotification).let(::toast)
+        is UserActionServerMessage -> when (it.action) {
+          UserAction.Approve -> "Approved by Admin"
+          UserAction.Discard -> "Discarded by Admin"
+        }.also(::println).also(notifyVM::addNotification).let(::toast)
+        is ReceiveMessageServerMessage -> chatVM.addMessage(it.message)
+        else -> Unit
+      }
+    }
   }
 
-  LaunchedEffect(gameAccessData) {
+  LaunchedEffect(vm.gameAccessData) {
     vm.client.startPlayingGame(
-      gameAccessData,
+      vm.gameAccessData,
       serverMessages,
       clientMessages,
-      onErrorLogin = { connectError() },
-      onErrorReceive = { connectError() },
-      onErrorSend = { connectError() },
+      onErrorLogin = { toast(CONNECT_ERROR_MESSAGE) },
+      onErrorReceive = { toast(RECEIVE_ERROR_MESSAGE) },
+      onErrorSend = { toast(SEND_ERROR_MESSAGE) },
     )
   }
 
-  LaunchedEffect(gameAccessData) {
+  LaunchedEffect(vm.gameAccessData) {
     while (isActive) {
       delay(HEARTBEAT_DELAY_MILLIS)
       clientMessages.emit(vm.heartBeat())

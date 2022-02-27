@@ -61,8 +61,8 @@ private suspend fun DefaultClientWebSocketSession.processClientMessages(
 ) {
   clientMessages.collect {
     if (it != null) try {
-      val encodedMessage = GameJson.encodeToString(it)
-      send(encodedMessage)
+      val message = GameJson.encodeToString(it)
+      send(message)
     } catch (e: Exception) {
       onErrorSend(e)
     }

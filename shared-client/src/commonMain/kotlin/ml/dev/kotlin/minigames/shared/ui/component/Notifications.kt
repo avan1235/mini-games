@@ -1,65 +1,81 @@
 package ml.dev.kotlin.minigames.shared.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.ui.theme.DiscardColor
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
+import ml.dev.kotlin.minigames.shared.viewmodel.IndexedNotification
 import ml.dev.kotlin.minigames.shared.viewmodel.NotificationsViewModel
 
 @Composable
 fun Notifications(
   vm: NotificationsViewModel
 ) {
-  val state = rememberLazyListState()
-  LazyColumn(
+  Column(
     modifier = Modifier.fillMaxWidth(),
-    state = state,
     verticalArrangement = Arrangement.Top
   ) {
-    items(vm.notifications.reversed()) {
-      Notification(it.message, onRemove = { vm.removeNotification(it) })
+    vm.notifications.reversed().forEach {
+      Notification(it, onRemove = { vm.removeNotification(it) })
     }
   }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, androidx.compose.animation.ExperimentalAnimationApi::class)
 @Composable
 private fun Notification(
-  message: String,
-  onRemove: () -> Unit,
+  notification: IndexedNotification,
+  onRemove: suspend () -> Unit,
+  animationDuration: Int = 300,
 ) {
+  val visible = remember { MutableTransitionState(true) }
+  val scope = rememberCoroutineScope()
+  val removeAndHide = {
+    scope.launch {
+      visible.targetState = false
+      delay(animationDuration.toLong())
+      onRemove()
+    }
+  }
   val dismissState = rememberDismissState(confirmStateChange = {
     when (it) {
       DismissValue.Default -> Unit
-      DismissValue.DismissedToEnd -> onRemove()
-      DismissValue.DismissedToStart -> onRemove()
+      DismissValue.DismissedToEnd -> removeAndHide()
+      DismissValue.DismissedToStart -> removeAndHide()
     }
     true
   })
 
   @Composable
   fun NotificationDataRaw() {
-    val elevation by animateDpAsState(targetValue = if (dismissState.dismissDirection != null) 4.dp else 0.dp)
     Card(
       modifier = Modifier.fillMaxWidth(),
-      elevation = elevation,
+      elevation = 4.dp,
       shape = Shapes.small,
     ) {
       Row(
@@ -70,7 +86,7 @@ private fun Notification(
         verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          text = message,
+          text = notification.message,
           style = Typography.body1,
           maxLines = 2,
           overflow = TextOverflow.Ellipsis,
@@ -80,39 +96,46 @@ private fun Notification(
     }
   }
 
-  SwipeToDismiss(
-    state = dismissState,
-    dismissThresholds = { FractionalThreshold(0.2f) },
-    background = {
-      val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
-      val color by animateColorAsState(
-        targetValue = when (dismissState.targetValue) {
-          DismissValue.Default -> MaterialTheme.colors.surface
-          DismissValue.DismissedToEnd -> DiscardColor
-          DismissValue.DismissedToStart -> DiscardColor
+  val animationSpec = tween<Float>(animationDuration, easing = LinearEasing)
+  AnimatedVisibility(
+    visible,
+    enter = scaleIn(transformOrigin = TransformOrigin(0.5f, 0f), animationSpec = animationSpec),
+    exit = fadeOut(animationSpec = animationSpec)
+  ) {
+    SwipeToDismiss(
+      state = dismissState,
+      dismissThresholds = { FractionalThreshold(0.2f) },
+      background = {
+        val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
+        val color by animateColorAsState(
+          targetValue = when (dismissState.targetValue) {
+            DismissValue.Default -> MaterialTheme.colors.surface
+            DismissValue.DismissedToEnd -> DiscardColor
+            DismissValue.DismissedToStart -> DiscardColor
+          }
+        )
+        val icon = when (direction) {
+          DismissDirection.StartToEnd -> Icons.Default.Delete
+          DismissDirection.EndToStart -> Icons.Default.Delete
         }
-      )
-      val icon = when (direction) {
-        DismissDirection.StartToEnd -> Icons.Default.Delete
-        DismissDirection.EndToStart -> Icons.Default.Delete
-      }
-      val scale by animateFloatAsState(
-        targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1f
-      )
-      val alignment = when (direction) {
-        DismissDirection.StartToEnd -> Alignment.CenterStart
-        DismissDirection.EndToStart -> Alignment.CenterEnd
-      }
-      Box(
-        modifier = Modifier
-          .fillMaxSize()
-          .background(color)
-          .padding(start = 12.dp, end = 12.dp),
-        contentAlignment = alignment
-      ) {
-        Icon(icon, contentDescription = "icon", modifier = Modifier.scale(scale))
-      }
-    },
-    dismissContent = { NotificationDataRaw() }
-  )
+        val scale by animateFloatAsState(
+          targetValue = if (dismissState.targetValue == DismissValue.Default) 0.8f else 1f
+        )
+        val alignment = when (direction) {
+          DismissDirection.StartToEnd -> Alignment.CenterStart
+          DismissDirection.EndToStart -> Alignment.CenterEnd
+        }
+        Box(
+          modifier = Modifier
+            .fillMaxSize()
+            .background(color)
+            .padding(start = 12.dp, end = 12.dp),
+          contentAlignment = alignment
+        ) {
+          Icon(icon, contentDescription = "icon", modifier = Modifier.scale(scale))
+        }
+      },
+      dismissContent = { NotificationDataRaw() }
+    )
+  }
 }
