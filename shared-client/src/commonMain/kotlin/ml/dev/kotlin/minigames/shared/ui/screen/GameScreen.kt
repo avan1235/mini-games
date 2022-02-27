@@ -45,7 +45,7 @@ inline fun <reified Snapshot : GameSnapshot> GameScreen(
         is UserActionServerMessage -> when (it.action) {
           UserAction.Approve -> "Approved by Admin"
           UserAction.Discard -> "Discarded by Admin"
-        }.also(::println).also(notifyVM::addNotification).let(::toast)
+        }.also(notifyVM::addNotification).let(::toast)
         is ReceiveMessageServerMessage -> chatVM.addMessage(it.message)
         else -> Unit
       }
