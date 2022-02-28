@@ -10,7 +10,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -36,12 +37,12 @@ import ml.dev.kotlin.minigames.shared.viewmodel.NotificationsViewModel
 fun Notifications(
   vm: NotificationsViewModel
 ) {
-  Column(
+  LazyColumn(
     modifier = Modifier.fillMaxWidth(),
     verticalArrangement = Arrangement.Top
   ) {
-    vm.notifications.reversed().forEach {
-      Notification(it, onRemove = { vm.removeNotification(it) })
+    items(vm.notifications.reversed(), key = { it.idx }) { notification ->
+      Notification(notification, onRemove = { vm.removeNotification(notification) })
     }
   }
 }
