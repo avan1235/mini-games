@@ -37,12 +37,12 @@ jobs:
       - name: Upload artifact file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGames-1.0.0.apk
+          name: MiniGames-1.3.0.apk
           path: android-app/build/outputs/apk/debug/android-app-debug.apk
       - name: Release artifact artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "MiniGames-1.0.0.apk"
+          automatic_release_tag: "MiniGames-1.3.0.apk"
           files: android-app/build/outputs/apk/debug/android-app-debug.apk

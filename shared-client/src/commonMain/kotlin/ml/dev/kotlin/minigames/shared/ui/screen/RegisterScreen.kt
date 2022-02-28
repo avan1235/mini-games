@@ -29,7 +29,7 @@ fun RegisterScreen(
     loadingAction = { loading ->
       vm.createUser()?.on(
         ok = {
-          toast("Verify your email")
+          toast("Verify your email and check for spam messages")
           navigator.navigate(ScreenRoute.LogInScreen, dropAll = true)
         },
         err = {
