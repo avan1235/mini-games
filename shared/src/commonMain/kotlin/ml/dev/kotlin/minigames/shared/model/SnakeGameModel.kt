@@ -21,7 +21,7 @@ data class SnakePart(val pos: V2) {
 data class SnakeDirection(val dir: V2)
 
 @Serializable
-data class Snake(
+data class Snake constructor(
   val parts: List<SnakePart>,
   val v: V2,
   val size: Float,
@@ -40,7 +40,11 @@ data class Snake(
   fun setDirection(direction: SnakeDirection): Snake = copy(v = direction.dir.speed)
 
   companion object {
-    fun create(parts: Int = 20, size: Float = 32f, at: V2 = V2.random(-size..size, -size..size)): Snake = Snake(
+    fun create(
+      parts: Int = SNAKE_INIT_PARTS,
+      size: Float = SNAKE_INIT_SIZE,
+      at: V2 = V2.random(-size..size, -size..size)
+    ): Snake = Snake(
       parts = List(parts) { SnakePart(at + V2(0f, -size * SIZE_PART * it)) },
       v = V2.ZERO_ONE.speed,
       size = size,
@@ -103,6 +107,7 @@ data class SnakeGameState(
   override fun update(currMillis: Long): SnakeGameState = move(currMillis)
     .dropItems()
     .collectItems()
+    .updateSnakesSizes()
     .collideSnakes(currMillis)
 
   private fun move(currMillis: Long): SnakeGameState {
@@ -114,7 +119,7 @@ data class SnakeGameState(
   private fun dropItems(): SnakeGameState {
     val expectInRange = (0..SNAKE_RANGE_MAX_COUNT).random()
     var currItems = items
-    for ((username, snake) in snakes) {
+    for ((_, snake) in snakes) {
       val head = snake.takeAlive()?.head?.let { SnakePartRange(it.pos, radius = SNAKE_DROP_RADIUS) } ?: continue
       val dropCount = expectInRange - currItems[head.rangeX, head.rangeY].size
       if (dropCount <= 0) continue
@@ -139,8 +144,8 @@ data class SnakeGameState(
   }
 
   private fun collideSnakes(currMillis: Long): SnakeGameState {
-    var itemsCopy = items
     val snakesCopy = HashMap(snakes)
+    var currItems = items
     val partsUsers = ComputedMap<SnakePartRange, HashSet<Username>> { HashSet() }.apply {
       for ((username, snakeState) in snakes) snakeState.takeAlive()?.let { snake ->
         snake.parts.forEach { this[SnakePartRange(it.pos, radius = snake.radius)] += username }
@@ -155,10 +160,33 @@ data class SnakeGameState(
       if (dead) {
         snakesCopy[username] = SnakeState.Dead(recreateAt = currMillis + RECREATE_AFTER_MILLIS)
         val r = snake.radius
-        itemsCopy = snake.parts.map { it.pos + V2.random(-r..r, -r..r) }.let(itemsCopy::addAll)
+        currItems = snake.parts.map { it.pos + V2.random(-r..r, -r..r) }.let(currItems::addAll)
       }
     }
-    return copy(snakes = snakesCopy, items = itemsCopy)
+    return copy(snakes = snakesCopy, items = currItems)
+  }
+
+  private fun updateSnakesSizes(): SnakeGameState {
+    val snakesCopy = HashMap(snakes)
+    for ((username, snakeState) in snakes) {
+      val snake = snakeState.takeAlive() ?: continue
+      val points = points[username] ?: 0
+
+      val expectedParts = SNAKE_INIT_PARTS + (points / SNAKE_POINTS_FOR_PART)
+      val parts = if (snake.parts.size >= expectedParts) snake.parts else {
+        val lastPart = snake.parts.last()
+        buildList {
+          addAll(snake.parts)
+          repeat(expectedParts - snake.parts.size) { add(lastPart) }
+        }
+      }
+
+      val expectedSize = SNAKE_INIT_SIZE + (points / SNAKE_POINTS_FOR_GROW)
+      val size = if (snake.size >= expectedSize) snake.size else expectedSize
+
+      snakesCopy[username] = SnakeState.Alive(snake.copy(parts = parts, size = size))
+    }
+    return copy(snakes = snakesCopy)
   }
 
   companion object {
@@ -182,6 +210,10 @@ private data class SnakePartRange(val pos: V2, val radius: Float) {
 private const val SNAKE_DROP_RADIUS: Float = 512f
 private const val SNAKE_SNAPSHOT_SIZE: Float = 512f
 private const val SNAKE_RANGE_MAX_COUNT: Int = 16
+private const val SNAKE_POINTS_FOR_PART: Int = 16
+private const val SNAKE_POINTS_FOR_GROW: Int = 32
+private const val SNAKE_INIT_PARTS: Int = 16
+private const val SNAKE_INIT_SIZE: Float = 32f
 
 sealed class SnakeState {
   data class Dead(val recreateAt: Long) : SnakeState()
