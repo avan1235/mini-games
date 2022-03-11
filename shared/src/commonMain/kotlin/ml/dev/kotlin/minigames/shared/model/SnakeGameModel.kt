@@ -1,9 +1,9 @@
 package ml.dev.kotlin.minigames.shared.model
 
 import kotlinx.serialization.Serializable
+import ml.dev.kotlin.minigames.shared.util.BlockV2Set
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
-import ml.dev.kotlin.minigames.shared.util.V2Set
 import ml.dev.kotlin.minigames.shared.util.random
 
 private const val SPEED_NORM: Float = 0.1f
@@ -74,7 +74,7 @@ data class SnakeGameUpdate(
 
 data class SnakeGameState(
   val snakes: Map<Username, SnakeState>,
-  val items: V2Set,
+  val items: BlockV2Set,
   override val points: Map<Username, Int>,
   override val users: Map<Username, UserData>,
   val prevMillis: Long?,
@@ -85,8 +85,8 @@ data class SnakeGameState(
 
   override fun snapshot(forUser: Username): SnakeGameSnapshot {
     val items = snakes[forUser]?.takeAlive()?.head
-      ?.let { SnakePartRange(it.pos, SNAPSHOT_RADIUS) }
-      ?.let { items.get(it.rangeX, it.rangeY) }
+      ?.let { SnakePartRange(it.pos, SNAKE_SNAPSHOT_SIZE) }
+      ?.let { items[it.rangeX, it.rangeY] }
       ?: items.values
     val snakes = buildMap { snakes.forEach { (username, state) -> state.takeAlive()?.let { put(username, it) } } }
     return SnakeGameSnapshot(snakes, items, points, users)
@@ -112,30 +112,30 @@ data class SnakeGameState(
   }
 
   private fun dropItems(): SnakeGameState {
-    val expectInRange = (0..RANGE_MAX_COUNT).random()
-    var itemsCopy = items
-    for (snake in snakes.values) {
-      val head = snake.takeAlive()?.head?.let { SnakePartRange(it.pos, radius = DROP_RADIUS) } ?: continue
-      val dropCount = expectInRange - itemsCopy.get(head.rangeX, head.rangeY).size
+    val expectInRange = (0..SNAKE_RANGE_MAX_COUNT).random()
+    var currItems = items
+    for ((username, snake) in snakes) {
+      val head = snake.takeAlive()?.head?.let { SnakePartRange(it.pos, radius = SNAKE_DROP_RADIUS) } ?: continue
+      val dropCount = expectInRange - currItems[head.rangeX, head.rangeY].size
       if (dropCount <= 0) continue
-      itemsCopy = HashSet<V2>().apply {
+      currItems = HashSet<V2>().apply {
         for (i in 1..dropCount) add(V2(head.rangeX.random(), head.rangeY.random()))
-      }.let { itemsCopy.addAll(it) }
+      }.let { currItems.addAll(it) }
     }
-    return copy(items = itemsCopy)
+    return copy(items = currItems)
   }
 
   private fun collectItems(): SnakeGameState {
-    var itemsCopy = items
     val pointsCopy = HashMap(points)
+    var currItems = items
     for ((username, snakeState) in snakes) {
       val snake = snakeState.takeAlive() ?: continue
       val head = snake.head?.let { SnakePartRange(it.pos, radius = snake.radius) } ?: continue
-      val userItems = itemsCopy.get(head.rangeX, head.rangeY).filter(head::inRange)
-      itemsCopy = itemsCopy.removeAll(userItems)
+      val userItems = currItems[head.rangeX, head.rangeY].filter(head::inRange)
+      currItems = currItems.removeAll(userItems)
       pointsCopy[username] = (pointsCopy[username] ?: 0) + userItems.size
     }
-    return copy(items = itemsCopy, points = pointsCopy)
+    return copy(items = currItems, points = pointsCopy)
   }
 
   private fun collideSnakes(currMillis: Long): SnakeGameState {
@@ -162,8 +162,12 @@ data class SnakeGameState(
   }
 
   companion object {
-    fun empty(items: V2Set): SnakeGameState = SnakeGameState(
-      snakes = emptyMap(), points = emptyMap(), users = emptyMap(), items = items, prevMillis = null
+    fun empty(): SnakeGameState = SnakeGameState(
+      snakes = emptyMap(),
+      points = emptyMap(),
+      users = emptyMap(),
+      items = BlockV2Set(3 * SNAKE_DROP_RADIUS),
+      prevMillis = null
     )
   }
 }
@@ -175,9 +179,9 @@ private data class SnakePartRange(val pos: V2, val radius: Float) {
   fun collides(other: SnakePartRange): Boolean = (pos - other.pos).len <= (radius + other.radius)
 }
 
-private const val DROP_RADIUS: Float = 512f
-private const val SNAPSHOT_RADIUS: Float = 512f
-private const val RANGE_MAX_COUNT: Int = 16
+private const val SNAKE_DROP_RADIUS: Float = 512f
+private const val SNAKE_SNAPSHOT_SIZE: Float = 512f
+private const val SNAKE_RANGE_MAX_COUNT: Int = 16
 
 sealed class SnakeState {
   data class Dead(val recreateAt: Long) : SnakeState()

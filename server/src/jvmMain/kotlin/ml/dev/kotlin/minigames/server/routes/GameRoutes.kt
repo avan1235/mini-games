@@ -12,14 +12,12 @@ import ml.dev.kotlin.minigames.shared.api.SNAKE_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.GameJson
 import ml.dev.kotlin.minigames.shared.util.now
-import ml.dev.kotlin.minigames.util.TreeV2Set
 import ml.dev.kotlin.minigames.util.eprintln
 
 private val SET_GAME_HANDLER = GameService { SetGameState.random() }
   .let(::GameHandler)
 
-private val SNAKE_GAME_HANDLER = GameService(updateDelay = 5) { SnakeGameState.empty(items = TreeV2Set()) }
-  .let(::GameHandler)
+private val SNAKE_GAME_HANDLER = GameService(updateDelay = 5) { SnakeGameState.empty() }.let(::GameHandler)
 
 fun Application.gameSockets() = routing {
   authJwtWebSocket(SET_GAME_WEBSOCKET("{$SERVER_NAME}"), SET_GAME_HANDLER::handleGame)
