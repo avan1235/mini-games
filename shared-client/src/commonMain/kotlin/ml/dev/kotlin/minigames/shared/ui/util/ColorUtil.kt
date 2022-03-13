@@ -19,7 +19,7 @@ fun randomColor(): Color {
 }
 
 @OptIn(ExperimentalGraphicsApi::class)
-fun Color.darker(lightScale: Float): Color {
+fun Color.lightScaled(lightScale: Float): Color {
   val number = toHSL()
   return Color.hsl(number[0], number[1], number[2] * lightScale, alpha)
 }

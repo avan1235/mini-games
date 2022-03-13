@@ -33,6 +33,8 @@ object Dependencies {
 
   val bCrypt = "at.favre.lib:bcrypt:0.9.0"
 
+  val napierLogger = "io.github.aakira:napier:2.4.0"
+
   val composeUi = "androidx.compose.ui:ui:${Version.composeVersion}"
   val composeMaterial = "androidx.compose.material:material:${Version.composeVersion}"
   val composeIcons = "androidx.compose.material:material-icons-extended:${Version.composeVersion}"

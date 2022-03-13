@@ -18,7 +18,7 @@ import ml.dev.kotlin.minigames.shared.model.Snake
 import ml.dev.kotlin.minigames.shared.model.SnakePart
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
-import ml.dev.kotlin.minigames.shared.ui.util.darker
+import ml.dev.kotlin.minigames.shared.ui.util.lightScaled
 import ml.dev.kotlin.minigames.shared.ui.util.randomColor
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
@@ -63,7 +63,7 @@ private fun SnakePart(
       .offset(x, y)
       .background(
         brush = Brush.radialGradient(
-          colors = listOf(color, color.darker(lightScale)),
+          colors = listOf(color, color.lightScaled(lightScale)),
           tileMode = TileMode.Mirror
         ),
         shape = CircleShape

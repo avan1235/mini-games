@@ -39,9 +39,12 @@ kotlin {
         implementation(Dependencies.ktorClientCore)
         implementation(Dependencies.ktorClientWebsockets)
         implementation(Dependencies.ktorClientSerialization)
+
+        implementation(Dependencies.napierLogger)
       }
     }
     named("androidMain") {
+      resources.srcDirs("src/commonMain/res")
       dependencies {
         implementation(Dependencies.ktorClientAndroid)
 
