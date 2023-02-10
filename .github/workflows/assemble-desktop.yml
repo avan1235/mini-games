@@ -33,8 +33,8 @@ jobs:
         run: |
           export GRADLE_USER_HOME=$(pwd)/.gradle
           export DESKTOP_CLIENT_API_HOST=${{ secrets.API_HOST }}
-          export REST_CLIENT_API_SCHEME=http
-          export WEBSOCKET_CLIENT_API_SCHEME=ws
+          export REST_CLIENT_API_SCHEME=https
+          export WEBSOCKET_CLIENT_API_SCHEME=wss
           chmod +x ./gradlew
           ./gradlew desktop-app:package
         shell: bash

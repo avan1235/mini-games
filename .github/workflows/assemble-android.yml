@@ -36,8 +36,8 @@ jobs:
         run: |
           export GRADLE_USER_HOME=$(pwd)/.gradle
           export ANDROID_CLIENT_API_HOST=${{ secrets.API_HOST }}
-          export REST_CLIENT_API_SCHEME=http
-          export WEBSOCKET_CLIENT_API_SCHEME=ws
+          export REST_CLIENT_API_SCHEME=https
+          export WEBSOCKET_CLIENT_API_SCHEME=wss
           chmod +x ./gradlew
           ./gradlew android-app:assembleDebug
           ./gradlew android-app:assembleRelease android-app:bundleRelease -Pandroid.injected.signing.store.file=$SIGNING_STORE_FILE -Pandroid.injected.signing.store.password=$SIGNING_STORE_PASSWORD -Pandroid.injected.signing.key.alias=$SIGNING_KEY_ALIAS -Pandroid.injected.signing.key.password=$SIGNING_KEY_PASSWORD
