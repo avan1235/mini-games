@@ -35,12 +35,12 @@ jobs:
       - name: Upload jar artifact file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGamesServer-1.5.0.jar
-          path: server/build/libs/server-1.5.0-all.jar
+          name: MiniGamesServer-1.6.0.jar
+          path: server/build/libs/server-1.6.0-all.jar
       - name: Release jar artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Server-MiniGames-1.5.0"
-          files: server/build/libs/server-1.5.0-all.jar
+          automatic_release_tag: "Server-MiniGames-1.6.0"
+          files: server/build/libs/server-1.6.0-all.jar
