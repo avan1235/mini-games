@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+
+  mini-games-dev-server:
+    build:
+      dockerfile: ./Dockerfile
+      args:
+        POSTGRES_PORT: ${POSTGRES_PORT}
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        JDBC_DATABASE_URL: ${JDBC_DATABASE_URL}
+        JDBC_DRIVER: ${JDBC_DRIVER}
+        HOST: ${HOST}
+        PORT: ${PORT}
+        FORCE_HTTPS: ${FORCE_HTTPS}
+        JWT_REALM: ${JWT_REALM}
+        JWT_SECRET: ${JWT_SECRET}
+        JWT_AUDIENCE: ${JWT_AUDIENCE}
+        JWT_ISSUER: ${JWT_ISSUER}
+        EMAIL_HOST: ${EMAIL_HOST}
+        EMAIL_PORT: ${EMAIL_PORT}
+        EMAIL_USERNAME: ${EMAIL_USERNAME}
+        EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+        REQUIRE_EMAIL_VERIFY: ${REQUIRE_EMAIL_VERIFY}
+        SCHEME_EMAIL_VERIFY: ${SCHEME_EMAIL_VERIFY}
+        HOST_EMAIL_VERIFY: ${HOST_EMAIL_VERIFY}
+    ports:
+      - "${PORT}:${PORT}"
+
+  mini-games-dev-postgres:
+    image: postgres:alpine3.14
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"

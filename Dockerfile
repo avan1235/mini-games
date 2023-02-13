@@ -4,7 +4,6 @@ RUN chmod +x ./gradlew
 RUN ./gradlew server:shadowJar
 
 FROM openjdk:11-jdk-slim
-COPY --from=build ./server/build/libs/server-1.6.0-all.jar ./server-1.6.0-all.jar
 
 ARG POSTGRES_PORT
 ARG POSTGRES_DB
@@ -50,5 +49,7 @@ ENV HOST_EMAIL_VERIFY=${HOST_EMAIL_VERIFY}
 ENV PORT=${PORT}
 
 EXPOSE ${PORT}
+
+COPY --from=build ./server/build/libs/server-1.6.0-all.jar ./server-1.6.0-all.jar
 
 ENTRYPOINT ["java","-jar","server-1.6.0-all.jar"]
