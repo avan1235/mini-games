@@ -14,17 +14,17 @@ fun Application.installJson() = install(ContentNegotiation) { json() }
 fun Application.installWebSockets() = install(WebSockets)
 
 fun Application.installJWTAuth() = install(Authentication) {
-  jwt(Jwt.CONFIG) {
-    realm = Jwt.REALM
-    verifier(
-      JWT.require(Algorithm.HMAC256(Jwt.SECRET))
-        .withAudience(Jwt.AUDIENCE)
-        .withIssuer(Jwt.ISSUER)
-        .build()
-    )
-    validate { credential ->
-      val username = credential.payload.getClaim(Jwt.CLAIM).asString()
-      username.takeUnless { it.isNullOrBlank() }?.let(Jwt::User)
+    jwt(Jwt.CONFIG) {
+        realm = Jwt.REALM
+        verifier(
+            JWT.require(Algorithm.HMAC256(Jwt.SECRET))
+                .withAudience(Jwt.AUDIENCE)
+                .withIssuer(Jwt.ISSUER)
+                .build()
+        )
+        validate { credential ->
+            val username = credential.payload.getClaim(Jwt.CLAIM).asString()
+            username.takeUnless { it.isNullOrBlank() }?.let(Jwt::User)
+        }
     }
-  }
 }

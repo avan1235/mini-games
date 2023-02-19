@@ -20,66 +20,67 @@ import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
 
 class Navigator<C : Any>(
-  private val router: Router<C, Any>,
-  backPressedHandler: BackPressedHandler
+    private val router: Router<C, Any>,
+    backPressedHandler: BackPressedHandler
 ) : BackPressedHandler by backPressedHandler {
-  val state: Value<RouterState<C, Any>> get() = router.state
+    val state: Value<RouterState<C, Any>> get() = router.state
 
-  fun navigate(configuration: C, dropAll: Boolean = false) {
-    router.navigate { if (dropAll) listOf(configuration) else it + configuration }
-  }
+    fun navigate(configuration: C, dropAll: Boolean = false) {
+        router.navigate { if (dropAll) listOf(configuration) else it + configuration }
+    }
 }
 
 @Composable
 inline fun <reified C : Parcelable> rememberRouter(
-  initialRoute: C,
-  key: String = "${C::class.simpleName}Router",
+    initialRoute: C,
+    key: String = "${C::class.simpleName}Router",
 ): Navigator<C> {
-  val context = rememberComponentContext()
-  return remember {
-    context.router(
-      initialStack = { listOf(initialRoute) },
-      configurationClass = C::class,
-      key = key,
-      handleBackButton = true,
-      childFactory = { configuration, _ -> configuration }
-    )
-  }.let { Navigator(it, context.backPressedHandler) }
+    val context = rememberComponentContext()
+    return remember {
+        context.router(
+            initialStack = { listOf(initialRoute) },
+            configurationClass = C::class,
+            key = key,
+            handleBackButton = true,
+            childFactory = { configuration, _ -> configuration }
+        )
+    }.let { Navigator(it, context.backPressedHandler) }
 }
 
 
 @Composable
 fun rememberComponentContext(): ComponentContext {
-  val lifecycle = rememberLifecycle()
-  val stateKeeper = rememberStateKeeper()
-  val backPressedHandler = LocalBackPressedHandler.current ?: BackPressedDispatcher()
+    val lifecycle = rememberLifecycle()
+    val stateKeeper = rememberStateKeeper()
+    val backPressedHandler = LocalBackPressedHandler.current ?: BackPressedDispatcher()
 
-  return remember { DefaultComponentContext(lifecycle, stateKeeper, null, backPressedHandler) }
+    return remember { DefaultComponentContext(lifecycle, stateKeeper, null, backPressedHandler) }
 }
 
 @Composable
 fun rememberLifecycle(): Lifecycle {
-  val lifecycle = remember { LifecycleRegistry() }
+    val lifecycle = remember { LifecycleRegistry() }
 
-  DisposableEffect(Unit) {
-    lifecycle.resume()
-    onDispose { lifecycle.destroy() }
-  }
-  return lifecycle
+    DisposableEffect(Unit) {
+        lifecycle.resume()
+        onDispose { lifecycle.destroy() }
+    }
+    return lifecycle
 }
 
 @Composable
 fun rememberStateKeeper(): StateKeeper {
-  val stateRegistry = LocalSaveableStateRegistry.current
-  val dispatcher = remember { StateKeeperDispatcher(stateRegistry?.consumeRestored(KEY_STATE) as ParcelableContainer?) }
+    val stateRegistry = LocalSaveableStateRegistry.current
+    val dispatcher =
+        remember { StateKeeperDispatcher(stateRegistry?.consumeRestored(KEY_STATE) as ParcelableContainer?) }
 
-  if (stateRegistry != null) {
-    DisposableEffect(Unit) {
-      val entry = stateRegistry.registerProvider(KEY_STATE, dispatcher::save)
-      onDispose { entry.unregister() }
+    if (stateRegistry != null) {
+        DisposableEffect(Unit) {
+            val entry = stateRegistry.registerProvider(KEY_STATE, dispatcher::save)
+            onDispose { entry.unregister() }
+        }
     }
-  }
-  return dispatcher
+    return dispatcher
 }
 
 val LocalBackPressedHandler: ProvidableCompositionLocal<BackPressedHandler?> = staticCompositionLocalOf { null }

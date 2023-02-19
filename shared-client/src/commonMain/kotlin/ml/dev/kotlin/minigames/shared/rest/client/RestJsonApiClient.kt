@@ -15,56 +15,56 @@ import ml.dev.kotlin.minigames.shared.util.*
 
 class RestJsonApiClient : Closeable {
 
-  val httpClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-    install(JsonFeature) {
-      serializer = KotlinxSerializer()
+    val httpClient = HttpClient(CLIENT_ENGINE_FACTORY) {
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
+        }
+        followRedirects = true
     }
-    followRedirects = true
-  }
 
-  suspend inline fun <reified E, reified T> post(
-    path: String,
-    block: HttpRequestBuilder.() -> Unit = {}
-  ): Res<E, T>? = try {
-    httpClient.post<T>(
-      scheme = RestApiConfig.scheme,
-      host = RestApiConfig.host,
-      path = path,
-    ) {
-      contentType(ContentType.Application.Json)
-      block()
-    }.ok()
-  } catch (e: ClientRequestException) {
-    tryOrNull {
-      val errorData = e.response.readText()
-      GameJson.decodeFromString<E>(errorData).err()
+    suspend inline fun <reified E, reified T> post(
+        path: String,
+        block: HttpRequestBuilder.() -> Unit = {}
+    ): Res<E, T>? = try {
+        httpClient.post<T>(
+            scheme = RestApiConfig.scheme,
+            host = RestApiConfig.host,
+            path = path,
+        ) {
+            contentType(ContentType.Application.Json)
+            block()
+        }.ok()
+    } catch (e: ClientRequestException) {
+        tryOrNull {
+            val errorData = e.response.readText()
+            GameJson.decodeFromString<E>(errorData).err()
+        }
+    } catch (_: Exception) {
+        null
     }
-  } catch (_: Exception) {
-    null
-  }
 
-  suspend inline fun <reified E, reified T> get(
-    path: String,
-    block: HttpRequestBuilder.() -> Unit = {}
-  ): Res<E, T>? = try {
-    httpClient.get(
-      scheme = RestApiConfig.scheme,
-      host = RestApiConfig.host,
-      path = path,
-    ) {
-      contentType(ContentType.Application.Json)
-      block()
+    suspend inline fun <reified E, reified T> get(
+        path: String,
+        block: HttpRequestBuilder.() -> Unit = {}
+    ): Res<E, T>? = try {
+        httpClient.get(
+            scheme = RestApiConfig.scheme,
+            host = RestApiConfig.host,
+            path = path,
+        ) {
+            contentType(ContentType.Application.Json)
+            block()
+        }
+    } catch (e: ClientRequestException) {
+        tryOrNull {
+            val errorData = e.response.readText()
+            GameJson.decodeFromString<E>(errorData).err()
+        }
+    } catch (_: Exception) {
+        null
     }
-  } catch (e: ClientRequestException) {
-    tryOrNull {
-      val errorData = e.response.readText()
-      GameJson.decodeFromString<E>(errorData).err()
-    }
-  } catch (_: Exception) {
-    null
-  }
 
-  override fun close(): Unit = httpClient.close()
+    override fun close(): Unit = httpClient.close()
 }
 
 internal expect val CLIENT_ENGINE_FACTORY: HttpClientEngineFactory<*>

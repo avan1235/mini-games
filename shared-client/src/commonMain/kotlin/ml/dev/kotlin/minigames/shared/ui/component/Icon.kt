@@ -14,28 +14,28 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ShadowIcon(
-  imageVector: ImageVector,
-  contentDescription: String,
-  size: Dp,
-  elevation: Dp = 1.dp
+    imageVector: ImageVector,
+    contentDescription: String,
+    size: Dp,
+    elevation: Dp = 1.dp
 ) {
-  Box(modifier = Modifier.size(size + elevation)) {
-    Icon(
-      imageVector = imageVector,
-      contentDescription = contentDescription,
-      modifier = Modifier
-        .size(size)
-        .offset(
-          x = elevation,
-          y = elevation
+    Box(modifier = Modifier.size(size + elevation)) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            modifier = Modifier
+                .size(size)
+                .offset(
+                    x = elevation,
+                    y = elevation
+                )
+                .alpha(0.5f),
+            tint = Color.Black,
         )
-        .alpha(0.5f),
-      tint = Color.Black,
-    )
-    Icon(
-      imageVector = imageVector,
-      contentDescription = contentDescription,
-      modifier = Modifier.size(size),
-    )
-  }
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(size),
+        )
+    }
 }

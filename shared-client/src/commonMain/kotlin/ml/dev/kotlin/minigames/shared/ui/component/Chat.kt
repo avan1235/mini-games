@@ -48,147 +48,147 @@ import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
 
 @Composable
 fun Chat(
-  vm: ChatViewModel,
-  clientMessages: MutableStateFlow<GameClientMessage?>,
-  size: Dp = 56.dp,
+    vm: ChatViewModel,
+    clientMessages: MutableStateFlow<GameClientMessage?>,
+    size: Dp = 56.dp,
 ) {
-  val scope = rememberCoroutineScope()
-  BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-    val messagesHeight = maxHeight - size
-    Column(
-      modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
-    ) {
-      Messages(vm.messages, vm.username, messagesHeight)
-      MessageInput(vm.userMessageTextState, size = size, onClick = { scope.launch { vm.send(clientMessages) } })
+    val scope = rememberCoroutineScope()
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val messagesHeight = maxHeight - size
+        Column(
+            modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
+        ) {
+            Messages(vm.messages, vm.username, messagesHeight)
+            MessageInput(vm.userMessageTextState, size = size, onClick = { scope.launch { vm.send(clientMessages) } })
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun MessageInput(
-  message: MutableState<String>,
-  size: Dp,
-  padding: Dp = 8.dp,
-  inputRegex: Regex = Regex("[^\\n]*"),
-  onClick: () -> Unit
+    message: MutableState<String>,
+    size: Dp,
+    padding: Dp = 8.dp,
+    inputRegex: Regex = Regex("[^\\n]*"),
+    onClick: () -> Unit
 ) {
-  BoxWithConstraints(modifier = Modifier.fillMaxWidth().height(size)) {
-    val messageWidth = maxWidth - size
-    Row(
-      modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background),
-      verticalAlignment = Alignment.CenterVertically
-    ) {
-      BasicTextField(
-        value = message.value,
-        onValueChange = { message.value = if (inputRegex.matches(it)) it else message.value },
-        textStyle = Typography.body1.copy(color = MaterialTheme.colors.primary),
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
-        keyboardActions = KeyboardActions(
-          onDone = { onClick() },
-        ),
-        modifier = Modifier
-          .width(messageWidth)
-          .padding(start = padding, top = padding, bottom = padding)
-          .clip(Shapes.large)
-          .background(MaterialTheme.colors.surface)
-          .padding(horizontal = padding * 2, vertical = padding)
-          .onKeyEvent {
-            if (it.key.keyCode == Key.Enter.keyCode) true.also { onClick() } else false
-          }
-      )
-      IconButton(
-        onClick = onClick,
-        modifier = Modifier
-          .size(size)
-          .padding(padding)
-          .clip(CircleShape)
-          .background(MaterialTheme.colors.secondaryVariant)
-          .padding(padding),
-      ) {
-        Icon(imageVector = Icons.Default.Send, contentDescription = "send")
-      }
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth().height(size)) {
+        val messageWidth = maxWidth - size
+        Row(
+            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colors.background),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            BasicTextField(
+                value = message.value,
+                onValueChange = { message.value = if (inputRegex.matches(it)) it else message.value },
+                textStyle = Typography.body1.copy(color = MaterialTheme.colors.primary),
+                singleLine = true,
+                cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                keyboardActions = KeyboardActions(
+                    onDone = { onClick() },
+                ),
+                modifier = Modifier
+                    .width(messageWidth)
+                    .padding(start = padding, top = padding, bottom = padding)
+                    .clip(Shapes.large)
+                    .background(MaterialTheme.colors.surface)
+                    .padding(horizontal = padding * 2, vertical = padding)
+                    .onKeyEvent {
+                        if (it.key.keyCode == Key.Enter.keyCode) true.also { onClick() } else false
+                    }
+            )
+            IconButton(
+                onClick = onClick,
+                modifier = Modifier
+                    .size(size)
+                    .padding(padding)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colors.secondaryVariant)
+                    .padding(padding),
+            ) {
+                Icon(imageVector = Icons.Default.Send, contentDescription = "send")
+            }
+        }
     }
-  }
 }
 
 @Composable
 private fun Messages(messages: List<UserMessage>, username: Username, height: Dp) {
-  val state = rememberLazyListState()
-  LazyColumn(
-    modifier = Modifier.fillMaxWidth().height(height),
-    state = state,
-    verticalArrangement = Arrangement.Top,
-    horizontalAlignment = Alignment.Start,
-  ) {
-    itemsIndexed(messages, key = { _, msg -> msg.uuid }) { idx, msg ->
-      Message(msg, username, onVisible = { state.animateScrollToItem(idx) })
+    val state = rememberLazyListState()
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth().height(height),
+        state = state,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start,
+    ) {
+        itemsIndexed(messages, key = { _, msg -> msg.uuid }) { idx, msg ->
+            Message(msg, username, onVisible = { state.animateScrollToItem(idx) })
+        }
     }
-  }
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun Message(
-  message: UserMessage,
-  username: Username,
-  contentPart: Float = 0.9f,
-  animationDuration: Int = 300,
-  paddingMultiply: Float = 1.5f,
-  onVisible: suspend () -> Unit
+    message: UserMessage,
+    username: Username,
+    contentPart: Float = 0.9f,
+    animationDuration: Int = 300,
+    paddingMultiply: Float = 1.5f,
+    onVisible: suspend () -> Unit
 ) {
-  val isAuthor = message.author == username
-  val background = if (isAuthor) MaterialTheme.colors.secondaryVariant else MaterialTheme.colors.primaryVariant
-  val align = if (isAuthor) Alignment.CenterEnd else Alignment.CenterStart
-  val transformOrigin = if (isAuthor) TransformOrigin(1f, 0.5f) else TransformOrigin(0f, 0.5f)
-  val animationSpec = tween<Float>(animationDuration, easing = LinearEasing)
-  var visible by remember(message) { mutableStateOf(false) }
-  LaunchedEffect(Unit) {
-    delay(message.timestamp - now())
-    visible = true
-    onVisible()
-  }
-  AnimatedVisibility(
-    visible,
-    enter = scaleIn(transformOrigin = transformOrigin, animationSpec = animationSpec),
-    exit = scaleOut(transformOrigin = transformOrigin, animationSpec = animationSpec)
-  ) {
-    Box(
-      modifier = Modifier.fillMaxWidth(), contentAlignment = align
-    ) {
-      Box(
-        modifier = Modifier.fillMaxWidth(contentPart), contentAlignment = align
-      ) {
-        Surface(
-          shape = Shapes.large, color = background, elevation = 4.dp, modifier = Modifier.padding(4.dp)
-        ) {
-          Box(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
-            if (!isAuthor) Text(
-              text = message.author,
-              style = Typography.subtitle2,
-              color = USER_COLOR[message.author],
-              modifier = Modifier.align(Alignment.TopStart)
-            )
-            Text(
-              message.message,
-              style = Typography.body1,
-              modifier = Modifier.align(Alignment.CenterEnd).padding(
-                top = if (!isAuthor) with(LocalDensity.current) { Typography.subtitle2.fontSize.toDp() * paddingMultiply } else 0.dp,
-                bottom = with(LocalDensity.current) { Typography.caption.fontSize.toDp() * paddingMultiply },
-              )
-            )
-            Text(
-              text = message.timestamp.format { "${hour.toPaddedString()}:${minute.toPaddedString()}" },
-              style = Typography.caption,
-              color = MaterialTheme.colors.onPrimary,
-              modifier = Modifier.align(Alignment.BottomEnd)
-            )
-          }
-        }
-      }
+    val isAuthor = message.author == username
+    val background = if (isAuthor) MaterialTheme.colors.secondaryVariant else MaterialTheme.colors.primaryVariant
+    val align = if (isAuthor) Alignment.CenterEnd else Alignment.CenterStart
+    val transformOrigin = if (isAuthor) TransformOrigin(1f, 0.5f) else TransformOrigin(0f, 0.5f)
+    val animationSpec = tween<Float>(animationDuration, easing = LinearEasing)
+    var visible by remember(message) { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(message.timestamp - now())
+        visible = true
+        onVisible()
     }
-  }
+    AnimatedVisibility(
+        visible,
+        enter = scaleIn(transformOrigin = transformOrigin, animationSpec = animationSpec),
+        exit = scaleOut(transformOrigin = transformOrigin, animationSpec = animationSpec)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxWidth(), contentAlignment = align
+        ) {
+            Box(
+                modifier = Modifier.fillMaxWidth(contentPart), contentAlignment = align
+            ) {
+                Surface(
+                    shape = Shapes.large, color = background, elevation = 4.dp, modifier = Modifier.padding(4.dp)
+                ) {
+                    Box(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                        if (!isAuthor) Text(
+                            text = message.author,
+                            style = Typography.subtitle2,
+                            color = USER_COLOR[message.author],
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                        Text(
+                            message.message,
+                            style = Typography.body1,
+                            modifier = Modifier.align(Alignment.CenterEnd).padding(
+                                top = if (!isAuthor) with(LocalDensity.current) { Typography.subtitle2.fontSize.toDp() * paddingMultiply } else 0.dp,
+                                bottom = with(LocalDensity.current) { Typography.caption.fontSize.toDp() * paddingMultiply },
+                            )
+                        )
+                        Text(
+                            text = message.timestamp.format { "${hour.toPaddedString()}:${minute.toPaddedString()}" },
+                            style = Typography.caption,
+                            color = MaterialTheme.colors.onPrimary,
+                            modifier = Modifier.align(Alignment.BottomEnd)
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
 private val USER_COLOR: ComputedMap<Username, Color> = ComputedMap { randomColor() }

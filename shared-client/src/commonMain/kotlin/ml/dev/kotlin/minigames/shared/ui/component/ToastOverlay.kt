@@ -20,36 +20,36 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @Composable
 fun ToastOverlay(
-  message: MutableState<ToastMessage?>,
+    message: MutableState<ToastMessage?>,
 ) {
-  val toast = message.value ?: return
-  Box(
-    modifier = Modifier.fillMaxSize(),
-    contentAlignment = Alignment.BottomCenter
-  ) {
-    var visible by remember(toast) { mutableStateOf(false) }
-    AnimatedVisibility(visible, enter = fadeIn(), exit = fadeOut()) {
-      Box(
-        modifier = Modifier
-          .padding(24.dp)
-          .clip(CircleShape)
-          .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
-          .padding(16.dp)
-      ) {
-        Text(
-          toast.message,
-          color = MaterialTheme.colors.background,
-          style = Typography.caption
-        )
-      }
+    val toast = message.value ?: return
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        var visible by remember(toast) { mutableStateOf(false) }
+        AnimatedVisibility(visible, enter = fadeIn(), exit = fadeOut()) {
+            Box(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
+                    .padding(16.dp)
+            ) {
+                Text(
+                    toast.message,
+                    color = MaterialTheme.colors.background,
+                    style = Typography.caption
+                )
+            }
+        }
+        LaunchedEffect(toast) {
+            visible = true
+            delay(toast.duration)
+            visible = false
+            message.value = null
+        }
     }
-    LaunchedEffect(toast) {
-      visible = true
-      delay(toast.duration)
-      visible = false
-      message.value = null
-    }
-  }
 }
 
 data class ToastBuffer(val state: MutableState<ToastMessage?>)
@@ -57,7 +57,7 @@ data class ToastBuffer(val state: MutableState<ToastMessage?>)
 data class ToastMessage(val message: String, val duration: Long)
 
 fun ToastBuffer?.toast(message: ToastMessage) {
-  this?.state?.value = message
+    this?.state?.value = message
 }
 
 fun ToastBuffer?.toast(message: String, duration: Long = 2_500): Unit = toast(ToastMessage(message, duration))

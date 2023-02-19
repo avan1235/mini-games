@@ -19,33 +19,33 @@ import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 
 class MainActivity : ComponentActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    val backPressedDispatcher = BackPressedHandler(onBackPressedDispatcher)
-    setContent {
-      LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-      CompositionLocalProvider(LocalBackPressedHandler provides backPressedDispatcher) {
-        val keeper = InstanceKeeper(viewModelStore)
-        val context = ViewModelContext(keeper, LocalContext.current, window)
-        MiniGamesApp(context)
-      }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val backPressedDispatcher = BackPressedHandler(onBackPressedDispatcher)
+        setContent {
+            LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+            CompositionLocalProvider(LocalBackPressedHandler provides backPressedDispatcher) {
+                val keeper = InstanceKeeper(viewModelStore)
+                val context = ViewModelContext(keeper, LocalContext.current, window)
+                MiniGamesApp(context)
+            }
+        }
     }
-  }
 }
 
 @Composable
 private fun LockScreenOrientation(orientation: Int) {
-  val context = LocalContext.current
-  DisposableEffect(Unit) {
-    val activity = context.findActivity() ?: return@DisposableEffect onDispose { }
-    val originalOrientation = activity.requestedOrientation
-    activity.requestedOrientation = orientation
-    onDispose { activity.requestedOrientation = originalOrientation }
-  }
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val activity = context.findActivity() ?: return@DisposableEffect onDispose { }
+        val originalOrientation = activity.requestedOrientation
+        activity.requestedOrientation = orientation
+        onDispose { activity.requestedOrientation = originalOrientation }
+    }
 }
 
 private fun Context.findActivity(): Activity? = when (this) {
-  is Activity -> this
-  is ContextWrapper -> baseContext.findActivity()
-  else -> null
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

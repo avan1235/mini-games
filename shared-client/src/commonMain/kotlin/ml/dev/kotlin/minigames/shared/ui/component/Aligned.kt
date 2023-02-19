@@ -9,5 +9,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun Aligned(contentAlignment: Alignment, content: @Composable BoxScope.() -> Unit) {
-  Box(modifier = Modifier.fillMaxSize(), contentAlignment = contentAlignment, content = content)
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = contentAlignment, content = content)
 }

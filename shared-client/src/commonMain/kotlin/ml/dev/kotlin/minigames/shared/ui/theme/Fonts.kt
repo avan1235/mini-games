@@ -8,15 +8,15 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 
 object Fonts {
-  @Composable
-  fun leckerliOne() = FontFamily(
-    Font(
-      "LeckerliOne",
-      "leckerlione_regular",
-      FontWeight.Normal,
-      FontStyle.Normal,
-    ),
-  )
+    @Composable
+    fun leckerliOne() = FontFamily(
+        Font(
+            "LeckerliOne",
+            "leckerlione_regular",
+            FontWeight.Normal,
+            FontStyle.Normal,
+        ),
+    )
 }
 
 @Composable

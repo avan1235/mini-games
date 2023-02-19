@@ -12,14 +12,14 @@ import org.jetbrains.exposed.sql.transactions.transactionManager
 
 object DbSettings {
 
-  val db by lazy {
-    Database.connect(
-      url = envVar("JDBC_DATABASE_URL"),
-      driver = envVar("JDBC_DRIVER"),
-    )
-  }
+    val db by lazy {
+        Database.connect(
+            url = envVar("JDBC_DATABASE_URL"),
+            driver = envVar("JDBC_DRIVER"),
+        )
+    }
 
-  val defaultLogger: SqlLogger? = null
+    val defaultLogger: SqlLogger? = null
 }
 
 fun <T> txn(
@@ -28,8 +28,8 @@ fun <T> txn(
     logger: SqlLogger? = DbSettings.defaultLogger,
     statement: Transaction.() -> T
 ): T = transaction(transactionIsolation, repetitionAttempts, DbSettings.db) {
-  logger?.let { addLogger(it) }
-  statement()
+    logger?.let { addLogger(it) }
+    statement()
 }
 
 suspend fun <T> suspendedTxn(
@@ -38,6 +38,6 @@ suspend fun <T> suspendedTxn(
     logger: SqlLogger? = DbSettings.defaultLogger,
     statement: Transaction.() -> T
 ): T = newSuspendedTransaction(context, DbSettings.db, transactionIsolation) {
-  logger?.let { addLogger(it) }
-  statement()
+    logger?.let { addLogger(it) }
+    statement()
 }

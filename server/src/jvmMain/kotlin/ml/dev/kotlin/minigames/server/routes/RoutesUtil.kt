@@ -19,34 +19,34 @@ inline fun RoutesCtx.log(): Logger = this.application.environment.log
 
 @ContextDsl
 inline fun <reified R : Any> Route.authJwtPost(
-  path: String,
-  crossinline body: suspend RoutesCtx.(R, Jwt.User) -> Unit
+    path: String,
+    crossinline body: suspend RoutesCtx.(R, Jwt.User) -> Unit
 ): Route = authenticate(Jwt.CONFIG) {
-  post(path) {
-    val principal = call.principal<Jwt.User>()
-    if (principal != null) body(call.receive(), principal)
-    else call.respond(HttpStatusCode.Unauthorized)
-  }
+    post(path) {
+        val principal = call.principal<Jwt.User>()
+        if (principal != null) body(call.receive(), principal)
+        else call.respond(HttpStatusCode.Unauthorized)
+    }
 }
 
 inline fun Route.authJwtGet(
-  path: String,
-  crossinline body: suspend RoutesCtx.(Jwt.User) -> Unit
+    path: String,
+    crossinline body: suspend RoutesCtx.(Jwt.User) -> Unit
 ): Route = authenticate(Jwt.CONFIG) {
-  get(path) {
-    val principal = call.principal<Jwt.User>()
-    if (principal != null) body(principal)
-    else call.respond(HttpStatusCode.Unauthorized)
-  }
+    get(path) {
+        val principal = call.principal<Jwt.User>()
+        if (principal != null) body(principal)
+        else call.respond(HttpStatusCode.Unauthorized)
+    }
 }
 
 fun Route.authJwtWebSocket(
-  path: String,
-  handler: suspend (DefaultWebSocketServerSession, Jwt.User) -> Unit
+    path: String,
+    handler: suspend (DefaultWebSocketServerSession, Jwt.User) -> Unit
 ): Route = authenticate(Jwt.CONFIG) {
-  webSocket(path) {
-    val principal = call.principal<Jwt.User>()
-    if (principal != null) handler(this, principal)
-    else call.respond(HttpStatusCode.Unauthorized)
-  }
+    webSocket(path) {
+        val principal = call.principal<Jwt.User>()
+        if (principal != null) handler(this, principal)
+        else call.respond(HttpStatusCode.Unauthorized)
+    }
 }

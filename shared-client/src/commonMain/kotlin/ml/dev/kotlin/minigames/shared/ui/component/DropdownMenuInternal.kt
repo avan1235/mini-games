@@ -7,14 +7,14 @@ import androidx.compose.ui.Modifier
 
 @Composable
 internal expect fun DropdownMenu(
-  expanded: Boolean,
-  onDismissRequest: () -> Unit,
-  modifier: Modifier,
-  content: @Composable ColumnScope.() -> Unit
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier,
+    content: @Composable ColumnScope.() -> Unit
 )
 
 @Composable
 internal expect fun DropdownMenuItem(
-  onClick: () -> Unit,
-  content: @Composable RowScope.() -> Unit
+    onClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit
 )

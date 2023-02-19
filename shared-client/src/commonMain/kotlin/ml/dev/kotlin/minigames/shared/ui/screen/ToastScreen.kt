@@ -9,11 +9,11 @@ import ml.dev.kotlin.minigames.shared.ui.component.ToastOverlay
 
 @Composable
 fun ToastScreen(content: @Composable ToastBuffer.() -> Unit) {
-  Box(modifier = Modifier.fillMaxSize()) {
-    val buffer = remember { ToastBuffer(mutableStateOf(null)) }
-    CompositionLocalProvider(LocalToastContext provides buffer) { content(buffer) }
-    ToastOverlay(buffer.state)
-  }
+    Box(modifier = Modifier.fillMaxSize()) {
+        val buffer = remember { ToastBuffer(mutableStateOf(null)) }
+        CompositionLocalProvider(LocalToastContext provides buffer) { content(buffer) }
+        ToastOverlay(buffer.state)
+    }
 }
 
 val LocalToastContext: ProvidableCompositionLocal<ToastBuffer?> = staticCompositionLocalOf { null }

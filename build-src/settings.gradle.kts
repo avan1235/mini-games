@@ -1,7 +1,7 @@
 pluginManagement {
-  repositories {
-    gradlePluginPortal()
-  }
+    repositories {
+        gradlePluginPortal()
+    }
 }
 
 rootProject.name = "build-src"

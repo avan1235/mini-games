@@ -19,47 +19,47 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CircleButton(
-  icon: ImageVector? = null,
-  contentDescription: String? = null,
-  text: String? = null,
-  color: Color = MaterialTheme.colors.primaryVariant,
-  onClick: () -> Unit
+    icon: ImageVector? = null,
+    contentDescription: String? = null,
+    text: String? = null,
+    color: Color = MaterialTheme.colors.primaryVariant,
+    onClick: () -> Unit
 ) {
-  Surface(
-    shape = CircleShape,
-    modifier = Modifier
-      .padding(16.dp)
-      .size(56.dp),
-    elevation = 8.dp,
-    color = color
-  ) {
-    Box(
-      modifier = Modifier
-        .size(52.dp)
-        .clickable(onClick = onClick),
-      contentAlignment = Alignment.Center
+    Surface(
+        shape = CircleShape,
+        modifier = Modifier
+            .padding(16.dp)
+            .size(56.dp),
+        elevation = 8.dp,
+        color = color
     ) {
-      if (icon != null) {
-        Icon(
-          imageVector = icon,
-          contentDescription = contentDescription,
-          tint = MaterialTheme.colors.onPrimary,
-        )
-      }
-      if (text != null) {
-        Text(
-          text = text,
-          fontSize = 12.sp,
-          fontWeight = FontWeight.Bold
-        )
-      }
+        Box(
+            modifier = Modifier
+                .size(52.dp)
+                .clickable(onClick = onClick),
+            contentAlignment = Alignment.Center
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = contentDescription,
+                    tint = MaterialTheme.colors.onPrimary,
+                )
+            }
+            if (text != null) {
+                Text(
+                    text = text,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
-  }
 }
 
 @Composable
 fun BackButton(onClick: () -> Unit) {
-  IconButton(onClick, modifier = Modifier.size(56.dp)) {
-    Icon(Icons.Default.ArrowBack, contentDescription = "back")
-  }
+    IconButton(onClick, modifier = Modifier.size(56.dp)) {
+        Icon(Icons.Default.ArrowBack, contentDescription = "back")
+    }
 }

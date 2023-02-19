@@ -32,11 +32,13 @@ You can download them to play with "production" version of application - to run 
 you should compile server and clients by yourself.
 
 To install Linux version run:
+
 ```shell
 sudo dpkg -i  minigames.deb
 ```
 
 You can try playing with default login credentials which are publicly available:
+
 - user: **user**
 - password: **pass**
 
@@ -75,9 +77,11 @@ To compile client application you need Android SDK as well as JDK 15 (corretto v
 There is a docker environment configured in [docker-compose.yml](dev-env/docker-compose.yml)
 required to run server application. It contains Postgres database for server data.
 You can start it with
+
 ```shell
 ./start.sh
 ```
+
 on linux or some equivalent
 commands on other platform.
 
@@ -85,9 +89,11 @@ commands on other platform.
 
 The easiest way to run the instance of server is to start it from terminal by running
 Gradle
+
 ```shell
 ./gradlew server:run
 ```
+
 from the root directory of project.
 
 #### Run from Intellij
@@ -114,9 +120,11 @@ working.
 
 The easiest way to run the instance of desktop client is to start it from terminal by running
 Gradle
+
 ```shell
 ./gradlew desktop-app:runDistributable
 ```
+
 from the root directory of project.
 
 ### Android

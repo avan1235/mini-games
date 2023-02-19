@@ -13,22 +13,22 @@ import ml.dev.kotlin.minigames.util.eprintln
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 
 fun main(): Unit = try {
-  txn { createMissingTablesAndColumns(UserEntityTable) }
+    txn { createMissingTablesAndColumns(UserEntityTable) }
 
-  embeddedServer(
-    factory = Netty,
-    host = envVar("HOST"),
-    port = envVar("PORT"),
-    watchPaths = emptyList(),
-  ) {
-    installJson()
-    installWebSockets()
-    installJWTAuth()
+    embeddedServer(
+        factory = Netty,
+        host = envVar("HOST"),
+        port = envVar("PORT"),
+        watchPaths = emptyList(),
+    ) {
+        installJson()
+        installWebSockets()
+        installJWTAuth()
 
-    userRoutes()
-    webRoutes()
-    gameSockets()
-  }.start(wait = true).unit()
+        userRoutes()
+        webRoutes()
+        gameSockets()
+    }.start(wait = true).unit()
 } catch (e: Throwable) {
-  eprintln(e)
+    eprintln(e)
 }

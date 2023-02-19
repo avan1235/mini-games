@@ -15,38 +15,38 @@ import ml.dev.kotlin.minigames.shared.websocket.WebsocketApiConfig
 
 class WebsocketApiClient : Closeable {
 
-  private val wsClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-    install(JsonFeature) {
-      serializer = KotlinxSerializer()
+    private val wsClient = HttpClient(CLIENT_ENGINE_FACTORY) {
+        install(JsonFeature) {
+            serializer = KotlinxSerializer()
+        }
+        followRedirects = true
+        install(WebSockets)
     }
-    followRedirects = true
-    install(WebSockets)
-  }
 
-  @ExperimentalCoroutinesApi
-  suspend fun webSocket(
-    path: String,
-    jwtToken: JwtToken,
-    outputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
-    inputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
-  ) {
-    wsClient.webSocket(
-      request = {
-        method = HttpMethod.Get
-        header(HttpHeaders.Authorization, "Bearer ${jwtToken.value}")
-        url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
-      },
-      block = {
-        val messageOutputRoutine = launch { outputMessages() }
-        val messageInputRoutine = launch { inputMessages() }
+    @ExperimentalCoroutinesApi
+    suspend fun webSocket(
+        path: String,
+        jwtToken: JwtToken,
+        outputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
+        inputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
+    ) {
+        wsClient.webSocket(
+            request = {
+                method = HttpMethod.Get
+                header(HttpHeaders.Authorization, "Bearer ${jwtToken.value}")
+                url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
+            },
+            block = {
+                val messageOutputRoutine = launch { outputMessages() }
+                val messageInputRoutine = launch { inputMessages() }
 
-        messageInputRoutine.join()
-        messageOutputRoutine.join()
-      }
-    )
-  }
+                messageInputRoutine.join()
+                messageOutputRoutine.join()
+            }
+        )
+    }
 
-  override fun close(): Unit = wsClient.close()
+    override fun close(): Unit = wsClient.close()
 }
 
 internal expect val CLIENT_ENGINE_FACTORY: HttpClientEngineFactory<*>

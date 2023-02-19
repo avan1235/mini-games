@@ -5,8 +5,8 @@ import java.util.*
 
 @Serializable
 data class UserMessage(
-  val message: String,
-  val author: Username,
-  val timestamp: Long,
-  val uuid: String = UUID.randomUUID().toString()
+    val message: String,
+    val author: Username,
+    val timestamp: Long,
+    val uuid: String = UUID.randomUUID().toString()
 )

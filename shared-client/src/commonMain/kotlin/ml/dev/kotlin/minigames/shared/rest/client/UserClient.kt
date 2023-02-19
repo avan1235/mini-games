@@ -12,18 +12,18 @@ import ml.dev.kotlin.minigames.shared.util.Res
 
 class UserClient : Closeable, InstanceKeeper.Instance {
 
-  private val client = RestJsonApiClient()
+    private val client = RestJsonApiClient()
 
-  suspend fun loginUser(userLogin: UserLogin): Res<UserError, JwtToken>? =
-    client.post(USER_LOGIN_POST) {
-      body = userLogin
-    }
+    suspend fun loginUser(userLogin: UserLogin): Res<UserError, JwtToken>? =
+        client.post(USER_LOGIN_POST) {
+            body = userLogin
+        }
 
-  suspend fun createUser(userCreate: UserCreate): Res<UserError, Unit>? =
-    client.post(USER_CREATE_POST) {
-      body = userCreate
-    }
+    suspend fun createUser(userCreate: UserCreate): Res<UserError, Unit>? =
+        client.post(USER_CREATE_POST) {
+            body = userCreate
+        }
 
-  override fun close(): Unit = client.close()
-  override fun onDestroy(): Unit = close()
+    override fun close(): Unit = client.close()
+    override fun onDestroy(): Unit = close()
 }

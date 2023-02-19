@@ -14,15 +14,15 @@ import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 
 @Composable
 fun MiniGamesApp(context: ViewModelContext) {
-  initClientLogger()
+    initClientLogger()
 
-  Theme {
-    Surface(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.surface)
-    ) {
-      ToastScreen { MiniGamesRoutes(context) }
+    Theme {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.surface)
+        ) {
+            ToastScreen { MiniGamesRoutes(context) }
+        }
     }
-  }
 }

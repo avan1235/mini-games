@@ -11,23 +11,23 @@ import java.util.Comparator.comparing
 
 class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
 
-  private val _messages: MutableList<UserMessage> = mutableStateListOf()
-  val messages: List<UserMessage> get() = _messages
+    private val _messages: MutableList<UserMessage> = mutableStateListOf()
+    val messages: List<UserMessage> get() = _messages
 
-  val userMessageTextState: MutableState<String> = mutableStateOf("")
-  var userMessageText by userMessageTextState
+    val userMessageTextState: MutableState<String> = mutableStateOf("")
+    var userMessageText by userMessageTextState
 
-  fun addMessage(message: UserMessage) {
-    val idx = _messages.binarySearch(message, comparing(UserMessage::timestamp))
-    if (idx < 0) _messages.add(-idx - 1, message)
-  }
+    fun addMessage(message: UserMessage) {
+        val idx = _messages.binarySearch(message, comparing(UserMessage::timestamp))
+        if (idx < 0) _messages.add(-idx - 1, message)
+    }
 
-  suspend fun send(clientMessages: MutableStateFlow<GameClientMessage?>) {
-    if (userMessageText.isBlank()) return
-    val timestamp = now()
-    val userMessage = UserMessage(userMessageText, username, timestamp)
-    val message = SendMessageClientMessage(userMessage, timestamp)
-    clientMessages.emit(message)
-    userMessageText = ""
-  }
+    suspend fun send(clientMessages: MutableStateFlow<GameClientMessage?>) {
+        if (userMessageText.isBlank()) return
+        val timestamp = now()
+        val userMessage = UserMessage(userMessageText, username, timestamp)
+        val message = SendMessageClientMessage(userMessage, timestamp)
+        clientMessages.emit(message)
+        userMessageText = ""
+    }
 }

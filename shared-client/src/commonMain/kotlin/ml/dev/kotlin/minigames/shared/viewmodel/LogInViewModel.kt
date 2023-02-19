@@ -19,54 +19,55 @@ import kotlin.random.Random
 
 class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewModel(context) {
 
-  private val client: UserClient = ctx.keeper.getOrCreate { UserClient() }
+    private val client: UserClient = ctx.keeper.getOrCreate { UserClient() }
 
-  val serverNameState: MutableState<String> = mutableStateOf("")
-  val usernameState: MutableState<String> = mutableStateOf("")
-  val passwordState: MutableState<String> = mutableStateOf("")
+    val serverNameState: MutableState<String> = mutableStateOf("")
+    val usernameState: MutableState<String> = mutableStateOf("")
+    val passwordState: MutableState<String> = mutableStateOf("")
 
-  val usernameErrorState: MutableState<Boolean> = mutableStateOf(false)
-  val passwordErrorState: MutableState<Boolean> = mutableStateOf(false)
-  val serverNameErrorState: MutableState<Boolean> = mutableStateOf(false)
+    val usernameErrorState: MutableState<Boolean> = mutableStateOf(false)
+    val passwordErrorState: MutableState<Boolean> = mutableStateOf(false)
+    val serverNameErrorState: MutableState<Boolean> = mutableStateOf(false)
 
-  val gameState: MutableState<Game> = mutableStateOf(Game.values().first())
+    val gameState: MutableState<Game> = mutableStateOf(Game.values().first())
 
-  var serverName: String by serverNameState
+    var serverName: String by serverNameState
 
-  var username: String by usernameState
-  var password: String by passwordState
-  var rememberUserLogin: Boolean by mutableStateOf(true)
+    var username: String by usernameState
+    var password: String by passwordState
+    var rememberUserLogin: Boolean by mutableStateOf(true)
 
-  val userLogin: UserLogin get() = UserLogin(username, password)
+    val userLogin: UserLogin get() = UserLogin(username, password)
 
-  init {
-    shuffleGameName()
-    scope.launch { loadUserLogin(context, { username = it }, { password = it }) }
-  }
+    init {
+        shuffleGameName()
+        scope.launch { loadUserLogin(context, { username = it }, { password = it }) }
+    }
 
-  fun navigateGame(navigator: Navigator<ScreenRoute>): Unit = when (gameState.value) {
-    Game.Set -> navigator.navigate(ScreenRoute.SetGameScreen(serverName, username, password))
-    Game.SnakeIO -> navigator.navigate(ScreenRoute.SnakeGameScreen(serverName, username, password))
-  }
+    fun navigateGame(navigator: Navigator<ScreenRoute>): Unit = when (gameState.value) {
+        Game.Set -> navigator.navigate(ScreenRoute.SetGameScreen(serverName, username, password))
+        Game.SnakeIO -> navigator.navigate(ScreenRoute.SnakeGameScreen(serverName, username, password))
+        Game.Bird -> navigator.navigate(ScreenRoute.BirdGameScreen(serverName, username, password))
+    }
 
-  fun shuffleGameName() {
-    serverName = gameState.value.name + "-" + Random.nextInt(0, 1000)
-  }
+    fun shuffleGameName() {
+        serverName = gameState.value.name + "-" + Random.nextInt(0, 1000)
+    }
 
-  suspend fun loginUser(): Res<UserError, JwtToken>? {
-    val userData = if (rememberUserLogin) userLogin else UserLogin("", "")
-    storeUserLogin(ctx, userData)
-    return client.loginUser(userLogin)
-  }
+    suspend fun loginUser(): Res<UserError, JwtToken>? {
+        val userData = if (rememberUserLogin) userLogin else UserLogin("", "")
+        storeUserLogin(ctx, userData)
+        return client.loginUser(userLogin)
+    }
 }
 
 internal expect suspend fun storeUserLogin(
-  context: ViewModelContext,
-  userLogin: UserLogin,
+    context: ViewModelContext,
+    userLogin: UserLogin,
 )
 
 internal expect suspend fun loadUserLogin(
-  context: ViewModelContext,
-  username: (String) -> Unit,
-  password: (String) -> Unit,
+    context: ViewModelContext,
+    username: (String) -> Unit,
+    password: (String) -> Unit,
 )
