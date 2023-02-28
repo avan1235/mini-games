@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'dev/**'
     paths-ignore:
       - '.github/workflows/assemble-desktop.yml'
       - '.github/workflows/deploy-server.yml'
