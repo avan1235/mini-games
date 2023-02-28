@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import ml.dev.kotlin.minigames.shared.model.*
+import ml.dev.kotlin.minigames.shared.ui.component.SizedCanvas
 import ml.dev.kotlin.minigames.shared.ui.theme.*
 
 
@@ -139,7 +139,7 @@ private fun Diamond(
     color: Color,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
-    CardObjectCanvas(width, height) {
+    SizedCanvas(width, height) {
         val path = Path()
         path.moveTo(0f, size.height / 2)
         path.lineTo(size.width / 2, 0f)
@@ -168,7 +168,7 @@ private fun Oval(
     color: Color,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
-    CardObjectCanvas(width, height) {
+    SizedCanvas(width, height) {
         val path = Path()
         path.arcTo(
             rect = Rect(
@@ -211,7 +211,7 @@ private fun Squiggle(
     color: Color,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
-    CardObjectCanvas(width, height) {
+    SizedCanvas(width, height) {
         val path = Path()
         path.moveTo(
             size.width * 0.936f,
@@ -286,16 +286,6 @@ private val fullFill: DrawScope.(Color) -> Unit = { color ->
 }
 
 private val noneFill: DrawScope.(Color) -> Unit = { }
-
-@Composable
-private fun CardObjectCanvas(width: Dp, height: Dp, onDraw: DrawScope.() -> Unit) {
-    Canvas(
-        modifier = Modifier
-            .height(height)
-            .width(width),
-        onDraw
-    )
-}
 
 private fun stroke(width: Dp, height: Dp, density: Density): DrawStyle = with(density) {
     Stroke(width = (min(width, height) / 10).toPx() + 1f)

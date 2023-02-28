@@ -16,7 +16,7 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [ ubuntu-18.04, windows-2019 ]
+        platform: [ ubuntu-20.04, windows-2019 ]
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout to push branch
@@ -40,30 +40,30 @@ jobs:
 
       - name: Upload deb artifact file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.6.0-1_amd64.deb') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.0-1_amd64.deb') != ''
         with:
-          name: MiniGames-1.6.0.deb
-          path: desktop-app/build/compose/binaries/main/deb/minigames_1.6.0-1_amd64.deb
+          name: MiniGames-1.7.0.deb
+          path: desktop-app/build/compose/binaries/main/deb/minigames_1.7.0-1_amd64.deb
       - name: Release deb artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.6.0-1_amd64.deb') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.0-1_amd64.deb') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Linux-MiniGames-1.6.0"
-          files: desktop-app/build/compose/binaries/main/deb/minigames_1.6.0-1_amd64.deb
+          automatic_release_tag: "Linux-MiniGames-1.7.0"
+          files: desktop-app/build/compose/binaries/main/deb/minigames_1.7.0-1_amd64.deb
 
       - name: Upload msi artifact file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.6.0.msi') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.0.msi') != ''
         with:
-          name: MiniGames-1.6.0.msi
-          path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.6.0.msi
+          name: MiniGames-1.7.0.msi
+          path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.0.msi
       - name: Release msi artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.6.0.msi') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.0.msi') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Windows-MiniGames-1.6.0"
-          files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.6.0.msi
+          automatic_release_tag: "Windows-MiniGames-1.7.0"
+          files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.0.msi

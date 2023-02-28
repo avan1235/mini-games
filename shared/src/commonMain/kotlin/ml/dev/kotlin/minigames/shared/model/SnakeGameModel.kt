@@ -231,7 +231,6 @@ sealed class SnakeState {
 @Suppress("NOTHING_TO_INLINE")
 private inline fun SnakeState.takeAlive(): Snake? = if (this is SnakeState.Alive) snake else null
 
-@Suppress("NOTHING_TO_INLINE")
 private inline fun SnakeState.mapAlive(currMillis: Long, f: (Snake) -> Snake): SnakeState = when {
     this is SnakeState.Alive -> f(snake).alive()
     this is SnakeState.Dead && currMillis >= recreateAt -> Snake.create().alive()

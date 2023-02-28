@@ -92,8 +92,8 @@ sealed interface ScreenRoute : Parcelable {
 
 enum class Game : Named {
     Bird,
-    Set,
     SnakeIO,
+    Set,
 }
 
 val GAMES: List<Game> = Game.values().toList()

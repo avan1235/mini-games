@@ -23,6 +23,16 @@ data class V2(val x: Float, val y: Float) {
         return V2(x * scale, y * scale)
     }
 
+    fun coerceAtLeast(minX: Float? = null, minY: Float? = null): V2 {
+        val xCoerced = minX?.let { this.copy(x = x.coerceAtLeast(it)) } ?: this
+        return minY?.let { xCoerced.copy(y = y.coerceAtLeast(it)) } ?: xCoerced
+    }
+
+    fun coerceAtMost(maxX: Float? = null, maxY: Float? = null): V2 {
+        val xCoerced = maxX?.let { this.copy(x = x.coerceAtMost(it)) } ?: this
+        return maxY?.let { xCoerced.copy(y = y.coerceAtMost(it)) } ?: xCoerced
+    }
+
     val len2: Float get() = x * x + y * y
     val len: Float get() = sqrt(len2)
 

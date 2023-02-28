@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 fun DotsTyping(
     dotSize: Dp = 16.dp,
     spaceSize: Dp = 8.dp,
-    delayUnit: Int = 300,
+    delayMillis: Int = 300,
     maxOffset: Float = 10f,
 ) {
     @Composable
@@ -43,17 +43,17 @@ fun DotsTyping(
         targetValue = 0f,
         animationSpec = infiniteRepeatable(
             animation = keyframes {
-                durationMillis = delayUnit * 4
+                durationMillis = delayMillis * 4
                 0f at delay with LinearEasing
-                maxOffset at delay + delayUnit with LinearEasing
-                0f at delay + delayUnit * 2
+                maxOffset at delay + delayMillis with LinearEasing
+                0f at delay + delayMillis * 2
             }
         )
     )
 
     val offset1 by animateOffsetWithDelay(0)
-    val offset2 by animateOffsetWithDelay(delayUnit)
-    val offset3 by animateOffsetWithDelay(delayUnit * 2)
+    val offset2 by animateOffsetWithDelay(delayMillis)
+    val offset3 by animateOffsetWithDelay(delayMillis * 2)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

@@ -10,8 +10,7 @@ enum class UserRole {
     Admin,
     Player;
 
-    fun defaultState(): UserState =
-        if (this == Admin) UserState.Approved else UserState.WaitingForApproval
+    fun defaultState(): UserState = UserState.Approved
 }
 
 @Serializable
