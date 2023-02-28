@@ -2,17 +2,18 @@
 
 help()
 {
-  echo "Run docker services script for mini-games environment"
+  echo "Run docker services script for mini-games environment."
+  echo "By default only database service is started."
   echo "Available options:"
-  echo "  -d - run only database service"
+  echo "  -a - run all docker services including server app"
   echo "  -h - display this help page"
 }
 
-while getopts "dh" opt      # get options for -a and -b ( ':' - option has an argument )
+while getopts "ah" opt
 do
     case $opt in
-        d) docker compose --file docker-compose.yml --env-file .env build mini-games-dev-postgres
-           docker compose --file docker-compose.yml --env-file .env up mini-games-dev-postgres
+        a) docker compose --file docker-compose.yml --env-file .env build
+           docker compose --file docker-compose.yml --env-file .env up
            exit;;
         h) help
            exit;;
@@ -21,5 +22,5 @@ do
     esac
 done
 
-docker compose --file docker-compose.yml --env-file .env build
-docker compose --file docker-compose.yml --env-file .env up
+docker compose --file docker-compose.yml --env-file .env build mini-games-dev-postgres
+docker compose --file docker-compose.yml --env-file .env up mini-games-dev-postgres
