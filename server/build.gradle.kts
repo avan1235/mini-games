@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "ml.dev.kotlin.minigames"
-version = "1.7.1"
+version = "1.7.2"
 
 kotlin {
     jvm()

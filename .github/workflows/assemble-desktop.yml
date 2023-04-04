@@ -40,45 +40,45 @@ jobs:
 
       - name: Upload deb artifact file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.1-1_amd64.deb') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.2-1_amd64.deb') != ''
         with:
-          name: MiniGames-1.7.1.deb
-          path: desktop-app/build/compose/binaries/main/deb/minigames_1.7.1-1_amd64.deb
+          name: MiniGames-1.7.2.deb
+          path: desktop-app/build/compose/binaries/main/deb/minigames_1.7.2-1_amd64.deb
       - name: Release deb artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.1-1_amd64.deb') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/deb/minigames_1.7.2-1_amd64.deb') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Linux-MiniGames-1.7.1"
-          files: desktop-app/build/compose/binaries/main/deb/minigames_1.7.1-1_amd64.deb
+          automatic_release_tag: "Linux-MiniGames-1.7.2"
+          files: desktop-app/build/compose/binaries/main/deb/minigames_1.7.2-1_amd64.deb
 
       - name: Upload msi installer file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.1.msi') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.2.msi') != ''
         with:
-          name: MiniGames-1.7.1.msi
-          path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.1.msi
+          name: MiniGames-1.7.2.msi
+          path: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.2.msi
       - name: Release msi installer file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.1.msi') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.2.msi') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Windows-MiniGames-1.7.1"
-          files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.1.msi
+          automatic_release_tag: "Windows-MiniGames-1.7.2"
+          files: desktop-app/build/compose/binaries/main/msi/MiniGames-1.7.2.msi
 
       - name: Upload dmg image file to workflow run results
         uses: actions/upload-artifact@v2
-        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.1.dmg') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.2.dmg') != ''
         with:
-          name: MiniGames-1.7.1.dmg
-          path: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.1.dmg
+          name: MiniGames-1.7.2.dmg
+          path: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.2.dmg
       - name: Release dmg image file
         uses: "marvinpinto/action-automatic-releases@latest"
-        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.1.dmg') != ''
+        if: hashFiles('desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.2.dmg') != ''
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "MacOS-MiniGames-1.7.1"
-          files: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.1.dmg
+          automatic_release_tag: "MacOS-MiniGames-1.7.2"
+          files: desktop-app/build/compose/binaries/main/dmg/MiniGames-1.7.2.dmg

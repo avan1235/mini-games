@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "ml.dev.kotlin.minigames"
-version = "1.7.1"
+version = "1.7.2"
 
 android {
     compileSdk = Constants.Android.compileSdk
@@ -16,8 +16,8 @@ android {
         applicationId = "ml.dev.kotlin.minigames"
         minSdk = Constants.Android.minSdk
         targetSdk = Constants.Android.targetSdk
-        versionCode = 171
-        versionName = "1.7.1"
+        versionCode = 172
+        versionName = "1.7.2"
     }
     buildTypes {
         getByName("release") {

@@ -8,6 +8,7 @@ on:
       - '.github/workflows/assemble-android.yml'
       - '.github/workflows/deploy-server.yml'
       - 'android-app/**'
+      - 'desktop-app/**'
       - 'dev-env/**'
       - 'shared-client/**'
       - 'README.md'
@@ -34,12 +35,12 @@ jobs:
       - name: Upload jar artifact file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGamesServer-1.7.1.jar
-          path: server/build/libs/server-1.7.1-all.jar
+          name: MiniGamesServer-1.7.2.jar
+          path: server/build/libs/server-1.7.2-all.jar
       - name: Release jar artifact file
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Server-MiniGames-1.7.1"
-          files: server/build/libs/server-1.7.1-all.jar
+          automatic_release_tag: "Server-MiniGames-1.7.2"
+          files: server/build/libs/server-1.7.2-all.jar
