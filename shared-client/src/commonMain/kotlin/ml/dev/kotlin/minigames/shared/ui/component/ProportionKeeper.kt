@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun ProportionKeeper(
-    maxWidthToHeight: Float = 0.5f,
+    maxWidthToHeight: Float = 0.66f,
     content: @Composable BoxScope.() -> Unit
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

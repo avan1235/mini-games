@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.ui.component.SizedCanvas
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
@@ -28,6 +30,7 @@ fun Bird(
     pos: V2,
     direction: BirdNozzleDirection,
     mapSize: DpSize,
+    isAlive: Boolean,
     birdSize: Dp = 32.dp
 ) {
     Positioned(pos, DpSize(birdSize, birdSize), mapSize) {
@@ -36,8 +39,8 @@ fun Bird(
                 .size(birdSize)
                 .background(Color.White, Shapes.medium)
         ) {
-            BirdWing(birdSize, Color.Black, fullFill)
-            BirdNozzle(birdSize, Color.Red, direction, fullFill)
+            BirdWing(birdSize, Color.Black, isAlive, fullFill)
+            BirdNozzle(birdSize, Color.Red, direction, isAlive, fullFill)
         }
     }
 }
@@ -59,14 +62,19 @@ private fun BirdNozzle(
     birdSize: Dp,
     color: Color,
     direction: BirdNozzleDirection,
+    isAlive: Boolean,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     val nozzleSpace = AnimateInfiniteRepeatableReverse(
         animation = tween(
             durationMillis = BIRD_NOZZLE_DURATION_MILLIS,
             easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
         )
     )
+    if (!isAlive) {
+        scope.launch { nozzleSpace.snapTo(1f) }
+    }
     SizedCanvas(birdSize, birdSize) {
         val path = Path().apply {
             moveTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.25f)
@@ -103,25 +111,18 @@ private const val BIRD_WING_DURATION_MILLIS: Int = 5 * 5 * 2 * 5 * 2
 private fun BirdWing(
     birdSize: Dp,
     color: Color,
+    isAlive: Boolean,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
     val wingHeight = AnimateInfiniteRepeatableReverse(
         animation = tween(
             durationMillis = BIRD_WING_DURATION_MILLIS,
             easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
         )
     )
-    LaunchedEffect(wingHeight) {
-        wingHeight.animateTo(
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(
-                    durationMillis = 500,
-                    easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
-                ),
-                repeatMode = RepeatMode.Reverse
-            )
-        )
+    if (!isAlive) {
+        scope.launch { wingHeight.snapTo(1f) }
     }
     SizedCanvas(birdSize, birdSize) {
         val path = Path().apply {
