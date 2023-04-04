@@ -23,10 +23,10 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "ml.dev.kotlin.minigames.app.MainAppKt"
-        version = "1.7.0"
+        version = "1.7.1"
 
         nativeDistributions {
-            targetFormats(TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Dmg)
             packageName = "MiniGames"
 
             windows {
@@ -37,6 +37,15 @@ compose.desktop {
 
             linux {
                 iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.png"))
+            }
+
+            macOS {
+                bundleID = "ml.dev.kotlin.minigames.app"
+                appStore = false
+                iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.icns"))
+                signing {
+                    sign.set(false)
+                }
             }
         }
     }

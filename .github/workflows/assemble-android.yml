@@ -49,19 +49,19 @@ jobs:
       - name: Upload debug artifact file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGames-Debug-1.7.0.apk
+          name: MiniGames-Debug-1.7.1.apk
           path: android-app/build/outputs/apk/debug/android-app-debug.apk
 
       - name: Upload release artifact file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGames-Release-1.7.0.apk
+          name: MiniGames-Release-1.7.1.apk
           path: android-app/build/outputs/apk/release/android-app-release.apk
 
       - name: Upload release bundle file to workflow run results
         uses: actions/upload-artifact@v2
         with:
-          name: MiniGames-Release-1.7.0.aab
+          name: MiniGames-Release-1.7.1.aab
           path: android-app/build/outputs/bundle/release/android-app-release.aab
 
       - name: Release debug artifact artifact file
@@ -69,7 +69,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "Android-MiniGames-1.7.0"
+          automatic_release_tag: "Android-MiniGames-1.7.1"
           files: |
             android-app/build/outputs/apk/debug/android-app-debug.apk
             android-app/build/outputs/apk/release/android-app-release.apk
