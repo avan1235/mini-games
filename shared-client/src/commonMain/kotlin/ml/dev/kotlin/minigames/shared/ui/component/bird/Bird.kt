@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.ui.component.SizedCanvas
-import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
 import ml.dev.kotlin.minigames.shared.util.V2
 
@@ -31,20 +30,20 @@ fun Bird(
     direction: BirdNozzleDirection,
     mapSize: DpSize,
     isAlive: Boolean,
+    theme: BirdTheme,
     birdSize: Dp = 32.dp
 ) {
     Positioned(pos, DpSize(birdSize, birdSize), mapSize) {
         Box(
             modifier = Modifier
                 .size(birdSize)
-                .background(Color.White, Shapes.medium)
+                .background(theme.bodyColor, theme.bodyShape)
         ) {
-            BirdWing(birdSize, Color.Black, isAlive, fullFill)
-            BirdNozzle(birdSize, Color.Red, direction, isAlive, fullFill)
+            BirdWing(birdSize, theme.wingColor, isAlive, fullFill)
+            BirdNozzle(birdSize, theme.nozzleColor, direction, isAlive, fullFill)
         }
     }
 }
-
 
 private const val BIRD_NOZZLE_DURATION_MILLIS: Int = 7 * 3 * 3 * 3 * 3
 

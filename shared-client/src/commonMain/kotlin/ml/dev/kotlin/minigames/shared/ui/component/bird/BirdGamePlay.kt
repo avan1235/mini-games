@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.BirdGameSnapshot
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
+import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
 import ml.dev.kotlin.minigames.shared.ui.component.ProportionKeeper
@@ -19,6 +20,7 @@ import ml.dev.kotlin.minigames.shared.ui.component.bird.BirdNozzleDirection.Comp
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
+import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
 import ml.dev.kotlin.minigames.shared.viewmodel.BirdGameViewModel
 
@@ -66,10 +68,20 @@ fun BirdGamePlay(
                         last = Pair(bird.pos, direction)
                         userAlive = true
                     }
-                    Bird(bird.pos, direction, mapSize, isAlive = true)
+                    Bird(bird.pos, direction, mapSize, isAlive = true, theme = CACHED_THEMES[username])
                 }
-                if (!userAlive) Bird(last.first, last.second, mapSize, isAlive = false)
+                if (!userAlive) {
+                    Bird(
+                        last.first,
+                        last.second,
+                        mapSize,
+                        isAlive = false,
+                        theme = CACHED_THEMES[vm.username]
+                    )
+                }
             }
         }
     }
 }
+
+private val CACHED_THEMES: ComputedMap<Username, BirdTheme> = ComputedMap { BirdTheme.values().random() }
