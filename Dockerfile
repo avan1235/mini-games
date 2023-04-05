@@ -50,6 +50,6 @@ ENV PORT=${PORT}
 
 EXPOSE ${PORT}
 
-COPY --from=build ./server/build/libs/server-1.7.2-all.jar ./server-1.7.2-all.jar
+COPY --from=build ./server/build/libs/server-*-all.jar ./server.jar
 
-ENTRYPOINT ["java","-jar","server-1.7.2-all.jar"]
+ENTRYPOINT ["java", "-jar", "server.jar"]

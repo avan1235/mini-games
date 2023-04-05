@@ -1,26 +1,23 @@
-name: Server Image
+name: Push Docker Image
 
 on:
   push:
-    branches:
-      - 'master'
-    paths-ignore:
-      - '.github/workflows/assemble-android.yml'
-      - '.github/workflows/deploy-server.yml'
-      - 'android-app/**'
-      - 'desktop-app/**'
-      - 'dev-env/**'
-      - 'shared-client/**'
-      - 'README.md'
+    tags:
+      - "v*.*.*"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout to push branch
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
         with:
           ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: extract_version
+        uses: damienaicheh/extract-version-from-tag-action@v1.1.0
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -37,4 +34,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/mini-games:1.7.2
+          tags: ${{ secrets.DOCKER_USERNAME }}/mini-games:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}

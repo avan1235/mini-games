@@ -26,3 +26,5 @@ val ENV: Map<String, String>
         val idx = line.indexOf('=').takeIf { it > -1 } ?: return@mapNotNull null
         line.substring(0 until idx) to line.substring(idx + 1)
     }.toMap().let { it + getenv() }
+
+val VERSION: String get() = ENV["VERSION"] ?: "1.0.0"

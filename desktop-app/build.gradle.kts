@@ -23,7 +23,7 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "ml.dev.kotlin.minigames.app.MainAppKt"
-        version = "1.7.2"
+        version = VERSION
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Dmg)
