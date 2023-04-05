@@ -35,3 +35,12 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/mini-games:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+
+      - name: Install and configure Koyeb CLI
+        uses: koyeb-community/install-koyeb-cli@v2
+        with:
+          api_token: "${{ secrets.KOYEB_TOKEN }}"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Deploy
+        run: koyeb services update ${{ secrets.SERVICE_ID }} --docker ${{ secrets.DOCKER_USERNAME }}/mini-games:${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
