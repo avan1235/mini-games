@@ -27,9 +27,17 @@ Android released version is available on
 You can download compiled version of application from
 [release page](https://github.com/avan1235/mini-games/releases).
 
-Client applications are configured to work with the server deployed on test AWS EC2.
+Client applications are configured to work with the server deployed on test server.
 You can download them to play with "production" version of application - to run it locally,
 you should compile server and clients by yourself.
+
+Please note that for running unsigned version of macOS application, you need to temporarily
+disable Gatekeeper, so executing command
+```shell
+sudo xattr -dr com.apple.quarantine  /Applications/MiniGames.app
+```
+is required to be able to run the app on macOS. You can learn more about this
+[here](https://web.archive.org/web/20230318124537/https://disable-gatekeeper.github.io/).
 
 To install Linux version run:
 
@@ -49,17 +57,11 @@ You need a fast internet connection to have a good play experience in _SnakeIO_ 
 Project contains two parts - client app and the server app.
 
 [Intellij Ultimate](https://www.jetbrains.com/idea/download/) is highly
-recommended when working with server app. To develop Android part,
-download the [Android Studio](https://developer.android.com/studio).
+recommended when working with server app.
 
 In both cases, open main project directory when importing the project (
 not the `android-app`, `desktop-app` nor `server`) as the main directory contains the
 configuration common to both projects and has to be loaded.
-
-Additionally, the best approach seems to have two copies of project to
-open them in two different IDEs (Intellij and Android Studio). It's
-caused by the fact that the IDEs use the same directory for configuration
-and their configuration may be misunderstood by the other.
 
 **Remember:**
 When working with project use **Rebase** strategy as long as you can
@@ -82,8 +84,7 @@ You can start it with
 ./start.sh
 ```
 
-on linux or some equivalent
-commands on other platform.
+on linux or some equivalent commands on other platform.
 
 #### Run from terminal
 
