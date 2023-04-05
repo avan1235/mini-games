@@ -1,9 +1,7 @@
 # Mini Games
 
-[![Server](https://github.com/avan1235/mini-games/actions/workflows/assemble-server.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-server.yml)
-[![Android](https://github.com/avan1235/mini-games/actions/workflows/assemble-android.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-android.yml)
-[![Desktop](https://github.com/avan1235/mini-games/actions/workflows/assemble-desktop.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-desktop.yml)
-[![Docker](https://github.com/avan1235/mini-games/actions/workflows/assemble-server-image.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-server-image.yml)
+[![Release](https://github.com/avan1235/mini-games/actions/workflows/release.yml/badge.svg)](https://github.com/avan1235/mini-games/releases/latest)
+[![Docker](https://github.com/avan1235/mini-games/actions/workflows/push-docker-image.yml/badge.svg)](https://hub.docker.com/repository/docker/avan1235/mini-games/tags?ordering=last_updated)
 
 ## Project description
 
