@@ -3,9 +3,6 @@ package ml.dev.kotlin.minigames.shared.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import com.arkivanov.decompose.ExperimentalDecomposeApi
-import com.arkivanov.decompose.extensions.compose.jetbrains.Children
-import com.arkivanov.decompose.extensions.compose.jetbrains.animation.child.crossfadeScale
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import ml.dev.kotlin.minigames.shared.model.UserLogin
@@ -16,13 +13,14 @@ import ml.dev.kotlin.minigames.shared.ui.component.snake.SnakeGamePlay
 import ml.dev.kotlin.minigames.shared.ui.screen.GameScreen
 import ml.dev.kotlin.minigames.shared.ui.screen.LogInScreen
 import ml.dev.kotlin.minigames.shared.ui.screen.RegisterScreen
+import ml.dev.kotlin.minigames.shared.ui.util.Children
+import ml.dev.kotlin.minigames.shared.ui.util.crossfadeScale
 import ml.dev.kotlin.minigames.shared.ui.util.rememberRouter
 import ml.dev.kotlin.minigames.shared.util.Named
 import ml.dev.kotlin.minigames.shared.viewmodel.*
 import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 
 
-@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun MiniGamesRoutes(context: ViewModelContext) {
     val navigator = rememberRouter<ScreenRoute>(ScreenRoute.LogInScreen)

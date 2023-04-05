@@ -27,7 +27,7 @@ fun <T> txn(
     repetitionAttempts: Int = DbSettings.db.transactionManager.defaultRepetitionAttempts,
     logger: SqlLogger? = DbSettings.defaultLogger,
     statement: Transaction.() -> T
-): T = transaction(transactionIsolation, repetitionAttempts, DbSettings.db) {
+): T = transaction(transactionIsolation, repetitionAttempts, db = DbSettings.db) {
     logger?.let { addLogger(it) }
     statement()
 }

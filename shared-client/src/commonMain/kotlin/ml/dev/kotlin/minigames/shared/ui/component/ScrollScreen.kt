@@ -137,7 +137,7 @@ private fun BottomIcon(
     iconsSize: Dp,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         IconButton(
             onClick = onClick,
             modifier = Modifier.padding(padding)

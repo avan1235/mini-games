@@ -1,5 +1,6 @@
 package ml.dev.kotlin.minigames.shared.ui.component.snake
 
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -63,16 +64,14 @@ private suspend fun PointerInputScope.detectDirectionChange(
     vm: SnakeGameViewModel,
     clientMessages: MutableStateFlow<GameClientMessage?>,
 ) {
-    forEachGesture {
-        awaitPointerEventScope {
-            awaitFirstDown()
-            do {
-                val event = awaitPointerEvent()
-                event.changes.fold(Offset.Zero) { acc, c -> acc + c.position - center }
-                    .run { V2(x, y) }.takeIf { it != V2.ZERO }
-                    ?.let { coroutineScope.launch { vm.emitDirectionChange(it, clientMessages) } }
-                event.changes.forEach { if (it.positionChange() != Offset.Zero) it.consume() }
-            } while (event.changes.any { it.pressed })
-        }
+    awaitEachGesture {
+        awaitFirstDown()
+        do {
+            val event = awaitPointerEvent()
+            event.changes.fold(Offset.Zero) { acc, c -> acc + c.position - center }
+                .run { V2(x, y) }.takeIf { it != V2.ZERO }
+                ?.let { coroutineScope.launch { vm.emitDirectionChange(it, clientMessages) } }
+            event.changes.forEach { if (it.positionChange() != Offset.Zero) it.consume() }
+        } while (event.changes.any { it.pressed })
     }
 }

@@ -30,7 +30,6 @@ kotlin {
                 api(compose.animationGraphics)
 
                 implementation(Dependencies.decompose)
-                implementation(Dependencies.decomposeExtensions)
 
                 implementation(Dependencies.essentyLifecycle)
                 implementation(Dependencies.essentyStateKeeper)

@@ -4,8 +4,8 @@ object Dependencies {
         val kotlinVersion by System.getProperties()
         val composeVersion by System.getProperties()
         const val ktor = "1.6.7"
-        const val exposed = "0.38.2" // Keep this version compatible with the version of exposed used by krush
-        const val krush = "1.0.0"
+        const val exposed = "0.41.1" // Keep this version compatible with the version of exposed used by krush
+        const val krush = "1.2.0"
         const val simpleMail = "1.3.3"
         const val decompose = "0.5.0"
         const val essenty = "0.2.2"
@@ -44,7 +44,6 @@ object Dependencies {
     val androidXActivityCompose = "androidx.activity:activity-compose:1.4.0"
 
     val decompose = "com.arkivanov.decompose:decompose:${Version.decompose}"
-    val decomposeExtensions = "com.arkivanov.decompose:extensions-compose-jetbrains:${Version.decompose}"
 
     val essentyParcelable = "com.arkivanov.essenty:parcelable:${Version.essenty}"
     val essentyLifecycle = "com.arkivanov.essenty:lifecycle:${Version.essenty}"
