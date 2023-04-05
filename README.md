@@ -3,6 +3,7 @@
 [![Server](https://github.com/avan1235/mini-games/actions/workflows/assemble-server.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-server.yml)
 [![Android](https://github.com/avan1235/mini-games/actions/workflows/assemble-android.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-android.yml)
 [![Desktop](https://github.com/avan1235/mini-games/actions/workflows/assemble-desktop.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-desktop.yml)
+[![Docker](https://github.com/avan1235/mini-games/actions/workflows/assemble-server-image.yml/badge.svg)](https://github.com/avan1235/mini-games/actions/workflows/assemble-server-image.yml)
 
 ## Project description
 
