@@ -3,7 +3,7 @@ object Dependencies {
     object Version {
         val kotlinVersion by System.getProperties()
         val composeVersion by System.getProperties()
-        const val ktor = "1.6.7"
+        const val ktor = "1.6.8"
         const val exposed = "0.41.1" // Keep this version compatible with the version of exposed used by krush
         const val krush = "1.2.0"
         const val simpleMail = "1.3.3"
@@ -35,9 +35,6 @@ object Dependencies {
 
     val napierLogger = "io.github.aakira:napier:2.4.0"
 
-    val composeUi = "androidx.compose.ui:ui:${Version.composeVersion}"
-    val composeMaterial = "androidx.compose.material:material:${Version.composeVersion}"
-    val composeIcons = "androidx.compose.material:material-icons-extended:${Version.composeVersion}"
     val androidGoogleMaterial = "com.google.android.material:material:1.4.0"
     val androidXDataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
     val androidXActivity = "androidx.activity:activity:1.4.0"
