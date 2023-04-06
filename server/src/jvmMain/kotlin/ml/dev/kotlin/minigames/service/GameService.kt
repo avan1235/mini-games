@@ -167,4 +167,4 @@ object UnapprovedGameStateUpdate : GameStateUpdateResult
 private data class UserAtServer(val serverName: ServerName, val username: Username)
 
 private fun <K, V> ComputedConcurrentHashMap(default: (K) -> V): ComputedMap<K, V> =
-    ComputedMap(map = ConcurrentHashMap(), default)
+    ComputedMap(map = ConcurrentHashMap()) { default(it) }

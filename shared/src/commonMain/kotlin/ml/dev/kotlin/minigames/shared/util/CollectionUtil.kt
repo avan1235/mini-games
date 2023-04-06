@@ -11,10 +11,10 @@ inline fun <V> Set<V>.everyUnorderedTriple(action: (V, V, V) -> Unit) {
 
 class ComputedMap<K, V>(
     private val map: MutableMap<K, V> = HashMap(),
-    private val default: (K) -> V
+    private val default: MutableMap<K, V>.(K) -> V
 ) : MutableMap<K, V> by map {
-    override fun get(key: K): V = map.getOrDefault(key, default(key)).also { this[key] = it }
-    override fun remove(key: K): V = map.remove(key) ?: default(key)
+    override fun get(key: K): V = map.getOrDefault(key, this.default(key)).also { this[key] = it }
+    override fun remove(key: K): V = map.remove(key) ?: this.default(key)
     override fun toString(): String = "ComputedMap(map=$map)"
     override fun hashCode(): Int = map.hashCode()
     override fun equals(other: Any?): Boolean = (other as? ComputedMap<*, *>)?.let { it.map == map } ?: false
