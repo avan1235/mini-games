@@ -17,18 +17,18 @@ class GameService(
     private val updateDelay: Long? = null,
     private val default: () -> GameState,
 ) {
-    private val serverLocks = ComputedMap<ServerName, Mutex>(map = ConcurrentHashMap()) { Mutex() }
-
-    private val serverConnections = ComputedMap<ServerName, MutableSet<GameConnection>> {
+    private val serverLocks = ComputedConcurrentHashMap<ServerName, Mutex> {
+        Mutex()
+    }
+    private val serverConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameConnection>> {
         Collections.synchronizedSet(HashSet())
     }
-
-    private val userServerConnections = ComputedMap<UserAtServer, MutableSet<GameConnection>> {
+    private val userServerConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameConnection>> {
         Collections.synchronizedSet(HashSet())
     }
-
-    private val serverGamesStates = ComputedMap<ServerName, GameState>(map = ConcurrentHashMap()) { default() }
-
+    private val serverGamesStates = ComputedConcurrentHashMap<ServerName, GameState> {
+        default()
+    }
     private val serverUpdateJobs = HashMap<ServerName, Job>()
 
     suspend fun addConnection(serverName: ServerName, username: Username, connection: GameConnection): Unit =
@@ -165,3 +165,6 @@ data class UpdatedGameState(val gameState: GameState) : GameStateUpdateResult
 object UnapprovedGameStateUpdate : GameStateUpdateResult
 
 private data class UserAtServer(val serverName: ServerName, val username: Username)
+
+private fun <K, V> ComputedConcurrentHashMap(default: (K) -> V): ComputedMap<K, V> =
+    ComputedMap(map = ConcurrentHashMap(), default)
