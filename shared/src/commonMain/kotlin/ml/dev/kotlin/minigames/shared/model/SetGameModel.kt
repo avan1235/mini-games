@@ -84,7 +84,11 @@ data class SetGameState(
     override fun updateWith(users: Map<Username, UserData>, points: Map<Username, Int>): SetGameState =
         copy(users = users, points = points)
 
-    override fun snapshot(forUser: Username): SetGameSnapshot = SetGameSnapshot(table, points, users)
+    override fun snapshot(forUser: Username): SetGameSnapshot =
+        SetGameSnapshot(table, points, users)
+
+    override fun snapshot(): CumulativeGameSnapshot =
+        CumulativeGameSnapshot.SameForAllUsers(SetGameSnapshot(table, points, users))
 
     companion object {
         fun random(): SetGameState {

@@ -87,7 +87,13 @@ data class BirdGameState(
     override fun updateWith(users: Map<Username, UserData>, points: Map<Username, Int>): BirdGameState =
         copy(users = users, points = points)
 
-    override fun snapshot(forUser: Username): BirdGameSnapshot {
+    override fun snapshot(forUser: Username): BirdGameSnapshot =
+        buildSnapshot()
+
+    override fun snapshot(): CumulativeGameSnapshot =
+        CumulativeGameSnapshot.SameForAllUsers(buildSnapshot())
+
+    private fun buildSnapshot(): BirdGameSnapshot {
         val birds = buildMap { birds.forEach { (username, state) -> state.takeAlive()?.let { put(username, it) } } }
         return BirdGameSnapshot(birds, candies, leftSpikes + rightSpikes, points, users)
     }

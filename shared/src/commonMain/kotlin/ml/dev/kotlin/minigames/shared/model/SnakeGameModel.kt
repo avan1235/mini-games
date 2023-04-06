@@ -96,6 +96,9 @@ data class SnakeGameState(
         return SnakeGameSnapshot(snakes, items, points, users)
     }
 
+    override fun snapshot(): CumulativeGameSnapshot =
+        CumulativeGameSnapshot.DifferentForEachUser(users.keys.associateWith { snapshot(it) })
+
     override fun addUser(username: Username, role: UserRole): GameState {
         val superGameState = super.addUser(username, role)
         val gameState = (superGameState as? SnakeGameState) ?: return superGameState
@@ -216,7 +219,7 @@ private data class SnakePartRange(val pos: V2, val radius: Float) {
 
 private const val DROP_ITEMS_RADIUS: Float = 512f
 private const val DROP_SNAKE_RADIUS: Float = 256f
-private const val SNAKE_SNAPSHOT_SIZE: Float = 512f
+private const val SNAKE_SNAPSHOT_SIZE: Float = 1024f
 private const val SNAKE_RANGE_MAX_COUNT: Int = 16
 private const val SNAKE_POINTS_FOR_PART: Int = 16
 private const val SNAKE_POINTS_FOR_GROW: Int = 32

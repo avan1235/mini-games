@@ -49,6 +49,8 @@ abstract class GameState {
 
     abstract fun snapshot(forUser: Username): GameSnapshot
 
+    abstract fun snapshot(): CumulativeGameSnapshot
+
     open fun addUser(username: Username, role: UserRole): GameState = when (users[username]?.role) {
         UserRole.Admin -> this
         else -> {
@@ -86,6 +88,18 @@ abstract class GameState {
     open fun update(currMillis: Long): GameState = this
 }
 
+sealed interface CumulativeGameSnapshot {
+
+    operator fun get(username: Username): GameSnapshot?
+
+    class SameForAllUsers(private val snapshot: GameSnapshot) : CumulativeGameSnapshot {
+        override fun get(username: Username): GameSnapshot = snapshot
+    }
+
+    class DifferentForEachUser(private val snapshots: Map<Username, GameSnapshot>) : CumulativeGameSnapshot {
+        override fun get(username: Username): GameSnapshot? = snapshots[username]
+    }
+}
 
 @Serializable
 sealed interface GameUpdate {
