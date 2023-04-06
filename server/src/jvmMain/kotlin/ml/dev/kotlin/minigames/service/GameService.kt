@@ -4,7 +4,6 @@ import io.ktor.http.cio.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
@@ -118,42 +117,48 @@ class GameService(
     private fun updateInBackground(delayMillis: Long, serverName: ServerName): Job =
         CoroutineScope(Dispatchers.IO).launch {
             var now = 0L
-            do {
+            while (isActive) {
                 tryOrNull update@{
-                    val updateGameState = timeUpdateGameState(serverName) ?: return@update
-                    val snapshots = ComputedMap<Username, GameSnapshot> { updateGameState.snapshot(it) }
-                    serverConnections[serverName].map { it.sendSnapshot(snapshots) }.awaitAll()
+                    val updatedGameState = timeUpdateGameState(serverName) ?: return@update
+                    val snapshot = updatedGameState.snapshot()
+                    supervisorScope {
+                        serverConnections[serverName]
+                            .map { sendSnapshot(it, snapshot::get) }
+                            .joinAll()
+                    }
                     val last = now
                     now = now()
                     val passedMillis = now - last
                     delay(delayMillis - passedMillis)
                 }
-            } while (isActive)
+            }
         }
 }
 
-class GameConnection(val session: WebSocketSession, val username: Username) {
+class GameConnection(
+    val session: WebSocketSession,
+    val username: Username,
+) {
     override fun hashCode(): Int = session.hashCode()
     override fun equals(other: Any?): Boolean = (other as? GameConnection)?.session == session
-
-    suspend fun sendSnapshot(
-        snapshots: ComputedMap<Username, GameSnapshot>,
-    ): Deferred<Unit> = coroutineScope {
-        async {
-            val snapshot = snapshots[username]
-            val message = GameStateSnapshotServerMessage(snapshot, timestamp = now())
-            session.sendJson(message)
-        }
-    }
 }
 
-@OptIn(ExperimentalSerializationApi::class)
+fun CoroutineScope.sendSnapshot(
+    connection: GameConnection,
+    snapshot: (Username) -> GameSnapshot?,
+): Job = launch {
+    val userSnapshot = snapshot(connection.username) ?: return@launch
+    val message = GameStateSnapshotServerMessage(userSnapshot, timestamp = now())
+    connection.session.sendJson(message)
+}
+
 suspend inline fun WebSocketSession.sendJson(content: GameServerMessage): Unit =
     send(Frame.Text(GameJson.encodeToString(content)))
 
-data class ServerName(val name: String)
+@JvmInline
+value class ServerName(val name: String)
 
-inline val String.serverName: ServerName get() = ServerName(this)
+fun String.toServerName(): ServerName = ServerName(this)
 
 sealed interface GameStateUpdateResult
 data class UpdatedGameState(val gameState: GameState) : GameStateUpdateResult

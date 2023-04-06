@@ -25,9 +25,10 @@ object DbSettings {
 fun <T> txn(
     transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
     repetitionAttempts: Int = DbSettings.db.transactionManager.defaultRepetitionAttempts,
+    readOnly: Boolean = false,
     logger: SqlLogger? = DbSettings.defaultLogger,
     statement: Transaction.() -> T
-): T = transaction(transactionIsolation, repetitionAttempts, db = DbSettings.db) {
+): T = transaction(transactionIsolation, repetitionAttempts, readOnly, DbSettings.db) {
     logger?.let { addLogger(it) }
     statement()
 }

@@ -3,6 +3,7 @@ package ml.dev.kotlin.minigames.server.routes
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
+import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.decodeFromString
 import ml.dev.kotlin.minigames.server.Jwt
@@ -15,8 +16,7 @@ import ml.dev.kotlin.minigames.shared.util.GameJson
 import ml.dev.kotlin.minigames.shared.util.now
 import ml.dev.kotlin.minigames.util.eprintln
 
-private val SET_GAME_HANDLER = GameService { SetGameState.random() }
-    .let(::GameHandler)
+private val SET_GAME_HANDLER = GameService { SetGameState.random() }.let(::GameHandler)
 
 private val SNAKE_GAME_HANDLER = GameService(updateDelay = 30) { SnakeGameState.empty() }.let(::GameHandler)
 
@@ -34,10 +34,10 @@ private class GameHandler(
     suspend fun handleGame(
         session: DefaultWebSocketServerSession,
         user: Jwt.User,
-    ): Unit =
+    ) {
         with(session) {
             GameConnection(session, user.username).run {
-                val serverName = call.parameters[SERVER_NAME]?.serverName ?: return
+                val serverName = call.parameters[SERVER_NAME]?.toServerName() ?: return
                 val username = user.username
                 service.addConnection(serverName, username, this)
 
@@ -52,11 +52,13 @@ private class GameHandler(
                 } catch (e: Exception) {
                     eprintln(e.localizedMessage)
                 } finally {
-                    service.removeConnection(serverName, this)
+                    service
+                        .removeConnection(serverName, this)
                         ?.let { gameState -> sendAllUpdatedGameState(serverName, gameState) }
                 }
             }
         }
+    }
 
     private suspend fun GameConnection.updateGameStateWithClientMessage(
         serverName: ServerName,
@@ -64,7 +66,7 @@ private class GameHandler(
         msg: GameClientMessage,
     ): Unit = when (msg) {
         is HeartBeatClientMessage -> service.state(serverName)
-            .let(gameStateServerMessage(username))
+            .let(asGameStateServerMessage(username))
             .let { session.sendJson(it) }
 
         is GameStateUpdateClientMessage -> service
@@ -90,7 +92,7 @@ private class GameHandler(
         serverName: ServerName,
         gameState: GameState,
     ): Unit = service.connections(serverName).forEach {
-        val message = gameState.let(gameStateServerMessage(it.username))
+        val message = gameState.let(asGameStateServerMessage(it.username))
         it.session.sendJson(message)
     }
 
@@ -113,7 +115,14 @@ private class GameHandler(
     }
 }
 
-private const val SERVER_NAME = "serverName"
+@JvmInline
+private value class StringValuesKey(val key: String) {
+    override fun toString(): String = key
+}
 
-private fun gameStateServerMessage(forUser: Username) =
-    { state: GameState -> GameStateSnapshotServerMessage(state.snapshot(forUser), timestamp = now()) }
+private operator fun StringValues.get(key: StringValuesKey): String? = this[key.key]
+
+private val SERVER_NAME = StringValuesKey("serverName")
+
+private fun asGameStateServerMessage(forUser: Username) =
+    fun(state: GameState) = GameStateSnapshotServerMessage(state.snapshot(forUser), timestamp = now())
