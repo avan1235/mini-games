@@ -52,4 +52,4 @@ EXPOSE ${PORT}
 
 COPY --from=build ./server/build/libs/server-*-all.jar ./server.jar
 
-ENTRYPOINT ["java", "-jar", "server.jar"]
+ENTRYPOINT ["java", "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED", "-Dio.netty.tryReflectionSetAccessible=true", "-jar", "server.jar"]
