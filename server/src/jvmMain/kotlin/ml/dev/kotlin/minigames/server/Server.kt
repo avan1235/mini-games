@@ -13,7 +13,7 @@ import ml.dev.kotlin.minigames.util.eprintln
 import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 
 fun main() {
-    while (true) try {
+    try {
         txn { createMissingTablesAndColumns(UserEntityTable) }
 
         embeddedServer(
