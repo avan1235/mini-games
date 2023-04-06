@@ -224,7 +224,7 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./android-app/build/outputs/apk/debug/android-app-debug.apk
-          asset_name: MiniGames-android-app-debug.apk
+          asset_name: MiniGames-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload release artifact file to release
@@ -234,7 +234,7 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./android-app/build/outputs/apk/release/android-app-release.apk
-          asset_name: MiniGames-android-app-release.apk
+          asset_name: MiniGames-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           asset_content_type: application/vnd.android.package-archive
 
       - name: Upload release bundle file to release
@@ -244,5 +244,5 @@ jobs:
         with:
           upload_url: ${{ needs.release.outputs.upload_url }}
           asset_path: ./android-app/build/outputs/bundle/release/android-app-release.aab
-          asset_name: MiniGames-android-app-release.aab
+          asset_name: MiniGames-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
           asset_content_type: application/x-authorware-bin
