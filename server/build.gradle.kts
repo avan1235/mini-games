@@ -16,6 +16,8 @@ kotlin {
     jvm()
     sourceSets {
         named("jvmMain") {
+            kotlin.srcDir("${buildDir.absolutePath}/generated/source/kaptKotlin/main/")
+
             dependencies {
                 implementation(project(":shared"))
 
