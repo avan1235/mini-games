@@ -9,11 +9,11 @@ You can find project description in [Essay](ESSAY.md).
 
 ## Project presentation
 
-You can watch Mini Games android client in action (on [YouTube](https://www.youtube.com/watch?v=sPgB5PpPs6w))
+### Android client
 
-https://user-images.githubusercontent.com/11787040/230045385-157c20ca-183b-4b15-8e1b-1c8d5ecf2f7e.mp4
+![Untitled1](https://user-images.githubusercontent.com/11787040/230712173-e8c3ff55-6d77-4fa4-a90e-4a7127732645.gif)
 
-as well as see how the project can be compiled locally and executed with desktop and android (qemu) clients in the same time (on [YouTube](https://www.youtube.com/watch?v=kvV8ffqI1WQ))
+### Local project compilation process
 
 https://user-images.githubusercontent.com/11787040/230044938-f243df3d-ecc7-47ce-b056-227405fc889b.mp4
 
