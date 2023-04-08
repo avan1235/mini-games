@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ShadowIcon(
+internal fun ShadowIcon(
     imageVector: ImageVector,
     contentDescription: String,
     size: Dp,

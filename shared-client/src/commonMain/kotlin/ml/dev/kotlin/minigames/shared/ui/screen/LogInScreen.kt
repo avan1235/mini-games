@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 import ml.dev.kotlin.minigames.shared.ui.GAMES
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.*
-import ml.dev.kotlin.minigames.shared.ui.theme.Fonts
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 import ml.dev.kotlin.minigames.shared.ui.theme.capitals
+import ml.dev.kotlin.minigames.shared.ui.theme.leckerliOne
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.ui.util.set
 import ml.dev.kotlin.minigames.shared.util.on
@@ -70,7 +70,7 @@ fun LogInScreen(
                                 textAlign = TextAlign.Center,
                                 style = Typography.h3.copy(
                                     fontFeatureSettings = capitals,
-                                    fontFamily = Fonts.leckerliOne()
+//                                    fontFamily = leckerliOne()
                                 ),
                             )
                             Spacer(Modifier.size(16.dp))

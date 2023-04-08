@@ -20,7 +20,7 @@ import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
-fun SnakePointItem(
+internal fun SnakePointItem(
     pos: V2,
     head: V2,
     mapSize: DpSize,

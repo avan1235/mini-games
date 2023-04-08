@@ -21,8 +21,8 @@ internal actual fun DropdownMenu(
 @Composable
 internal actual fun DropdownMenuItem(
     onClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable () -> Unit
 ): Unit = androidx.compose.material.DropdownMenuItem(
     onClick = onClick,
-    content = content,
+    content = { content() },
 )

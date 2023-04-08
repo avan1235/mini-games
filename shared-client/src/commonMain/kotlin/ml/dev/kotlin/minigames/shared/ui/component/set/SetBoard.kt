@@ -15,7 +15,7 @@ import kotlin.math.ceil
 import kotlin.math.roundToInt
 
 @Composable
-fun SetBoard(
+internal fun SetBoard(
     setGame: SetGameSnapshot,
     onProposal: (Set<Int>) -> Unit,
     maxCardRatio: Float = 1.25f,

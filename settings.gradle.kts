@@ -13,6 +13,7 @@ pluginManagement {
         val composeVersion: String by System.getProperties()
         val buildkonfigVersion: String by System.getProperties()
         val shadowVersion: String by System.getProperties()
+        val parcelizeDarwinVersion: String by System.getProperties()
 
         kotlin("multiplatform") version kotlinVersion
         kotlin("plugin.parcelize") version kotlinVersion
@@ -22,6 +23,7 @@ pluginManagement {
         id("org.jetbrains.compose") version composeVersion
         id("com.codingfeline.buildkonfig") version buildkonfigVersion
         id("com.github.johnrengelman.shadow") version shadowVersion
+        id("com.arkivanov.parcelize.darwin") version parcelizeDarwinVersion
     }
 }
 

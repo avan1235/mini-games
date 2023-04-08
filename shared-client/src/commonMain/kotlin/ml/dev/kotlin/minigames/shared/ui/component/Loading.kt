@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DotsTyping(
+internal fun DotsTyping(
     dotSize: Dp = 16.dp,
     spaceSize: Dp = 8.dp,
     delayMillis: Int = 300,

@@ -14,7 +14,7 @@ import ml.dev.kotlin.minigames.shared.ui.component.DotsTyping
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @Composable
-fun LoadingScreen(
+internal fun LoadingScreen(
     loadingText: String? = null,
     loadingInitState: Boolean = false,
     loadingAction: suspend CoroutineScope.(loadingState: MutableState<Boolean>) -> Unit = {},
@@ -28,7 +28,7 @@ fun LoadingScreen(
 }
 
 @Composable
-fun LoadingScreen(
+internal fun LoadingScreen(
     text: String? = null,
     action: suspend CoroutineScope.() -> Unit = {}
 ) {

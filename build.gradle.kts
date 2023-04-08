@@ -10,6 +10,11 @@ plugins {
     id("org.jetbrains.compose") apply false
     id("com.codingfeline.buildkonfig") apply false
     id("com.github.johnrengelman.shadow") apply false
+    id("com.arkivanov.parcelize.darwin") apply false
+}
+
+repositories {
+    mavenCentral()
 }
 
 subprojects {

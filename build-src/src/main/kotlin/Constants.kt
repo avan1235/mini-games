@@ -5,4 +5,8 @@ object Constants {
         const val compileSdk = 33
         const val targetSdk = 33
     }
+
+    object iOS {
+        const val deploymentTarget = "15.2"
+    }
 }

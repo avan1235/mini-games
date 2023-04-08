@@ -1,8 +1,8 @@
 package ml.dev.kotlin.minigames.shared.websocket.client
 
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import io.ktor.client.features.websocket.*
-import io.ktor.http.cio.websocket.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.websocket.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow

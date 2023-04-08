@@ -25,6 +25,7 @@ kotlin {
                 implementation(Dependencies.ktorServerNetty)
                 implementation(Dependencies.ktorServerSerialization)
                 implementation(Dependencies.ktorServerWebsockets)
+                implementation(Dependencies.ktorServerContentNegotiation)
                 implementation(Dependencies.ktorAuth)
                 implementation(Dependencies.ktorAuthJwt)
                 implementation(Dependencies.ktorHtmlBuilder)

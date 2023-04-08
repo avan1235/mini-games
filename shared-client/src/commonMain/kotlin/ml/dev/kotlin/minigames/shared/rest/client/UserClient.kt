@@ -1,6 +1,7 @@
 package ml.dev.kotlin.minigames.shared.rest.client
 
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import io.ktor.client.request.*
 import io.ktor.utils.io.core.*
 import ml.dev.kotlin.minigames.shared.api.USER_CREATE_POST
 import ml.dev.kotlin.minigames.shared.api.USER_LOGIN_POST
@@ -16,12 +17,12 @@ class UserClient : Closeable, InstanceKeeper.Instance {
 
     suspend fun loginUser(userLogin: UserLogin): Res<UserError, JwtToken>? =
         client.post(USER_LOGIN_POST) {
-            body = userLogin
+            setBody(userLogin)
         }
 
     suspend fun createUser(userCreate: UserCreate): Res<UserError, Unit>? =
         client.post(USER_CREATE_POST) {
-            body = userCreate
+            setBody(userCreate)
         }
 
     override fun close(): Unit = client.close()

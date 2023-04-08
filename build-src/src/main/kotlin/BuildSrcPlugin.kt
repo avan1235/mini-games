@@ -7,6 +7,8 @@ import java.lang.System.getenv
 
 private const val ENV_FILE: String = ".env"
 
+private const val FROM_XCODE_ENV_FILE: String = "../../.env"
+
 class BuildSrcPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.tasks.withType(JavaExec::class.java) {
@@ -21,8 +23,11 @@ fun Project.kapt(dependency: String) {
     configurations.getByName("kapt").dependencies.add(moduleDependency)
 }
 
+private fun currentScopeEnvFile(): File =
+    File(ENV_FILE).takeIf { it.exists() } ?: File(FROM_XCODE_ENV_FILE)
+
 val ENV: Map<String, String>
-    get() = File(ENV_FILE).readLines().mapNotNull { line ->
+    get() = currentScopeEnvFile().readLines().mapNotNull { line ->
         val idx = line.indexOf('=').takeIf { it > -1 } ?: return@mapNotNull null
         line.substring(0 until idx) to line.substring(idx + 1)
     }.toMap().let { it + getenv() }

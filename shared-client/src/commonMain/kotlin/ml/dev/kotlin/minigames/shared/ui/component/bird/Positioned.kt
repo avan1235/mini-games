@@ -10,7 +10,7 @@ import ml.dev.kotlin.minigames.shared.ui.util.DpSize
 import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
-fun Positioned(
+internal fun Positioned(
     pos: V2,
     size: DpSize,
     mapSize: DpSize,

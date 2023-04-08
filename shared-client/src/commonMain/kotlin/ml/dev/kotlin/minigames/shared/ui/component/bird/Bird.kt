@@ -25,7 +25,7 @@ import ml.dev.kotlin.minigames.shared.util.V2
 
 
 @Composable
-fun Bird(
+internal fun Bird(
     pos: V2,
     direction: BirdNozzleDirection,
     mapSize: DpSize,

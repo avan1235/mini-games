@@ -27,7 +27,7 @@ import ml.dev.kotlin.minigames.shared.util.V2
 import ml.dev.kotlin.minigames.shared.util.random
 
 @Composable
-fun Candy(
+internal fun Candy(
     pos: V2,
     mapSize: DpSize,
     candySize: DpSize = DpSize(40.dp, 20.dp),

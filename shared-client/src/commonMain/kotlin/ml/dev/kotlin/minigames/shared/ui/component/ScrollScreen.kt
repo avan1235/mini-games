@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ScrollScreen(
+internal fun ScrollScreen(
     up: @Composable BoxScope.() -> Unit,
     leftScreen: @Composable BoxScope.() -> Unit,
     centerScreen: @Composable BoxScope.() -> Unit,

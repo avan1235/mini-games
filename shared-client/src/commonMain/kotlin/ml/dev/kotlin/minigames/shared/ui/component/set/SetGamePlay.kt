@@ -17,7 +17,7 @@ import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.viewmodel.SetGameViewModel
 
 @Composable
-fun SetGamePlay(
+internal fun SetGamePlay(
     navigator: Navigator<ScreenRoute>,
     vm: SetGameViewModel,
     gameState: SetGameSnapshot,

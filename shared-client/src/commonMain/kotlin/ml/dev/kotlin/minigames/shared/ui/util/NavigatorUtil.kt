@@ -18,6 +18,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.ParcelableContainer
 import com.arkivanov.essenty.statekeeper.StateKeeper
 import com.arkivanov.essenty.statekeeper.StateKeeperDispatcher
+import kotlin.reflect.KClass
 
 class Navigator<C : Any>(
     private val router: Router<C, Any>,
@@ -31,15 +32,16 @@ class Navigator<C : Any>(
 }
 
 @Composable
-inline fun <reified C : Parcelable> rememberRouter(
+internal fun <C : Parcelable> rememberRouter(
     initialRoute: C,
-    key: String = "${C::class.simpleName}Router",
+    configurationClass: KClass<out C>,
+    key: String = "${configurationClass.simpleName}Router",
 ): Navigator<C> {
     val context = rememberComponentContext()
     return remember {
         context.router(
             initialStack = { listOf(initialRoute) },
-            configurationClass = C::class,
+            configurationClass = configurationClass,
             key = key,
             handleBackButton = true,
             childFactory = { configuration, _ -> configuration }
@@ -49,7 +51,7 @@ inline fun <reified C : Parcelable> rememberRouter(
 
 
 @Composable
-fun rememberComponentContext(): ComponentContext {
+internal fun rememberComponentContext(): ComponentContext {
     val lifecycle = rememberLifecycle()
     val stateKeeper = rememberStateKeeper()
     val backPressedHandler = LocalBackPressedHandler.current ?: BackPressedDispatcher()
@@ -58,7 +60,7 @@ fun rememberComponentContext(): ComponentContext {
 }
 
 @Composable
-fun rememberLifecycle(): Lifecycle {
+internal fun rememberLifecycle(): Lifecycle {
     val lifecycle = remember { LifecycleRegistry() }
 
     DisposableEffect(Unit) {
@@ -69,7 +71,7 @@ fun rememberLifecycle(): Lifecycle {
 }
 
 @Composable
-fun rememberStateKeeper(): StateKeeper {
+internal fun rememberStateKeeper(): StateKeeper {
     val stateRegistry = LocalSaveableStateRegistry.current
     val dispatcher =
         remember { StateKeeperDispatcher(stateRegistry?.consumeRestored(KEY_STATE) as ParcelableContainer?) }
@@ -83,7 +85,7 @@ fun rememberStateKeeper(): StateKeeper {
     return dispatcher
 }
 
-val LocalBackPressedHandler: ProvidableCompositionLocal<BackPressedHandler?> = staticCompositionLocalOf { null }
+internal val LocalBackPressedHandler: ProvidableCompositionLocal<BackPressedHandler?> = staticCompositionLocalOf { null }
 
 private const val KEY_STATE = "MINI_GAMES_STATE"
 

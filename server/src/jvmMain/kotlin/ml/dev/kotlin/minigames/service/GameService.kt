@@ -1,6 +1,6 @@
 package ml.dev.kotlin.minigames.service
 
-import io.ktor.http.cio.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

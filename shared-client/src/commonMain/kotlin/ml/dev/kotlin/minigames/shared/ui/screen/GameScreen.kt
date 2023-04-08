@@ -20,7 +20,7 @@ import ml.dev.kotlin.minigames.shared.util.takeTyped
 import ml.dev.kotlin.minigames.shared.viewmodel.*
 
 @Composable
-inline fun <reified Snapshot : GameSnapshot> GameScreen(
+internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
     navigator: Navigator<ScreenRoute>,
     vm: GameViewModel<Snapshot>,
     chatVM: ChatViewModel,

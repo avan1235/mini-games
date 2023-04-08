@@ -16,5 +16,5 @@ internal expect fun DropdownMenu(
 @Composable
 internal expect fun DropdownMenuItem(
     onClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable () -> Unit
 )

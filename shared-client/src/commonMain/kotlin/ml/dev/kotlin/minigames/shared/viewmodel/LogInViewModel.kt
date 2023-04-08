@@ -5,6 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import com.russhwolf.settings.ExperimentalSettingsApi
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.coroutines.SuspendSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.JwtToken
@@ -61,13 +64,27 @@ class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewMod
     }
 }
 
-internal expect suspend fun storeUserLogin(
+@OptIn(ExperimentalSettingsApi::class)
+internal expect fun getUserSettings(context: ViewModelContext): SuspendSettings
+
+@OptIn(ExperimentalSettingsApi::class)
+private suspend fun storeUserLogin(
     context: ViewModelContext,
     userLogin: UserLogin,
-)
+): Unit = getUserSettings(context).run {
+    putString(USERNAME_KEY, userLogin.username)
+    putString(PASSWORD_KEY, userLogin.password)
+}
 
-internal expect suspend fun loadUserLogin(
+@OptIn(ExperimentalSettingsApi::class)
+private suspend fun loadUserLogin(
     context: ViewModelContext,
     username: (String) -> Unit,
     password: (String) -> Unit,
-)
+): Unit = getUserSettings(context).run {
+    getStringOrNull(USERNAME_KEY)?.let(username)
+    getStringOrNull(PASSWORD_KEY)?.let(password)
+}
+
+private const val USERNAME_KEY: String = "username"
+private const val PASSWORD_KEY: String = "password"

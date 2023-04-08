@@ -1,8 +1,8 @@
 package ml.dev.kotlin.minigames.server.routes
 
-import io.ktor.application.*
-import io.ktor.html.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.html.*
+import io.ktor.server.routing.*
 import kotlinx.html.*
 import ml.dev.kotlin.minigames.shared.api.MAIN_SITE
 import ml.dev.kotlin.minigames.util.RoutesCtx

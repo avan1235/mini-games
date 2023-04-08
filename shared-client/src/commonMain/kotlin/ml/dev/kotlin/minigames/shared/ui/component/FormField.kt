@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun FormField(
+internal fun FormField(
     text: String,
     textInput: MutableState<String>,
     errorState: MutableState<Boolean>,

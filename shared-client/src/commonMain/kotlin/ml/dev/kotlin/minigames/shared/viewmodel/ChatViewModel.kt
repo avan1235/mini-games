@@ -7,7 +7,6 @@ import ml.dev.kotlin.minigames.shared.model.SendMessageClientMessage
 import ml.dev.kotlin.minigames.shared.model.UserMessage
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.util.now
-import java.util.Comparator.comparing
 
 class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
 
@@ -18,7 +17,7 @@ class ChatViewModel(context: ViewModelContext, val username: Username) : ViewMod
     var userMessageText by userMessageTextState
 
     fun addMessage(message: UserMessage) {
-        val idx = _messages.binarySearch(message, comparing(UserMessage::timestamp))
+        val idx = _messages.binarySearch(message, USER_MESSAGES_COMPARATOR)
         if (idx < 0) _messages.add(-idx - 1, message)
     }
 
@@ -31,3 +30,6 @@ class ChatViewModel(context: ViewModelContext, val username: Username) : ViewMod
         userMessageText = ""
     }
 }
+
+private val USER_MESSAGES_COMPARATOR: Comparator<UserMessage> =
+    Comparator { a, b -> a.timestamp.compareTo(b.timestamp) }

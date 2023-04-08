@@ -2,7 +2,6 @@ package ml.dev.kotlin.minigames.shared.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import java.util.concurrent.atomic.AtomicInteger
 
 class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
 
@@ -10,7 +9,8 @@ class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
     val notifications: List<IndexedNotification> get() = _notifications
 
     fun addNotification(message: String) {
-        val notification = IndexedNotification(message, NOTIFICATION_IDX.getAndIncrement())
+        NOTIFICATION_IDX += 1
+        val notification = IndexedNotification(message, NOTIFICATION_IDX)
         _notifications.add(notification)
     }
 
@@ -21,4 +21,4 @@ class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
 
 data class IndexedNotification(val message: String, val idx: Int)
 
-private val NOTIFICATION_IDX: AtomicInteger = AtomicInteger(0)
+private var NOTIFICATION_IDX: Int = 0

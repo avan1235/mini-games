@@ -37,7 +37,7 @@ import ml.dev.kotlin.minigames.shared.ui.theme.*
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SetCard(
+internal fun SetCard(
     setCardData: SetCard,
     selected: Boolean,
     width: Dp,

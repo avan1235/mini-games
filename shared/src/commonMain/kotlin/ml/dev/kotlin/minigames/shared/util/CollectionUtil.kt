@@ -13,7 +13,7 @@ class ComputedMap<K, V>(
     private val map: MutableMap<K, V> = HashMap(),
     private val default: MutableMap<K, V>.(K) -> V
 ) : MutableMap<K, V> by map {
-    override fun get(key: K): V = map.getOrDefault(key, this.default(key)).also { this[key] = it }
+    override fun get(key: K): V = map[key]?.let { return it } ?: default(key).also { map[key] = it }
     override fun remove(key: K): V = map.remove(key) ?: this.default(key)
     override fun toString(): String = "ComputedMap(map=$map)"
     override fun hashCode(): Int = map.hashCode()
@@ -38,7 +38,13 @@ data class BlockV2Set(
 
     fun addAll(elements: Iterable<V2>): BlockV2Set {
         val byRangeCopy = HashMap(byRange)
-        elements.forEach { byRangeCopy.computeIfAbsent(it ranged rangeUnit) { HashSet() } += it }
+        elements.forEach {
+            val blockIdx = it ranged rangeUnit
+            if (blockIdx !in byRangeCopy) {
+                byRangeCopy[blockIdx] = HashSet()
+            }
+            byRangeCopy[blockIdx]!! += it
+        }
         return copy(byRange = byRangeCopy)
     }
 

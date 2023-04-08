@@ -28,7 +28,7 @@ typealias ChildAnimator<C, T> =
         ) -> Unit
 
 @Composable
-fun <C : Any, T : Any> Children(
+internal fun <C : Any, T : Any> Children(
     routerState: Value<RouterState<C, T>>,
     modifier: Modifier = Modifier,
     animation: ChildAnimation<C, T>,

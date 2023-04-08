@@ -22,8 +22,8 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 
 
 @Composable
-fun MiniGamesRoutes(context: ViewModelContext) {
-    val navigator = rememberRouter<ScreenRoute>(ScreenRoute.LogInScreen)
+internal fun MiniGamesRoutes(context: ViewModelContext) {
+    val navigator = rememberRouter(ScreenRoute.LogInScreen, ScreenRoute::class)
     val scope = rememberCoroutineScope()
 
     val loginVM = remember { LogInViewModel(context, scope) }

@@ -6,9 +6,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import ml.dev.kotlin.minigames.shared.ui.component.ToastBuffer
 import ml.dev.kotlin.minigames.shared.ui.component.ToastOverlay
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.HiddenFromObjC
 
 @Composable
-fun ToastScreen(content: @Composable ToastBuffer.() -> Unit) {
+internal fun ToastScreen(content: @Composable ToastBuffer.() -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         val buffer = remember { ToastBuffer(mutableStateOf(null)) }
         CompositionLocalProvider(LocalToastContext provides buffer) { content(buffer) }
@@ -16,4 +18,6 @@ fun ToastScreen(content: @Composable ToastBuffer.() -> Unit) {
     }
 }
 
-val LocalToastContext: ProvidableCompositionLocal<ToastBuffer?> = staticCompositionLocalOf { null }
+@OptIn(ExperimentalObjCRefinement::class)
+@HiddenFromObjC
+internal val LocalToastContext: ProvidableCompositionLocal<ToastBuffer?> = staticCompositionLocalOf { null }

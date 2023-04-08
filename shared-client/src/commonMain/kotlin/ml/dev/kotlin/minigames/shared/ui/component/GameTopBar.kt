@@ -16,7 +16,7 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun GameTopBar(
+internal fun GameTopBar(
     points: Int,
     role: UserRole,
     onClose: () -> Unit

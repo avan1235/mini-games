@@ -6,7 +6,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProportionKeeper(
+internal fun ProportionKeeper(
     maxWidthToHeight: Float = 0.66f,
     content: @Composable BoxScope.() -> Unit
 ) {

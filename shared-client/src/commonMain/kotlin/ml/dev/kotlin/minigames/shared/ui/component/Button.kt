@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun CircleButton(
+internal fun CircleButton(
     icon: ImageVector? = null,
     contentDescription: String? = null,
     text: String? = null,
@@ -58,7 +58,7 @@ fun CircleButton(
 }
 
 @Composable
-fun BackButton(onClick: () -> Unit) {
+internal fun BackButton(onClick: () -> Unit) {
     IconButton(onClick, modifier = Modifier.size(56.dp)) {
         Icon(Icons.Default.ArrowBack, contentDescription = "back")
     }

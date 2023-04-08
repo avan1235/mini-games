@@ -1,7 +1,6 @@
 package ml.dev.kotlin.minigames.shared.model
 
 import kotlinx.serialization.Serializable
-import java.util.*
 
 typealias Username = String
 
@@ -29,15 +28,19 @@ class UserData private constructor(
         fun admin(): UserData = of(UserRole.Admin)
     }
 
+    fun updateState(state: UserState): UserData = when (role) {
+        UserRole.Admin -> this
+        UserRole.Player -> UserData(UserRole.Player, state)
+    }
+
     override fun equals(other: Any?): Boolean =
         true == (other as? UserData)
             ?.let { it.role == role && it.state == state }
 
-    override fun hashCode(): Int = Objects.hash(role, state)
-
-    fun updateState(state: UserState): UserData = when (role) {
-        UserRole.Admin -> this
-        UserRole.Player -> UserData(UserRole.Player, state)
+    override fun hashCode(): Int {
+        var result = role.hashCode()
+        result = 31 * result + state.hashCode()
+        return result
     }
 }
 

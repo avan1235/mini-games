@@ -1,13 +1,14 @@
 package ml.dev.kotlin.minigames.shared.rest.client
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.core.*
 import kotlinx.serialization.decodeFromString
 import ml.dev.kotlin.minigames.shared.rest.RestApiConfig
@@ -16,9 +17,7 @@ import ml.dev.kotlin.minigames.shared.util.*
 class RestJsonApiClient : Closeable {
 
     val httpClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
+        install(ContentNegotiation) { json() }
         followRedirects = true
     }
 
@@ -26,17 +25,20 @@ class RestJsonApiClient : Closeable {
         path: String,
         block: HttpRequestBuilder.() -> Unit = {}
     ): Res<E, T>? = try {
-        httpClient.post<T>(
-            scheme = RestApiConfig.scheme,
-            host = RestApiConfig.host,
-            path = path,
-        ) {
-            contentType(ContentType.Application.Json)
+        httpClient.post {
+            url {
+                protocol = URLProtocol.byName[RestApiConfig.scheme]!!
+                host = RestApiConfig.host
+                contentType(ContentType.Application.Json)
+                path(path)
+            }
             block()
-        }.ok()
+        }
+            .body<T>()
+            .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
-            val errorData = e.response.readText()
+            val errorData = e.response.bodyAsText()
             GameJson.decodeFromString<E>(errorData).err()
         }
     } catch (_: Exception) {
@@ -47,17 +49,20 @@ class RestJsonApiClient : Closeable {
         path: String,
         block: HttpRequestBuilder.() -> Unit = {}
     ): Res<E, T>? = try {
-        httpClient.get(
-            scheme = RestApiConfig.scheme,
-            host = RestApiConfig.host,
-            path = path,
-        ) {
-            contentType(ContentType.Application.Json)
+        httpClient.get {
+            url {
+                protocol = URLProtocol.byName[RestApiConfig.scheme]!!
+                host = RestApiConfig.host
+                contentType(ContentType.Application.Json)
+                path(path)
+            }
             block()
         }
+            .body<T>()
+            .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
-            val errorData = e.response.readText()
+            val errorData = e.response.bodyAsText()
             GameJson.decodeFromString<E>(errorData).err()
         }
     } catch (_: Exception) {

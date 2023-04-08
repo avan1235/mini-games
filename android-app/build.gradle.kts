@@ -12,6 +12,7 @@ version = VERSION
 
 android {
     compileSdk = Constants.Android.compileSdk
+    namespace = "ml.dev.kotlin.minigames"
     defaultConfig {
         applicationId = "ml.dev.kotlin.minigames"
         minSdk = Constants.Android.minSdk

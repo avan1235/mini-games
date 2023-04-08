@@ -17,7 +17,7 @@ import ml.dev.kotlin.minigames.shared.ui.util.DpSize
 import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
-fun LeftRightSpikes(
+internal fun LeftRightSpikes(
     spikes: List<V2>,
     mapSize: DpSize,
 ) {
@@ -25,7 +25,7 @@ fun LeftRightSpikes(
 }
 
 @Composable
-fun UpDownConstantSpikes(mapSize: DpSize, count: Int = 8) {
+internal fun UpDownConstantSpikes(mapSize: DpSize, count: Int = 8) {
     val stepX = 2f / (count + 1)
     for (x in 1..count) {
         UpDownSpike(V2(-1f + stepX * x, -1f), mapSize)

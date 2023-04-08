@@ -23,10 +23,9 @@ import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
 import ml.dev.kotlin.minigames.shared.viewmodel.BirdGameViewModel
-import java.util.EnumSet
 
 @Composable
-fun BirdGamePlay(
+internal fun BirdGamePlay(
     navigator: Navigator<ScreenRoute>,
     vm: BirdGameViewModel,
     gameState: BirdGameSnapshot,
@@ -85,7 +84,7 @@ fun BirdGamePlay(
     }
 }
 
-private val POSSIBLE_THEMES: EnumSet<BirdTheme> = EnumSet.allOf(BirdTheme::class.java)
+private val POSSIBLE_THEMES: Set<BirdTheme> = setOf(*BirdTheme.values())
 
 private val CACHED_THEMES: ComputedMap<Username, BirdTheme> = ComputedMap {
     val unused = POSSIBLE_THEMES - values

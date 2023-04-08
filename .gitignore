@@ -6,3 +6,12 @@ build/
 .idea/httpRequests
 .DS_STORE
 local.properties
+
+ios-app/Podfile.lock
+ios-app/Pods/*
+ios-app/iosApp.xcworkspace/*
+ios-app/iosApp.xcodeproj/*
+!ios-app/iosApp.xcodeproj/project.pbxproj
+
+shared/shared.podspec
+shared-client/shared_client.podspec

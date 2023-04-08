@@ -19,7 +19,7 @@ import kotlinx.coroutines.delay
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @Composable
-fun ToastOverlay(
+internal fun ToastOverlay(
     message: MutableState<ToastMessage?>,
 ) {
     val toast = message.value ?: return

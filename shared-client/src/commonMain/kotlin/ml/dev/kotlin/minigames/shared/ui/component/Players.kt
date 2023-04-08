@@ -17,7 +17,7 @@ import ml.dev.kotlin.minigames.shared.ui.screen.LocalToastContext
 import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
 
 @Composable
-fun <Snapshot : GameSnapshot> Players(
+internal fun <Snapshot : GameSnapshot> Players(
     vm: GameViewModel<Snapshot>,
     snapshot: Snapshot,
     clientMessages: MutableStateFlow<GameClientMessage?>

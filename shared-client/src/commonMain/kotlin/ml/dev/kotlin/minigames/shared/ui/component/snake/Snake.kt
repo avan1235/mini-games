@@ -23,7 +23,7 @@ import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
-fun Snake(
+internal fun Snake(
     username: Username,
     snake: Snake,
     head: V2,

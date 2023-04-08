@@ -1,10 +1,10 @@
 package ml.dev.kotlin.minigames.server.routes
 
-import io.ktor.application.*
 import io.ktor.http.*
-import io.ktor.request.*
-import io.ktor.response.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 import ml.dev.kotlin.minigames.server.Jwt
 import ml.dev.kotlin.minigames.service.UserService
 import ml.dev.kotlin.minigames.shared.api.USER_CONFIRM_GET

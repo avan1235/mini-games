@@ -47,7 +47,7 @@ import ml.dev.kotlin.minigames.shared.util.toPaddedString
 import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
 
 @Composable
-fun Chat(
+internal fun Chat(
     vm: ChatViewModel,
     clientMessages: MutableStateFlow<GameClientMessage?>,
     size: Dp = 56.dp,

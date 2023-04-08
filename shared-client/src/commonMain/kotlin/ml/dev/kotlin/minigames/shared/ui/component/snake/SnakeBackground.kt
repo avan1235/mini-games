@@ -18,7 +18,7 @@ import ml.dev.kotlin.minigames.shared.util.V2
 import kotlin.math.*
 
 @Composable
-fun SnakeBackground(
+internal fun SnakeBackground(
     head: V2,
     mapSize: DpSize,
     itemSize: Dp = 72.dp

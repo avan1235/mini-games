@@ -34,7 +34,7 @@ import ml.dev.kotlin.minigames.shared.viewmodel.IndexedNotification
 import ml.dev.kotlin.minigames.shared.viewmodel.NotificationsViewModel
 
 @Composable
-fun Notifications(
+internal fun Notifications(
     vm: NotificationsViewModel
 ) {
     LazyColumn(

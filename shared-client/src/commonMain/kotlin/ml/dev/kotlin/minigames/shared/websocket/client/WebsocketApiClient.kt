@@ -2,11 +2,11 @@ package ml.dev.kotlin.minigames.shared.websocket.client
 
 import io.ktor.client.*
 import io.ktor.client.engine.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.websocket.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -16,9 +16,7 @@ import ml.dev.kotlin.minigames.shared.websocket.WebsocketApiConfig
 class WebsocketApiClient : Closeable {
 
     private val wsClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-        install(JsonFeature) {
-            serializer = KotlinxSerializer()
-        }
+        install(ContentNegotiation) { json() }
         followRedirects = true
         install(WebSockets)
     }

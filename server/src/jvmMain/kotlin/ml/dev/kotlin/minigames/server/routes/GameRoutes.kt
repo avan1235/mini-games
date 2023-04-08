@@ -1,8 +1,8 @@
 package ml.dev.kotlin.minigames.server.routes
 
-import io.ktor.application.*
-import io.ktor.http.cio.websocket.*
-import io.ktor.routing.*
+import io.ktor.server.application.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.serialization.decodeFromString
 import ml.dev.kotlin.minigames.server.Jwt
@@ -20,9 +20,9 @@ import ml.dev.kotlin.minigames.util.get
 
 private val SET_GAME_HANDLER = GameService { SetGameState.random() }.let(::GameHandler)
 
-private val SNAKE_GAME_HANDLER = GameService(updateDelay = 30) { SnakeGameState.empty() }.let(::GameHandler)
+private val SNAKE_GAME_HANDLER = GameService(updateDelay = 20) { SnakeGameState.empty() }.let(::GameHandler)
 
-private val BIRD_GAME_HANDLER = GameService(updateDelay = 30) { BirdGameState.empty() }.let(::GameHandler)
+private val BIRD_GAME_HANDLER = GameService(updateDelay = 20) { BirdGameState.empty() }.let(::GameHandler)
 
 fun Application.gameSockets() = routing {
     authJwtWebSocket(SET_GAME_WEBSOCKET("{$SERVER_NAME}"), SET_GAME_HANDLER::handleGame)

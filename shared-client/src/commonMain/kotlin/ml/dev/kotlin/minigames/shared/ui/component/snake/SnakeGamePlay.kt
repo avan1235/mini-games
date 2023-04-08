@@ -25,7 +25,7 @@ import ml.dev.kotlin.minigames.shared.util.V2
 import ml.dev.kotlin.minigames.shared.viewmodel.SnakeGameViewModel
 
 @Composable
-fun SnakeGamePlay(
+internal fun SnakeGamePlay(
     navigator: Navigator<ScreenRoute>,
     vm: SnakeGameViewModel,
     gameState: SnakeGameSnapshot,

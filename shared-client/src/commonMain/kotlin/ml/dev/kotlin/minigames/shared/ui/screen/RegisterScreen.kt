@@ -19,7 +19,7 @@ import ml.dev.kotlin.minigames.shared.viewmodel.RegisterViewModel
 import ml.dev.kotlin.minigames.shared.viewmodel.message
 
 @Composable
-fun RegisterScreen(
+internal fun RegisterScreen(
     navigator: Navigator<ScreenRoute>,
     vm: RegisterViewModel,
 ): Unit = with(LocalToastContext.current) {

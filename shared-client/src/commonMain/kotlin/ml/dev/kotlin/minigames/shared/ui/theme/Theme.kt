@@ -14,7 +14,7 @@ val DiscardColor: Color = Color(0xFFEE675C)
 val ApproveColor: Color = Color(0xFF8AB4F8)
 
 @Composable
-fun Theme(content: @Composable () -> Unit) {
+internal fun Theme(content: @Composable () -> Unit) {
     val themeColors = darkColors(
         onPrimary = Color(0xFFFFFFFF),
         primary = Color(0xFFCDCDCD),

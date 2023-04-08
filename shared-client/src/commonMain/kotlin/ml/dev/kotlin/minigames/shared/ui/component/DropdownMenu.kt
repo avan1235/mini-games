@@ -18,7 +18,7 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 import ml.dev.kotlin.minigames.shared.util.Named
 
 @Composable
-fun <T : Named> DropdownMenu(
+internal fun <T : Named> DropdownMenu(
     selected: MutableState<T>,
     anyItems: Collection<T>,
 ) {

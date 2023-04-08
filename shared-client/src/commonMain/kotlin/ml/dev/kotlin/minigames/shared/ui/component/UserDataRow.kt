@@ -26,7 +26,7 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun UserDataRow(
+internal fun UserDataRow(
     username: String,
     userData: UserData,
     userPoints: Int,
