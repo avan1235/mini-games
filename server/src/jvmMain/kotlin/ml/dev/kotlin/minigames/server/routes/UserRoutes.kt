@@ -13,6 +13,9 @@ import ml.dev.kotlin.minigames.shared.api.USER_LOGIN_POST
 import ml.dev.kotlin.minigames.shared.model.UserCreate
 import ml.dev.kotlin.minigames.shared.model.UserLogin
 import ml.dev.kotlin.minigames.shared.util.on
+import ml.dev.kotlin.minigames.util.RoutesCtx
+import ml.dev.kotlin.minigames.util.StringValuesKey
+import ml.dev.kotlin.minigames.util.get
 
 fun Application.userRoutes() = routing {
     post(USER_LOGIN_POST) { handleUserLogin() }
@@ -51,4 +54,4 @@ private suspend fun RoutesCtx.handleUserConfirm() {
     )
 }
 
-private const val CONFIRM_HASH = "confirmHash"
+private val CONFIRM_HASH = StringValuesKey("confirmHash")

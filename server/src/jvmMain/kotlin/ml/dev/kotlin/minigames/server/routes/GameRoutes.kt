@@ -3,7 +3,6 @@ package ml.dev.kotlin.minigames.server.routes
 import io.ktor.application.*
 import io.ktor.http.cio.websocket.*
 import io.ktor.routing.*
-import io.ktor.util.*
 import io.ktor.websocket.*
 import kotlinx.serialization.decodeFromString
 import ml.dev.kotlin.minigames.server.Jwt
@@ -14,7 +13,10 @@ import ml.dev.kotlin.minigames.shared.api.SNAKE_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.GameJson
 import ml.dev.kotlin.minigames.shared.util.now
+import ml.dev.kotlin.minigames.util.StringValuesKey
+import ml.dev.kotlin.minigames.util.authJwtWebSocket
 import ml.dev.kotlin.minigames.util.eprintln
+import ml.dev.kotlin.minigames.util.get
 
 private val SET_GAME_HANDLER = GameService { SetGameState.random() }.let(::GameHandler)
 
@@ -114,13 +116,6 @@ private class GameHandler(
         is UpdatedGameState -> sendAllUpdatedGameState(serverName, updateResult.gameState)
     }
 }
-
-@JvmInline
-private value class StringValuesKey(val key: String) {
-    override fun toString(): String = key
-}
-
-private operator fun StringValues.get(key: StringValuesKey): String? = this[key.key]
 
 private val SERVER_NAME = StringValuesKey("serverName")
 

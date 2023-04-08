@@ -1,6 +1,6 @@
 @file:Suppress("NOTHING_TO_INLINE")
 
-package ml.dev.kotlin.minigames.server.routes
+package ml.dev.kotlin.minigames.util
 
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -8,6 +8,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.util.*
 import io.ktor.util.pipeline.*
 import io.ktor.websocket.*
 import ml.dev.kotlin.minigames.server.Jwt
@@ -50,3 +51,10 @@ fun Route.authJwtWebSocket(
         else call.respond(HttpStatusCode.Unauthorized)
     }
 }
+
+@JvmInline
+value class StringValuesKey(val key: String) {
+    override fun toString(): String = key
+}
+
+operator fun StringValues.get(key: StringValuesKey): String? = this[key.key]

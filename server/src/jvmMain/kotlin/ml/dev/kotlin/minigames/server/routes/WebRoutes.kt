@@ -5,6 +5,7 @@ import io.ktor.html.*
 import io.ktor.routing.*
 import kotlinx.html.*
 import ml.dev.kotlin.minigames.shared.api.MAIN_SITE
+import ml.dev.kotlin.minigames.util.RoutesCtx
 
 fun Application.webRoutes() = routing {
     get(MAIN_SITE) { respondMainSite() }
