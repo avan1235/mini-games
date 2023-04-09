@@ -128,6 +128,29 @@ Gradle
 
 from the root directory of project.
 
+### iOS
+
+#### Run from terminal
+
+To run iOS version of client cocoapods pod needs to be compiled and installed to XCode project 
+located in `ios-app`. The easiest way to compile and link all ios targets is to run
+
+```shell
+./gradlew linkPodReleaseFrameworkIosFat linkPodDebugFrameworkIosFat
+```
+
+from the root directory of project and then 
+
+```shell
+./gradlew podInstall
+```
+
+to install the compiled resources to XCode.
+
+The last step is to set up the XCode project by first changing the value of `TEAM_ID` in
+`ios-app/Configuration/Config.xcconfig` to your own and then open XCode workspace available 
+in `ios-app`.
+
 ### Android
 
 #### Run from Intellij
