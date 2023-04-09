@@ -1,3 +1,5 @@
+@file:Suppress("OPT_IN_IS_NOT_ENABLED")
+
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -33,6 +35,7 @@ kotlin {
             isStatic = true
             baseName = "shared_client"
         }
+        extraSpecAttributes["resources"] = "['src/commonMain/res/**', 'src/iosMain/res/**']"
     }
 
     sourceSets {
@@ -71,7 +74,10 @@ kotlin {
             }
         }
         named("androidMain") {
+            dependsOn(commonMain)
+
             resources.srcDirs("src/commonMain/res")
+
             dependencies {
                 implementation(Dependencies.androidXActivity)
                 implementation(Dependencies.androidXActivityCompose)
@@ -88,7 +94,10 @@ kotlin {
             }
         }
         named("desktopMain") {
+            dependsOn(commonMain)
+
             resources.srcDirs("src/commonMain/res")
+
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
@@ -106,6 +115,8 @@ kotlin {
 
         val iosMain by creating {
             dependsOn(commonMain)
+
+            resources.srcDirs("src/commonMain/res")
 
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)

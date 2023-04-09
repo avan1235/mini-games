@@ -18,6 +18,7 @@ class WebsocketApiClient : Closeable {
     private val wsClient = HttpClient(CLIENT_ENGINE_FACTORY) {
         install(ContentNegotiation) { json() }
         followRedirects = true
+        expectSuccess = true
         install(WebSockets)
     }
 

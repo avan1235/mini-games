@@ -5,22 +5,31 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Shuffle
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.aakira.napier.Napier
+import io.ktor.utils.io.errors.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ml.dev.kotlin.minigames.shared.ui.GAMES
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.*
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 import ml.dev.kotlin.minigames.shared.ui.theme.capitals
+import ml.dev.kotlin.minigames.shared.ui.theme.loadLeckerliOneFont
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.ui.util.set
 import ml.dev.kotlin.minigames.shared.util.on
 import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
 import ml.dev.kotlin.minigames.shared.viewmodel.LogInViewModel
+import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 import ml.dev.kotlin.minigames.shared.viewmodel.message
 
 @Composable
@@ -63,13 +72,15 @@ internal fun LogInScreen(
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.Center,
                         ) {
+                            val fontFamily by produceLeckerliOneFont(vm.ctx)
+
                             Text(
                                 text = "Mini Games",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
                                 style = Typography.h3.copy(
                                     fontFeatureSettings = capitals,
-//                                    fontFamily = leckerliOne()
+                                    fontFamily = fontFamily ?: FontFamily.Cursive
                                 ),
                             )
                             Spacer(Modifier.size(16.dp))
@@ -144,5 +155,17 @@ private fun RememberCheckBox(vm: LogInViewModel) {
             onCheckedChange = { vm.rememberUserLogin = !vm.rememberUserLogin }
         )
         Text(text = "Remember", style = Typography.subtitle2)
+    }
+}
+
+@Composable
+private fun produceLeckerliOneFont(
+    context: ViewModelContext,
+): State<FontFamily?> = produceState<FontFamily?>(null) {
+    value = try {
+        loadLeckerliOneFont(context)
+    } catch (e: Exception) {
+        Napier.e { e.stackTraceToString() }
+        null
     }
 }

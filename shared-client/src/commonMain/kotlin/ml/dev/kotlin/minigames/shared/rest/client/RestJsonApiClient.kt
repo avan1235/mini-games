@@ -19,6 +19,7 @@ class RestJsonApiClient : Closeable {
     val httpClient = HttpClient(CLIENT_ENGINE_FACTORY) {
         install(ContentNegotiation) { json() }
         followRedirects = true
+        expectSuccess = true
     }
 
     suspend inline fun <reified E, reified T> post(

@@ -1,13 +1,16 @@
 package ml.dev.kotlin.minigames.shared.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.platform.Font
+import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 
-@Composable
-internal actual fun leckerliOne(): FontFamily {
-    val font = Font("font/leckerlione_regular.ttf", FontWeight.Normal, FontStyle.Normal)
+internal actual suspend fun loadLeckerliOneFont(context: ViewModelContext): FontFamily =
+    loadFontFamily("leckerlione_regular.ttf", "font/leckerlione_regular.ttf")
+
+@OptIn(ExperimentalResourceApi::class)
+private suspend fun loadFontFamily(identity: String, path: String): FontFamily {
+    val fontBytes = resource(path).readBytes()
+    val font = androidx.compose.ui.text.platform.Font(identity, fontBytes)
     return FontFamily(font)
 }

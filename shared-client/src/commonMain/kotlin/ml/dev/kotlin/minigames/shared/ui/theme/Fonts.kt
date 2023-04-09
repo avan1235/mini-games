@@ -1,7 +1,6 @@
 package ml.dev.kotlin.minigames.shared.ui.theme
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
+import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 
-@Composable
-internal expect fun leckerliOne(): FontFamily
+internal expect suspend fun loadLeckerliOneFont(context: ViewModelContext): FontFamily
