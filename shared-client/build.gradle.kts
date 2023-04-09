@@ -62,7 +62,7 @@ kotlin {
                 implementation(Dependencies.essentyParcelable)
                 implementation(Dependencies.essentyInstanceKeeper)
 
-                implementation(Dependencies.kotlinxSerializationJson)
+                implementation(Dependencies.kotlinxSerialization)
                 implementation(Dependencies.ktorClientCore)
                 implementation(Dependencies.ktorClientWebsockets)
                 implementation(Dependencies.ktorClientSerialization)

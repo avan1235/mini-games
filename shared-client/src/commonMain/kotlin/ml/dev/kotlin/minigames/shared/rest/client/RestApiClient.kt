@@ -8,20 +8,23 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.cbor.*
 import io.ktor.utils.io.core.*
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
 import ml.dev.kotlin.minigames.shared.rest.RestApiConfig
 import ml.dev.kotlin.minigames.shared.util.*
 
-class RestJsonApiClient : Closeable {
+class RestApiClient : Closeable {
 
+    @OptIn(ExperimentalSerializationApi::class)
     val httpClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-        install(ContentNegotiation) { json() }
+        install(ContentNegotiation) { cbor() }
         followRedirects = true
         expectSuccess = true
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> post(
         path: String,
         block: HttpRequestBuilder.() -> Unit = {}
@@ -30,7 +33,7 @@ class RestJsonApiClient : Closeable {
             url {
                 protocol = URLProtocol.byName[RestApiConfig.scheme]!!
                 host = RestApiConfig.host
-                contentType(ContentType.Application.Json)
+                contentType(ContentType.Application.Cbor)
                 path(path)
             }
             block()
@@ -39,13 +42,14 @@ class RestJsonApiClient : Closeable {
             .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
-            val errorData = e.response.bodyAsText()
-            GameJson.decodeFromString<E>(errorData).err()
+            val errorData = e.response.readBytes()
+            GameSerialization.decodeFromByteArray<E>(errorData).err()
         }
     } catch (_: Exception) {
         null
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> get(
         path: String,
         block: HttpRequestBuilder.() -> Unit = {}
@@ -54,7 +58,7 @@ class RestJsonApiClient : Closeable {
             url {
                 protocol = URLProtocol.byName[RestApiConfig.scheme]!!
                 host = RestApiConfig.host
-                contentType(ContentType.Application.Json)
+                contentType(ContentType.Application.Cbor)
                 path(path)
             }
             block()
@@ -63,8 +67,8 @@ class RestJsonApiClient : Closeable {
             .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
-            val errorData = e.response.bodyAsText()
-            GameJson.decodeFromString<E>(errorData).err()
+            val errorData = e.response.readBytes()
+            GameSerialization.decodeFromByteArray<E>(errorData).err()
         }
     } catch (_: Exception) {
         null

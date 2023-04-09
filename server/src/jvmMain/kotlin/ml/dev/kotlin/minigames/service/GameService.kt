@@ -4,10 +4,11 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToByteArray
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
-import ml.dev.kotlin.minigames.shared.util.GameJson
+import ml.dev.kotlin.minigames.shared.util.GameSerialization
 import ml.dev.kotlin.minigames.shared.util.now
 import ml.dev.kotlin.minigames.shared.util.tryOrNull
 import java.util.*
@@ -149,11 +150,12 @@ fun CoroutineScope.sendSnapshot(
 ): Job = launch {
     val userSnapshot = snapshot(connection.username) ?: return@launch
     val message = GameStateSnapshotServerMessage(userSnapshot, timestamp = now())
-    connection.session.sendJson(message)
+    connection.session.sendSerialized(message)
 }
 
-suspend inline fun WebSocketSession.sendJson(content: GameServerMessage): Unit =
-    send(Frame.Text(GameJson.encodeToString(content)))
+@OptIn(ExperimentalSerializationApi::class)
+suspend inline fun WebSocketSession.sendSerialized(content: GameServerMessage): Unit =
+    send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
 
 @JvmInline
 value class ServerName(val name: String)

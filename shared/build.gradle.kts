@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(Dependencies.kotlinxSerializationJson)
+                implementation(Dependencies.kotlinxSerialization)
                 implementation(Dependencies.kotlinxDateTime)
                 implementation(Dependencies.uuid)
             }

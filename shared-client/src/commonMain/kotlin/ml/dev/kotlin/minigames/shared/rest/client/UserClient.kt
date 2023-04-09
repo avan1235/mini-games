@@ -13,7 +13,7 @@ import ml.dev.kotlin.minigames.shared.util.Res
 
 class UserClient : Closeable, InstanceKeeper.Instance {
 
-    private val client = RestJsonApiClient()
+    private val client = RestApiClient()
 
     suspend fun loginUser(userLogin: UserLogin): Res<UserError, JwtToken>? =
         client.post(USER_LOGIN_POST) {

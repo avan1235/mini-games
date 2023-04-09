@@ -29,7 +29,7 @@ fun main() {
 }
 
 private fun Application.gameServiceModule() {
-    installJson()
+    installCbor()
     installWebSockets()
     installJWTAuth()
 

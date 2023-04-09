@@ -4,14 +4,15 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
 import ml.dev.kotlin.minigames.server.Jwt
 import ml.dev.kotlin.minigames.service.*
 import ml.dev.kotlin.minigames.shared.api.BIRD_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.api.SET_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.api.SNAKE_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.model.*
-import ml.dev.kotlin.minigames.shared.util.GameJson
+import ml.dev.kotlin.minigames.shared.util.GameSerialization
 import ml.dev.kotlin.minigames.shared.util.now
 import ml.dev.kotlin.minigames.util.StringValuesKey
 import ml.dev.kotlin.minigames.util.authJwtWebSocket
@@ -33,6 +34,7 @@ fun Application.gameSockets() = routing {
 private class GameHandler(
     private val service: GameService,
 ) {
+    @OptIn(ExperimentalSerializationApi::class)
     suspend fun handleGame(
         session: DefaultWebSocketServerSession,
         user: Jwt.User,
@@ -47,8 +49,8 @@ private class GameHandler(
                     sendAllUpdatedGameState(serverName, service.state(serverName))
 
                     for (frame in incoming) {
-                        frame as? Frame.Text ?: continue
-                        val clientMessage = GameJson.decodeFromString<GameClientMessage>(frame.readText())
+                        frame as? Frame.Binary ?: continue
+                        val clientMessage = GameSerialization.decodeFromByteArray<GameClientMessage>(frame.readBytes())
                         updateGameStateWithClientMessage(serverName, username, clientMessage)
                     }
                 } catch (e: Exception) {
@@ -69,7 +71,7 @@ private class GameHandler(
     ): Unit = when (msg) {
         is HeartBeatClientMessage -> service.state(serverName)
             .let(asGameStateServerMessage(username))
-            .let { session.sendJson(it) }
+            .let { session.sendSerialized(it) }
 
         is GameStateUpdateClientMessage -> service
             .updateGameState(serverName, username, msg.update)
@@ -83,7 +85,7 @@ private class GameHandler(
         )?.let { gameState ->
             val message = UserActionServerMessage(action = msg.action, timestamp = now())
             val connections = service.connections(serverName, msg.username)
-            connections.forEach { it.session.sendJson(message) }
+            connections.forEach { it.session.sendSerialized(message) }
             sendAllUpdatedGameState(serverName, gameState)
         }
 
@@ -95,7 +97,7 @@ private class GameHandler(
         gameState: GameState,
     ): Unit = service.connections(serverName).forEach {
         val message = gameState.let(asGameStateServerMessage(it.username))
-        it.session.sendJson(message)
+        it.session.sendSerialized(message)
     }
 
     private suspend fun sendAllUserMessage(
@@ -103,7 +105,7 @@ private class GameHandler(
         userMessage: UserMessage,
     ): Unit = service.connections(serverName).forEach {
         val message = ReceiveMessageServerMessage(userMessage, timestamp = now())
-        it.session.sendJson(message)
+        it.session.sendSerialized(message)
     }
 
     private suspend fun GameConnection.sendGameStateUpdate(
@@ -111,7 +113,7 @@ private class GameHandler(
         updateResult: GameStateUpdateResult,
     ): Unit = when (updateResult) {
         UnapprovedGameStateUpdate -> UnapprovedGameStateUpdateServerMessage(timestamp = now())
-            .let { session.sendJson(it) }
+            .let { session.sendSerialized(it) }
 
         is UpdatedGameState -> sendAllUpdatedGameState(serverName, updateResult.gameState)
     }

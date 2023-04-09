@@ -6,17 +6,19 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.serialization.kotlinx.cbor.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import ml.dev.kotlin.minigames.shared.model.JwtToken
 import ml.dev.kotlin.minigames.shared.websocket.WebsocketApiConfig
 
 class WebsocketApiClient : Closeable {
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val wsClient = HttpClient(CLIENT_ENGINE_FACTORY) {
-        install(ContentNegotiation) { json() }
+        install(ContentNegotiation) { cbor() }
         followRedirects = true
         expectSuccess = true
         install(WebSockets)

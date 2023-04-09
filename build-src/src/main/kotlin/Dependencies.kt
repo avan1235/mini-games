@@ -13,19 +13,19 @@ object Dependencies {
         const val multiplatformSettings = "1.0.0"
     }
 
-    val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2"
+    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.3.2"
     val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
     val uuid = "com.benasher44:uuid:0.7.0"
 
     val ktorServerCore = "io.ktor:ktor-server-core:${Version.ktor}"
     val ktorServerNetty = "io.ktor:ktor-server-netty:${Version.ktor}"
-    val ktorServerSerialization = "io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}"
+    val ktorServerSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
     val ktorServerWebsockets = "io.ktor:ktor-server-websockets:${Version.ktor}"
     val ktorServerContentNegotiation = "io.ktor:ktor-server-content-negotiation:${Version.ktor}"
     val ktorAuth = "io.ktor:ktor-server-auth:${Version.ktor}"
     val ktorAuthJwt = "io.ktor:ktor-server-auth-jwt:${Version.ktor}"
     val ktorHtmlBuilder = "io.ktor:ktor-server-html-builder:${Version.ktor}"
-    val ktorClientSerialization = "io.ktor:ktor-serialization-kotlinx-json:${Version.ktor}"
+    val ktorClientSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
     val ktorClientContentNegotiation = "io.ktor:ktor-client-content-negotiation:${Version.ktor}"
     val ktorClientCore = "io.ktor:ktor-client-core:${Version.ktor}"
     val ktorClientAndroid = "io.ktor:ktor-client-okhttp:${Version.ktor}"

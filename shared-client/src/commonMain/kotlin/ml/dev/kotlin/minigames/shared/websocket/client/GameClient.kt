@@ -1,18 +1,20 @@
 package ml.dev.kotlin.minigames.shared.websocket.client
 
 import com.arkivanov.essenty.instancekeeper.InstanceKeeper
+import io.github.aakira.napier.Napier
 import io.ktor.client.plugins.websocket.*
 import io.ktor.utils.io.core.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.decodeFromByteArray
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
 import ml.dev.kotlin.minigames.shared.model.GameServerMessage
 import ml.dev.kotlin.minigames.shared.model.UserLogin
 import ml.dev.kotlin.minigames.shared.rest.client.UserClient
-import ml.dev.kotlin.minigames.shared.util.GameJson
+import ml.dev.kotlin.minigames.shared.util.GameSerialization
 import ml.dev.kotlin.minigames.shared.util.on
 import ml.dev.kotlin.minigames.shared.util.tryOrNull
 
@@ -54,13 +56,14 @@ class GameClient(
 
 data class GameAccessData(val serverName: String, val userLogin: UserLogin)
 
+@OptIn(ExperimentalSerializationApi::class)
 private suspend fun DefaultClientWebSocketSession.processClientMessages(
     clientMessages: MutableStateFlow<GameClientMessage?>,
     onErrorSend: (Exception) -> Unit,
 ) {
     clientMessages.collect {
         if (it != null) try {
-            val message = GameJson.encodeToString(it)
+            val message = GameSerialization.encodeToByteArray(it)
             send(message)
         } catch (e: Exception) {
             onErrorSend(e)
@@ -68,14 +71,15 @@ private suspend fun DefaultClientWebSocketSession.processClientMessages(
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 private suspend fun DefaultClientWebSocketSession.processServerMessages(
     serverMessages: MutableStateFlow<GameServerMessage?>,
     onErrorReceive: (Exception) -> Unit,
 ) {
     for (message in incoming) {
         try {
-            message as? Frame.Text ?: continue
-            val game = GameJson.decodeFromString<GameServerMessage>(message.readText())
+            message as? Frame.Binary ?: continue
+            val game = GameSerialization.decodeFromByteArray<GameServerMessage>(message.readBytes())
             serverMessages.emit(game)
         } catch (e: Exception) {
             onErrorReceive(e)
