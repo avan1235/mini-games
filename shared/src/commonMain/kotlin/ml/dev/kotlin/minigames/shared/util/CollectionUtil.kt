@@ -62,7 +62,7 @@ private operator fun IntRange.times(o: IntRange): List<BlockIdx> = buildList {
 }
 
 private infix fun Float.ranged(rangeUnit: Float): Int =
-    if (this >= 0) (this / rangeUnit).toInt() else (-this / rangeUnit).toInt() - 1
+    if (this >= 0) (this / rangeUnit).toInt() else (-this / rangeUnit).toInt()
 
 private infix fun V2.ranged(rangeUnit: Float): BlockIdx = BlockIdx(this.x ranged rangeUnit, this.y ranged rangeUnit)
 
