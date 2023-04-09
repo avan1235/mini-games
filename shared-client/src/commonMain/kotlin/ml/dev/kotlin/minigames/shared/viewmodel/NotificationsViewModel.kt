@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.shared.viewmodel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 
-class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
+internal class NotificationsViewModel(context: ViewModelContext) : ViewModel(context) {
 
     private var _notifications: SnapshotStateList<IndexedNotification> = mutableStateListOf()
     val notifications: List<IndexedNotification> get() = _notifications

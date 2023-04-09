@@ -20,7 +20,7 @@ import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.Res
 import kotlin.random.Random
 
-class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewModel(context) {
+internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) : ViewModel(context) {
 
     private val client: UserClient = ctx.keeper.getOrCreate { UserClient() }
 

@@ -11,7 +11,7 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
-class SnakeGameViewModel(
+internal class SnakeGameViewModel(
     context: ViewModelContext,
     gameAccessData: GameAccessData,
 ) : GameViewModel<SnakeGameSnapshot>(context, gameAccessData) {

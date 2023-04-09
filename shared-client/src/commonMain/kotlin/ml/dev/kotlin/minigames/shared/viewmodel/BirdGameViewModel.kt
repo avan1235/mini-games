@@ -13,7 +13,7 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
-class BirdGameViewModel(
+internal class BirdGameViewModel(
     context: ViewModelContext,
     gameAccessData: GameAccessData,
 ) : GameViewModel<BirdGameSnapshot>(context, gameAccessData) {

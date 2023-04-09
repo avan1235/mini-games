@@ -10,7 +10,7 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
-class SetGameViewModel(
+internal class SetGameViewModel(
     context: ViewModelContext,
     gameAccessData: GameAccessData,
 ) : GameViewModel<SetGameSnapshot>(context, gameAccessData) {

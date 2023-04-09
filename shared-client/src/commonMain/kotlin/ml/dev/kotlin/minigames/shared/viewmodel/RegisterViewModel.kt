@@ -10,7 +10,7 @@ import ml.dev.kotlin.minigames.shared.model.UserError
 import ml.dev.kotlin.minigames.shared.rest.client.UserClient
 import ml.dev.kotlin.minigames.shared.util.Res
 
-class RegisterViewModel(context: ViewModelContext) : ViewModel(context) {
+internal class RegisterViewModel(context: ViewModelContext) : ViewModel(context) {
 
     private val client: UserClient = ctx.keeper.getOrCreate { UserClient() }
 

@@ -8,7 +8,7 @@ import ml.dev.kotlin.minigames.shared.model.UserMessage
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.util.now
 
-class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
+internal class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
 
     private val _messages: MutableList<UserMessage> = mutableStateListOf()
     val messages: List<UserMessage> get() = _messages

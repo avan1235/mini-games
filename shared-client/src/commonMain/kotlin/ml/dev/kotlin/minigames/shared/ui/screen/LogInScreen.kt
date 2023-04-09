@@ -25,7 +25,7 @@ import ml.dev.kotlin.minigames.shared.viewmodel.LogInViewModel
 import ml.dev.kotlin.minigames.shared.viewmodel.message
 
 @Composable
-fun LogInScreen(
+internal fun LogInScreen(
     navigator: Navigator<ScreenRoute>,
     vm: LogInViewModel
 ): Unit = with(LocalToastContext.current) {

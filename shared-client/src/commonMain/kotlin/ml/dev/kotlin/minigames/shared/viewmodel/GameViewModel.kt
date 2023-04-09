@@ -7,7 +7,7 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
-abstract class GameViewModel<Snapshot : GameSnapshot>(
+internal abstract class GameViewModel<Snapshot : GameSnapshot>(
     context: ViewModelContext,
     val gameAccessData: GameAccessData,
 ) : ViewModel(context) {
