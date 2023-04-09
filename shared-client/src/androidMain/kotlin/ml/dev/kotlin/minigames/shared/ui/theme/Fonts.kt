@@ -2,13 +2,10 @@ package ml.dev.kotlin.minigames.shared.ui.theme
 
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
+import ml.dev.kotlin.minigames.shared.client.R
 
-internal actual suspend fun loadLeckerliOneFont(context: ViewModelContext): FontFamily =
-        loadFontFamily("leckerlione_regular", context)
+internal actual suspend fun loadLeckerliOneFont(): FontFamily =
+        loadFontFamily(R.font.leckerlione_regular)
 
-private fun loadFontFamily(name: String, context: ViewModelContext): FontFamily {
-    val androidContext = context.androidContext
-    val id = androidContext.resources.getIdentifier(name, "font", androidContext.packageName)
-    return FontFamily(Font(id))
-}
+private fun loadFontFamily(id: Int): FontFamily =
+        FontFamily(Font(id))

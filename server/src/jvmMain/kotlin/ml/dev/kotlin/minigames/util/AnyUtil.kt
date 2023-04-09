@@ -1,5 +1,3 @@
-@file:Suppress("NOTHING_TO_INLINE")
-
 package ml.dev.kotlin.minigames.util
 
 import java.security.MessageDigest

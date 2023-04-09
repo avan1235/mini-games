@@ -70,7 +70,7 @@ internal fun LogInScreen(
                                             .padding(16.dp),
                                     verticalArrangement = Arrangement.Center,
                             ) {
-                                val fontFamily by produceLeckerliOneFont(vm.ctx)
+                                val fontFamily by produceLeckerliOneFont()
 
                                 Text(
                                         text = "Mini Games",
@@ -157,11 +157,9 @@ private fun RememberCheckBox(vm: LogInViewModel) {
 }
 
 @Composable
-private fun produceLeckerliOneFont(
-        context: ViewModelContext,
-): State<FontFamily?> = produceState<FontFamily?>(null) {
+private fun produceLeckerliOneFont(): State<FontFamily?> = produceState<FontFamily?>(null) {
     value = try {
-        loadLeckerliOneFont(context)
+        loadLeckerliOneFont()
     } catch (e: Exception) {
         Napier.e { e.stackTraceToString() }
         null

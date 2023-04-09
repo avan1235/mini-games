@@ -1,11 +1,10 @@
 package ml.dev.kotlin.minigames.shared.ui.theme
 
 import androidx.compose.ui.text.font.FontFamily
-import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.resource
 
-internal actual suspend fun loadLeckerliOneFont(context: ViewModelContext): FontFamily =
+internal actual suspend fun loadLeckerliOneFont(): FontFamily =
         loadFontFamily("leckerlione_regular.ttf", "font/leckerlione_regular.ttf")
 
 @OptIn(ExperimentalResourceApi::class)
