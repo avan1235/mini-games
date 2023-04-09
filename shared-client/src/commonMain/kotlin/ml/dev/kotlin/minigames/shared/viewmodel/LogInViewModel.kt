@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.arkivanov.essenty.instancekeeper.getOrCreate
 import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.coroutines.SuspendSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.JwtToken
@@ -63,9 +61,6 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
         return client.loginUser(userLogin)
     }
 }
-
-@OptIn(ExperimentalSettingsApi::class)
-internal expect fun getUserSettings(context: ViewModelContext): SuspendSettings
 
 @OptIn(ExperimentalSettingsApi::class)
 private suspend fun storeUserLogin(
