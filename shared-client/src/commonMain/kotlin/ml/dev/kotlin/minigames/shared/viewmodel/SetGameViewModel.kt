@@ -11,16 +11,16 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
 internal class SetGameViewModel(
-    context: ViewModelContext,
-    gameAccessData: GameAccessData,
+        context: ViewModelContext,
+        gameAccessData: GameAccessData,
 ) : GameViewModel<SetGameSnapshot>(context, gameAccessData) {
 
     override val client: GameClient =
-        ctx.keeper.getOrCreate(Game.Set) { GameClient(SET_GAME_WEBSOCKET) }
+            ctx.keeper.getOrCreate(Game.Set) { GameClient(SET_GAME_WEBSOCKET) }
 
     suspend fun emitSetProposal(
-        cardsIds: Set<Int>,
-        clientMessages: MutableStateFlow<GameClientMessage?>
+            cardsIds: Set<Int>,
+            clientMessages: MutableStateFlow<GameClientMessage?>
     ) {
         val proposal = SetProposal(cardsIds)
         val update = SetGameUpdate(proposal)

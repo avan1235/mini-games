@@ -6,22 +6,22 @@ import androidx.compose.ui.Modifier
 
 @Composable
 internal actual fun DropdownMenu(
-    expanded: Boolean,
-    onDismissRequest: () -> Unit,
-    modifier: Modifier,
-    content: @Composable ColumnScope.() -> Unit
+        expanded: Boolean,
+        onDismissRequest: () -> Unit,
+        modifier: Modifier,
+        content: @Composable ColumnScope.() -> Unit
 ): Unit = androidx.compose.material.DropdownMenu(
-    expanded = expanded,
-    onDismissRequest = onDismissRequest,
-    modifier = modifier,
-    content = content,
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        content = content,
 )
 
 @Composable
 internal actual fun DropdownMenuItem(
-    onClick: () -> Unit,
-    content: @Composable () -> Unit
+        onClick: () -> Unit,
+        content: @Composable () -> Unit
 ): Unit = androidx.compose.material.DropdownMenuItem(
-    onClick = onClick,
-    content = { content() },
+        onClick = onClick,
+        content = { content() },
 )

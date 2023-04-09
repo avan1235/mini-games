@@ -14,8 +14,8 @@ object DbSettings {
 
     val db by lazy {
         Database.connect(
-            url = envVar("JDBC_DATABASE_URL"),
-            driver = envVar("JDBC_DRIVER"),
+                url = envVar("JDBC_DATABASE_URL"),
+                driver = envVar("JDBC_DRIVER"),
         )
     }
 
@@ -23,21 +23,21 @@ object DbSettings {
 }
 
 fun <T> txn(
-    transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
-    repetitionAttempts: Int = DbSettings.db.transactionManager.defaultRepetitionAttempts,
-    readOnly: Boolean = false,
-    logger: SqlLogger? = DbSettings.defaultLogger,
-    statement: Transaction.() -> T
+        transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
+        repetitionAttempts: Int = DbSettings.db.transactionManager.defaultRepetitionAttempts,
+        readOnly: Boolean = false,
+        logger: SqlLogger? = DbSettings.defaultLogger,
+        statement: Transaction.() -> T
 ): T = transaction(transactionIsolation, repetitionAttempts, readOnly, DbSettings.db) {
     logger?.let { addLogger(it) }
     statement()
 }
 
 suspend fun <T> suspendedTxn(
-    context: CoroutineDispatcher? = null,
-    transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
-    logger: SqlLogger? = DbSettings.defaultLogger,
-    statement: Transaction.() -> T
+        context: CoroutineDispatcher? = null,
+        transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
+        logger: SqlLogger? = DbSettings.defaultLogger,
+        statement: Transaction.() -> T
 ): T = newSuspendedTransaction(context, DbSettings.db, transactionIsolation) {
     logger?.let { addLogger(it) }
     statement()

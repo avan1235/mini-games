@@ -12,12 +12,12 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
 internal class SnakeGameViewModel(
-    context: ViewModelContext,
-    gameAccessData: GameAccessData,
+        context: ViewModelContext,
+        gameAccessData: GameAccessData,
 ) : GameViewModel<SnakeGameSnapshot>(context, gameAccessData) {
 
     override val client: GameClient =
-        ctx.keeper.getOrCreate(Game.SnakeIO) { GameClient(SNAKE_GAME_WEBSOCKET) }
+            ctx.keeper.getOrCreate(Game.SnakeIO) { GameClient(SNAKE_GAME_WEBSOCKET) }
 
     suspend fun emitDirectionChange(dir: V2, clientMessages: MutableStateFlow<GameClientMessage?>) {
         val direction = SnakeDirection(dir)

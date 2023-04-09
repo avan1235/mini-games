@@ -77,15 +77,15 @@ sealed interface ScreenRoute : Parcelable {
 
     @Parcelize
     data class SetGameScreen(val serverName: String, val username: Username, val password: String) :
-        ScreenRoute
+            ScreenRoute
 
     @Parcelize
     data class SnakeGameScreen(val serverName: String, val username: Username, val password: String) :
-        ScreenRoute
+            ScreenRoute
 
     @Parcelize
     data class BirdGameScreen(val serverName: String, val username: Username, val password: String) :
-        ScreenRoute
+            ScreenRoute
 }
 
 enum class Game : Named {

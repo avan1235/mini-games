@@ -8,4 +8,4 @@ import java.util.prefs.Preferences
 
 @OptIn(ExperimentalSettingsApi::class)
 internal actual fun getUserSettings(context: ViewModelContext): SuspendSettings =
-    PreferencesSettings(Preferences.userRoot()).toSuspendSettings()
+        PreferencesSettings(Preferences.userRoot()).toSuspendSettings()

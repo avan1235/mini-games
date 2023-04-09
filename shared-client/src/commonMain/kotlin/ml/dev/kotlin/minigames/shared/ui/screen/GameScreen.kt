@@ -21,13 +21,13 @@ import ml.dev.kotlin.minigames.shared.viewmodel.*
 
 @Composable
 internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
-    navigator: Navigator<ScreenRoute>,
-    vm: GameViewModel<Snapshot>,
-    chatVM: ChatViewModel,
-    notifyVM: NotificationsViewModel,
-    crossinline gamePlay: @Composable BoxScope.(
-        snapshot: Snapshot, messages: MutableStateFlow<GameClientMessage?>
-    ) -> Unit
+        navigator: Navigator<ScreenRoute>,
+        vm: GameViewModel<Snapshot>,
+        chatVM: ChatViewModel,
+        notifyVM: NotificationsViewModel,
+        crossinline gamePlay: @Composable BoxScope.(
+                snapshot: Snapshot, messages: MutableStateFlow<GameClientMessage?>
+        ) -> Unit
 ): Unit = with(LocalToastContext.current) {
     val serverMessages = remember { MutableStateFlow<GameServerMessage?>(null) }
     val clientMessages = remember { MutableStateFlow<GameClientMessage?>(null) }
@@ -54,12 +54,12 @@ internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
 
     LaunchedEffect(vm.gameAccessData) {
         vm.client.startPlayingGame(
-            vm.gameAccessData,
-            serverMessages,
-            clientMessages,
-            onErrorLogin = { toast(CONNECT_ERROR_MESSAGE) },
-            onErrorReceive = { toast(RECEIVE_ERROR_MESSAGE) },
-            onErrorSend = { toast(SEND_ERROR_MESSAGE) },
+                vm.gameAccessData,
+                serverMessages,
+                clientMessages,
+                onErrorLogin = { toast(CONNECT_ERROR_MESSAGE) },
+                onErrorReceive = { toast(RECEIVE_ERROR_MESSAGE) },
+                onErrorSend = { toast(SEND_ERROR_MESSAGE) },
         )
     }
 
@@ -73,19 +73,19 @@ internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
     when (val state = snapshot) {
         null -> LoadingScreen("Loading game")
         else -> ScrollScreen(
-            up = { gamePlay(state, clientMessages) },
-            leftScreen = { Chat(chatVM, clientMessages) },
-            centerScreen = { Players(vm, state, clientMessages) },
-            rightScreen = { Notifications(notifyVM) },
-            leftIcon = Icons.Outlined.Forum,
-            leftIconSelected = Icons.Filled.Forum,
-            centerIcon = Icons.Outlined.PeopleAlt,
-            centerIconSelected = Icons.Filled.PeopleAlt,
-            rightIcon = Icons.Outlined.Notifications,
-            rightIconSelected = Icons.Filled.Notifications,
-            backPressedHandler = navigator,
-            onUp = { vm.ctx.adjustPan() },
-            onDown = { vm.ctx.adjustResize() },
+                up = { gamePlay(state, clientMessages) },
+                leftScreen = { Chat(chatVM, clientMessages) },
+                centerScreen = { Players(vm, state, clientMessages) },
+                rightScreen = { Notifications(notifyVM) },
+                leftIcon = Icons.Outlined.Forum,
+                leftIconSelected = Icons.Filled.Forum,
+                centerIcon = Icons.Outlined.PeopleAlt,
+                centerIconSelected = Icons.Filled.PeopleAlt,
+                rightIcon = Icons.Outlined.Notifications,
+                rightIconSelected = Icons.Filled.Notifications,
+                backPressedHandler = navigator,
+                onUp = { vm.ctx.adjustPan() },
+                onDown = { vm.ctx.adjustResize() },
         )
     }
 }

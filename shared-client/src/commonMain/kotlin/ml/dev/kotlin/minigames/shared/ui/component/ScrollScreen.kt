@@ -21,22 +21,22 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ScrollScreen(
-    up: @Composable BoxScope.() -> Unit,
-    leftScreen: @Composable BoxScope.() -> Unit,
-    centerScreen: @Composable BoxScope.() -> Unit,
-    rightScreen: @Composable BoxScope.() -> Unit,
-    leftIcon: ImageVector,
-    leftIconSelected: ImageVector,
-    centerIcon: ImageVector,
-    centerIconSelected: ImageVector,
-    rightIcon: ImageVector,
-    rightIconSelected: ImageVector,
-    backPressedHandler: BackPressedHandler,
-    onUp: () -> Unit,
-    onDown: () -> Unit,
-    threshold: Float = 0.3f,
-    scrollIconSize: Dp = 32.dp,
-    iconPadding: Dp = 16.dp,
+        up: @Composable BoxScope.() -> Unit,
+        leftScreen: @Composable BoxScope.() -> Unit,
+        centerScreen: @Composable BoxScope.() -> Unit,
+        rightScreen: @Composable BoxScope.() -> Unit,
+        leftIcon: ImageVector,
+        leftIconSelected: ImageVector,
+        centerIcon: ImageVector,
+        centerIconSelected: ImageVector,
+        rightIcon: ImageVector,
+        rightIconSelected: ImageVector,
+        backPressedHandler: BackPressedHandler,
+        onUp: () -> Unit,
+        onDown: () -> Unit,
+        threshold: Float = 0.3f,
+        scrollIconSize: Dp = 32.dp,
+        iconPadding: Dp = 16.dp,
 ): Unit = with(LocalDensity.current) {
     BoxWithConstraints {
         val fullHeight = maxHeight
@@ -67,37 +67,37 @@ internal fun ScrollScreen(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(fullHeight)
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .height(fullHeight)
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height)
-                    .background(MaterialTheme.colors.surface),
-                content = up
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .height(height)
+                            .background(MaterialTheme.colors.surface),
+                    content = up
             )
             Box(
-                modifier = Modifier
-                    .offset { IntOffset(0, swipeState.offset.value.roundToInt()) }
-                    .fillMaxWidth()
-                    .height(fullHeight)
-                    .background(MaterialTheme.colors.surface)
-                    .swipeable(
-                        state = swipeState,
-                        anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
-                        thresholds = { _, _ -> FractionalThreshold(threshold) },
-                        orientation = Orientation.Vertical
-                    )
+                    modifier = Modifier
+                            .offset { IntOffset(0, swipeState.offset.value.roundToInt()) }
+                            .fillMaxWidth()
+                            .height(fullHeight)
+                            .background(MaterialTheme.colors.surface)
+                            .swipeable(
+                                    state = swipeState,
+                                    anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
+                                    thresholds = { _, _ -> FractionalThreshold(threshold) },
+                                    orientation = Orientation.Vertical
+                            )
             ) {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Surface(modifier = Modifier.shadow(elevation = 2.dp)) {
                         Row(
-                            modifier = Modifier
-                                .background(MaterialTheme.colors.background)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
+                                modifier = Modifier
+                                        .background(MaterialTheme.colors.background)
+                                        .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             iconScreens.forEach { (icon, screen) ->
                                 BottomIcon(icon, iconPadding, scrollIconSize, onClick = {
@@ -110,16 +110,16 @@ internal fun ScrollScreen(
                         }
                     }
                     Row(
-                        modifier = Modifier
-                            .offset(scrollOffset)
-                            .wrapContentWidth(unbounded = true, align = Alignment.Start)
+                            modifier = Modifier
+                                    .offset(scrollOffset)
+                                    .wrapContentWidth(unbounded = true, align = Alignment.Start)
                     ) {
                         screens.forEach {
                             Box(
-                                modifier = Modifier
-                                    .width(fullWidth)
-                                    .height(height),
-                                content = it
+                                    modifier = Modifier
+                                            .width(fullWidth)
+                                            .height(height),
+                                    content = it
                             )
                         }
                     }
@@ -132,20 +132,20 @@ internal fun ScrollScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BottomIcon(
-    icon: ImageVector,
-    padding: Dp,
-    iconsSize: Dp,
-    onClick: () -> Unit,
+        icon: ImageVector,
+        padding: Dp,
+        iconsSize: Dp,
+        onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         IconButton(
-            onClick = onClick,
-            modifier = Modifier.padding(padding)
+                onClick = onClick,
+                modifier = Modifier.padding(padding)
         ) {
             ShadowIcon(
-                imageVector = icon,
-                contentDescription = "selectIcon",
-                size = iconsSize
+                    imageVector = icon,
+                    contentDescription = "selectIcon",
+                    size = iconsSize
             )
         }
     }

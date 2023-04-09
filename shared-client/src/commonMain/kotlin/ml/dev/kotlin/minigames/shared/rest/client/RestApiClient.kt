@@ -26,8 +26,8 @@ class RestApiClient : Closeable {
 
     @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> post(
-        path: String,
-        block: HttpRequestBuilder.() -> Unit = {}
+            path: String,
+            block: HttpRequestBuilder.() -> Unit = {}
     ): Res<E, T>? = try {
         httpClient.post {
             url {
@@ -38,8 +38,8 @@ class RestApiClient : Closeable {
             }
             block()
         }
-            .body<T>()
-            .ok()
+                .body<T>()
+                .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
             val errorData = e.response.readBytes()
@@ -51,8 +51,8 @@ class RestApiClient : Closeable {
 
     @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> get(
-        path: String,
-        block: HttpRequestBuilder.() -> Unit = {}
+            path: String,
+            block: HttpRequestBuilder.() -> Unit = {}
     ): Res<E, T>? = try {
         httpClient.get {
             url {
@@ -63,8 +63,8 @@ class RestApiClient : Closeable {
             }
             block()
         }
-            .body<T>()
-            .ok()
+                .body<T>()
+                .ok()
     } catch (e: ClientRequestException) {
         tryOrNull {
             val errorData = e.response.readBytes()

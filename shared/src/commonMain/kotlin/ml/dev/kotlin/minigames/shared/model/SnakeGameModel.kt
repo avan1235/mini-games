@@ -22,9 +22,9 @@ data class SnakeDirection(val dir: V2)
 
 @Serializable
 data class Snake constructor(
-    val parts: List<SnakePart>,
-    val v: V2,
-    val size: Float,
+        val parts: List<SnakePart>,
+        val v: V2,
+        val size: Float,
 ) {
     val head: SnakePart? get() = parts.firstOrNull()
     val radius: Float get() = size / 2
@@ -41,35 +41,35 @@ data class Snake constructor(
 
     companion object {
         fun create(
-            parts: Int = SNAKE_INIT_PARTS,
-            size: Float = SNAKE_INIT_SIZE,
-            at: V2 = V2.random(-DROP_SNAKE_RADIUS..DROP_SNAKE_RADIUS, -DROP_SNAKE_RADIUS..DROP_SNAKE_RADIUS),
+                parts: Int = SNAKE_INIT_PARTS,
+                size: Float = SNAKE_INIT_SIZE,
+                at: V2 = V2.random(-DROP_SNAKE_RADIUS..DROP_SNAKE_RADIUS, -DROP_SNAKE_RADIUS..DROP_SNAKE_RADIUS),
         ): Snake = Snake(
-            parts = List(parts) { SnakePart(at + V2(0f, -size * SIZE_PART * it)) },
-            v = V2.ZERO_ONE.speed,
-            size = size,
+                parts = List(parts) { SnakePart(at + V2(0f, -size * SIZE_PART * it)) },
+                v = V2.ZERO_ONE.speed,
+                size = size,
         )
     }
 }
 
 @Serializable
 data class SnakeGameSnapshot(
-    val snakes: Map<Username, Snake>,
-    val items: Set<V2>,
-    override val points: Map<Username, Int>,
-    override val users: Map<Username, UserData>,
+        val snakes: Map<Username, Snake>,
+        val items: Set<V2>,
+        override val points: Map<Username, Int>,
+        override val users: Map<Username, UserData>,
 ) : GameSnapshot
 
 @Serializable
 data class SnakeGameUpdate(
-    private val dir: SnakeDirection,
+        private val dir: SnakeDirection,
 ) : GameUpdate {
 
     override fun update(forUser: Username, gameState: GameState, currMillis: Long): GameState = when (gameState) {
         !is SnakeGameState -> gameState
         else -> {
             val snakeUpdate = gameState.snakes[forUser]?.takeAlive()
-                ?.setDirection(dir)?.let { forUser to SnakeState.Alive(it) }
+                    ?.setDirection(dir)?.let { forUser to SnakeState.Alive(it) }
             val updatedSnakes = snakeUpdate?.let { gameState.snakes + it } ?: gameState.snakes
             gameState.copy(snakes = updatedSnakes)
         }
@@ -77,27 +77,27 @@ data class SnakeGameUpdate(
 }
 
 data class SnakeGameState(
-    val snakes: Map<Username, SnakeState>,
-    val items: BlockV2Set,
-    override val points: Map<Username, Int>,
-    override val users: Map<Username, UserData>,
-    val prevMillis: Long?,
+        val snakes: Map<Username, SnakeState>,
+        val items: BlockV2Set,
+        override val points: Map<Username, Int>,
+        override val users: Map<Username, UserData>,
+        val prevMillis: Long?,
 ) : GameState() {
 
     override fun updateWith(users: Map<Username, UserData>, points: Map<Username, Int>): SnakeGameState =
-        copy(users = users, points = points)
+            copy(users = users, points = points)
 
     override fun snapshot(forUser: Username): SnakeGameSnapshot {
         val items = snakes[forUser]?.takeAlive()?.head
-            ?.let { SnakePartRange(it.pos, SNAKE_SNAPSHOT_SIZE) }
-            ?.let { items[it.rangeX, it.rangeY] }
-            ?: items.values
+                ?.let { SnakePartRange(it.pos, SNAKE_SNAPSHOT_SIZE) }
+                ?.let { items[it.rangeX, it.rangeY] }
+                ?: items.values
         val snakes = buildMap { snakes.forEach { (username, state) -> state.takeAlive()?.let { put(username, it) } } }
         return SnakeGameSnapshot(snakes, items, points, users)
     }
 
     override fun snapshot(): CumulativeGameSnapshot =
-        CumulativeGameSnapshot.DifferentForEachUser(users.keys.associateWith { snapshot(it) })
+            CumulativeGameSnapshot.DifferentForEachUser(users.keys.associateWith { snapshot(it) })
 
     override fun addUser(username: Username, role: UserRole): GameState {
         val superGameState = super.addUser(username, role)
@@ -115,10 +115,10 @@ data class SnakeGameState(
     }
 
     override fun update(currMillis: Long): SnakeGameState = move(currMillis)
-        .dropItems()
-        .collectItems()
-        .updateSnakesSizes()
-        .collideSnakes(currMillis)
+            .dropItems()
+            .collectItems()
+            .updateSnakesSizes()
+            .collideSnakes(currMillis)
 
     private fun move(currMillis: Long): SnakeGameState {
         val afterMillis = prevMillis?.let { currMillis - it } ?: return copy(prevMillis = currMillis)
@@ -201,11 +201,11 @@ data class SnakeGameState(
 
     companion object {
         fun empty(): SnakeGameState = SnakeGameState(
-            snakes = emptyMap(),
-            points = emptyMap(),
-            users = emptyMap(),
-            items = BlockV2Set(3 * DROP_ITEMS_RADIUS),
-            prevMillis = null
+                snakes = emptyMap(),
+                points = emptyMap(),
+                users = emptyMap(),
+                items = BlockV2Set(3 * DROP_ITEMS_RADIUS),
+                prevMillis = null
         )
     }
 }

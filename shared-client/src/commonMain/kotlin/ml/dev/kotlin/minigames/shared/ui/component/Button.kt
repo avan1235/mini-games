@@ -19,38 +19,38 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 internal fun CircleButton(
-    icon: ImageVector? = null,
-    contentDescription: String? = null,
-    text: String? = null,
-    color: Color = MaterialTheme.colors.primaryVariant,
-    onClick: () -> Unit
+        icon: ImageVector? = null,
+        contentDescription: String? = null,
+        text: String? = null,
+        color: Color = MaterialTheme.colors.primaryVariant,
+        onClick: () -> Unit
 ) {
     Surface(
-        shape = CircleShape,
-        modifier = Modifier
-            .padding(16.dp)
-            .size(56.dp),
-        elevation = 8.dp,
-        color = color
+            shape = CircleShape,
+            modifier = Modifier
+                    .padding(16.dp)
+                    .size(56.dp),
+            elevation = 8.dp,
+            color = color
     ) {
         Box(
-            modifier = Modifier
-                .size(52.dp)
-                .clickable(onClick = onClick),
-            contentAlignment = Alignment.Center
+                modifier = Modifier
+                        .size(52.dp)
+                        .clickable(onClick = onClick),
+                contentAlignment = Alignment.Center
         ) {
             if (icon != null) {
                 Icon(
-                    imageVector = icon,
-                    contentDescription = contentDescription,
-                    tint = MaterialTheme.colors.onPrimary,
+                        imageVector = icon,
+                        contentDescription = contentDescription,
+                        tint = MaterialTheme.colors.onPrimary,
                 )
             }
             if (text != null) {
                 Text(
-                    text = text,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold
+                        text = text,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
                 )
             }
         }

@@ -10,11 +10,11 @@ import javax.persistence.Table
 @Entity
 @Table(name = "users")
 data class UserEntity(
-    val email: String,
-    val username: String,
-    val passwordHash: String,
-    val confirmed: Boolean,
-    val confirmHash: String = UUID.randomUUID().toString().sha256(),
-    val createdAt: ZonedDateTime = ZonedDateTime.now(),
-    @Id val id: UUID = UUID.randomUUID(),
+        val email: String,
+        val username: String,
+        val passwordHash: String,
+        val confirmed: Boolean,
+        val confirmHash: String = UUID.randomUUID().toString().sha256(),
+        val createdAt: ZonedDateTime = ZonedDateTime.now(),
+        @Id val id: UUID = UUID.randomUUID(),
 )

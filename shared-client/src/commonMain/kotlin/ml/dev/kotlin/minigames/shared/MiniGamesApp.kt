@@ -19,9 +19,9 @@ internal fun MiniGamesApp(context: ViewModelContext) {
 
     Theme {
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.surface)
+                modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colors.surface)
         ) {
             ToastScreen { MiniGamesRoutes(context) }
         }

@@ -16,28 +16,28 @@ val ApproveColor: Color = Color(0xFF8AB4F8)
 @Composable
 internal fun Theme(content: @Composable () -> Unit) {
     val themeColors = darkColors(
-        onPrimary = Color(0xFFFFFFFF),
-        primary = Color(0xFFCDCDCD),
-        primaryVariant = Color(0xFF222222),
+            onPrimary = Color(0xFFFFFFFF),
+            primary = Color(0xFFCDCDCD),
+            primaryVariant = Color(0xFF222222),
 
-        onSecondary = Color(0xFFFFFFFF),
-        secondary = Color(0xFFBDBDBD),
-        secondaryVariant = Color(0xFF111111),
+            onSecondary = Color(0xFFFFFFFF),
+            secondary = Color(0xFFBDBDBD),
+            secondaryVariant = Color(0xFF111111),
 
-        onBackground = Color(0xFFFFFFFF),
-        background = Color(0xFF212121),
+            onBackground = Color(0xFFFFFFFF),
+            background = Color(0xFF212121),
 
-        onSurface = Color(0xFFFFFFFF),
-        surface = Color(0xFF353535),
+            onSurface = Color(0xFFFFFFFF),
+            surface = Color(0xFF353535),
 
-        onError = Color(0xFF000000),
-        error = Color(0xFFFF3C3C),
+            onError = Color(0xFF000000),
+            error = Color(0xFFFF3C3C),
     )
 
     MaterialTheme(
-        colors = themeColors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
+            colors = themeColors,
+            typography = Typography,
+            shapes = Shapes,
+            content = content
     )
 }

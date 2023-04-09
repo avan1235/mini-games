@@ -17,11 +17,11 @@ fun main() {
         txn { createMissingTablesAndColumns(UserEntityTable) }
 
         embeddedServer(
-            factory = Netty,
-            host = envVar("HOST"),
-            port = envVar("PORT"),
-            watchPaths = emptyList(),
-            module = Application::gameServiceModule
+                factory = Netty,
+                host = envVar("HOST"),
+                port = envVar("PORT"),
+                watchPaths = emptyList(),
+                module = Application::gameServiceModule
         ).start(wait = true)
     } catch (e: Exception) {
         eprintln(e)

@@ -64,8 +64,8 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
 
 @OptIn(ExperimentalSettingsApi::class)
 private suspend fun storeUserLogin(
-    context: ViewModelContext,
-    userLogin: UserLogin,
+        context: ViewModelContext,
+        userLogin: UserLogin,
 ): Unit = getUserSettings(context).run {
     putString(USERNAME_KEY, userLogin.username)
     putString(PASSWORD_KEY, userLogin.password)
@@ -73,9 +73,9 @@ private suspend fun storeUserLogin(
 
 @OptIn(ExperimentalSettingsApi::class)
 private suspend fun loadUserLogin(
-    context: ViewModelContext,
-    username: (String) -> Unit,
-    password: (String) -> Unit,
+        context: ViewModelContext,
+        username: (String) -> Unit,
+        password: (String) -> Unit,
 ): Unit = getUserSettings(context).run {
     getStringOrNull(USERNAME_KEY)?.let(username)
     getStringOrNull(PASSWORD_KEY)?.let(password)

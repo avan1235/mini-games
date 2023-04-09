@@ -15,10 +15,10 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @Composable
 internal fun LoadingScreen(
-    loadingText: String? = null,
-    loadingInitState: Boolean = false,
-    loadingAction: suspend CoroutineScope.(loadingState: MutableState<Boolean>) -> Unit = {},
-    loadedScreen: @Composable (loadingState: MutableState<Boolean>) -> Unit,
+        loadingText: String? = null,
+        loadingInitState: Boolean = false,
+        loadingAction: suspend CoroutineScope.(loadingState: MutableState<Boolean>) -> Unit = {},
+        loadedScreen: @Composable (loadingState: MutableState<Boolean>) -> Unit,
 ) {
     val loadingState = remember { mutableStateOf(loadingInitState) }
     when (loadingState.value) {
@@ -29,26 +29,26 @@ internal fun LoadingScreen(
 
 @Composable
 internal fun LoadingScreen(
-    text: String? = null,
-    action: suspend CoroutineScope.() -> Unit = {}
+        text: String? = null,
+        action: suspend CoroutineScope.() -> Unit = {}
 ) {
     LaunchedEffect(Unit) {
         delay(MIN_LOADING_ANIMATION_TIME_MILLIS)
         action()
     }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.surface),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.surface),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         DotsTyping()
         Spacer(modifier = Modifier.height(16.dp))
         text?.let {
             Text(
-                text = text,
-                style = Typography.subtitle1,
+                    text = text,
+                    style = Typography.subtitle1,
             )
         }
     }

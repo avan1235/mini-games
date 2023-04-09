@@ -71,14 +71,14 @@ object UserService {
         if (!REQUIRE_EMAIL_VERIFY) return
         val confirmUrl = createConfirmUrl(userEntity)
         EmailService.send(
-            userEntity.email,
-            subject = "[Mini Games] Confirm your email address",
-            text = """If you have registered to Mini Games, please confirm your email address by using <a href="$confirmUrl">this link</a>"""
+                userEntity.email,
+                subject = "[Mini Games] Confirm your email address",
+                text = """If you have registered to Mini Games, please confirm your email address by using <a href="$confirmUrl">this link</a>"""
         )
     }
 
     private fun createConfirmUrl(userEntity: UserEntity): String =
-        "$SCHEME_EMAIL_VERIFY://$HOST_EMAIL_VERIFY/${USER_CONFIRM_GET(userEntity.confirmHash)}"
+            "$SCHEME_EMAIL_VERIFY://$HOST_EMAIL_VERIFY/${USER_CONFIRM_GET(userEntity.confirmHash)}"
 
     private fun String.bcrypt(): String = BCrypt.withDefaults().hashToString(BCRYPT_COST, toCharArray())
 

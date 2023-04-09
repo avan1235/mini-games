@@ -11,10 +11,10 @@ object EmailService {
 
     private val mailer by lazy {
         mailerBuilder(
-            host = envVar("EMAIL_HOST"),
-            port = envVar("EMAIL_PORT"),
-            username = envVar("EMAIL_USERNAME"),
-            password = envVar("EMAIL_PASSWORD"),
+                host = envVar("EMAIL_HOST"),
+                port = envVar("EMAIL_PORT"),
+                username = envVar("EMAIL_USERNAME"),
+                password = envVar("EMAIL_PASSWORD"),
         )
     }
 

@@ -32,4 +32,4 @@ internal class ChatViewModel(context: ViewModelContext, val username: Username) 
 }
 
 private val USER_MESSAGES_COMPARATOR: Comparator<UserMessage> =
-    Comparator { a, b -> a.timestamp.compareTo(b.timestamp) }
+        Comparator { a, b -> a.timestamp.compareTo(b.timestamp) }

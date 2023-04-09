@@ -166,8 +166,8 @@ android {
     sourceSets {
         named("main") {
             res.srcDirs(
-                "src/androidMain/res",
-                "src/commonMain/res",
+                    "src/androidMain/res",
+                    "src/commonMain/res",
             )
         }
     }

@@ -20,26 +20,26 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
 @Composable
 internal fun ToastOverlay(
-    message: MutableState<ToastMessage?>,
+        message: MutableState<ToastMessage?>,
 ) {
     val toast = message.value ?: return
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
     ) {
         var visible by remember(toast) { mutableStateOf(false) }
         AnimatedVisibility(visible, enter = fadeIn(), exit = fadeOut()) {
             Box(
-                modifier = Modifier
-                    .padding(96.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
-                    .padding(16.dp)
+                    modifier = Modifier
+                            .padding(96.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
+                            .padding(16.dp)
             ) {
                 Text(
-                    toast.message,
-                    color = MaterialTheme.colors.background,
-                    style = Typography.caption
+                        toast.message,
+                        color = MaterialTheme.colors.background,
+                        style = Typography.caption
                 )
             }
         }

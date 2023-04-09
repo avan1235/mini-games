@@ -11,18 +11,18 @@ import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
 internal fun Positioned(
-    pos: V2,
-    size: DpSize,
-    mapSize: DpSize,
-    content: @Composable BoxScope.() -> Unit
+        pos: V2,
+        size: DpSize,
+        mapSize: DpSize,
+        content: @Composable BoxScope.() -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .offset(
-                x = (mapSize.width - size.width) * 0.5f * (1f + pos.x),
-                y = (mapSize.height - size.height) * 0.5f * (1f - pos.y),
-            ),
-        content = content
+            modifier = Modifier
+                    .fillMaxSize()
+                    .offset(
+                            x = (mapSize.width - size.width) * 0.5f * (1f + pos.x),
+                            y = (mapSize.height - size.height) * 0.5f * (1f - pos.y),
+                    ),
+            content = content
     )
 }

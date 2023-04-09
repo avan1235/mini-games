@@ -18,25 +18,25 @@ import ml.dev.kotlin.minigames.shared.viewmodel.SetGameViewModel
 
 @Composable
 internal fun SetGamePlay(
-    navigator: Navigator<ScreenRoute>,
-    vm: SetGameViewModel,
-    gameState: SetGameSnapshot,
-    clientMessages: MutableStateFlow<GameClientMessage?>
+        navigator: Navigator<ScreenRoute>,
+        vm: SetGameViewModel,
+        gameState: SetGameSnapshot,
+        clientMessages: MutableStateFlow<GameClientMessage?>
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Top
     ) {
         val scope = rememberCoroutineScope()
         GameTopBar(
-            points = vm.points(gameState),
-            role = vm.userRole(gameState),
-            onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
+                points = vm.points(gameState),
+                role = vm.userRole(gameState),
+                onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
         )
         ProportionKeeper {
             SetBoard(
-                setGame = gameState,
-                onProposal = { scope.launch { vm.emitSetProposal(it, clientMessages) } }
+                    setGame = gameState,
+                    onProposal = { scope.launch { vm.emitSetProposal(it, clientMessages) } }
             )
         }
     }

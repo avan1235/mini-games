@@ -14,12 +14,12 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
 internal class BirdGameViewModel(
-    context: ViewModelContext,
-    gameAccessData: GameAccessData,
+        context: ViewModelContext,
+        gameAccessData: GameAccessData,
 ) : GameViewModel<BirdGameSnapshot>(context, gameAccessData) {
 
     override val client: GameClient =
-        ctx.keeper.getOrCreate(Game.Bird) { GameClient(BIRD_GAME_WEBSOCKET) }
+            ctx.keeper.getOrCreate(Game.Bird) { GameClient(BIRD_GAME_WEBSOCKET) }
 
     suspend fun emitFly(clientMessages: MutableStateFlow<GameClientMessage?>) {
         val message = GameStateUpdateClientMessage(BirdGameUpdate, timestamp = now())

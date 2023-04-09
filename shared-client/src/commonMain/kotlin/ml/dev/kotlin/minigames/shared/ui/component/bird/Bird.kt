@@ -26,18 +26,18 @@ import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
 internal fun Bird(
-    pos: V2,
-    direction: BirdNozzleDirection,
-    mapSize: DpSize,
-    isAlive: Boolean,
-    theme: BirdTheme,
-    birdSize: Dp = 32.dp
+        pos: V2,
+        direction: BirdNozzleDirection,
+        mapSize: DpSize,
+        isAlive: Boolean,
+        theme: BirdTheme,
+        birdSize: Dp = 32.dp
 ) {
     Positioned(pos, DpSize(birdSize, birdSize), mapSize) {
         Box(
-            modifier = Modifier
-                .size(birdSize)
-                .background(theme.bodyColor, theme.bodyShape)
+                modifier = Modifier
+                        .size(birdSize)
+                        .background(theme.bodyColor, theme.bodyShape)
         ) {
             BirdWing(birdSize, theme.wingColor, isAlive, fullFill)
             BirdNozzle(birdSize, theme.nozzleColor, direction, isAlive, fullFill)
@@ -52,24 +52,24 @@ enum class BirdNozzleDirection(val m: Float) {
 
     companion object {
         fun fromVelocity(v: V2): BirdNozzleDirection =
-            if (v.x > 0f) Right else Left
+                if (v.x > 0f) Right else Left
     }
 }
 
 @Composable
 private fun BirdNozzle(
-    birdSize: Dp,
-    color: Color,
-    direction: BirdNozzleDirection,
-    isAlive: Boolean,
-    fill: DrawScope.(color: Color) -> Unit,
+        birdSize: Dp,
+        color: Color,
+        direction: BirdNozzleDirection,
+        isAlive: Boolean,
+        fill: DrawScope.(color: Color) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val nozzleSpace = AnimateInfiniteRepeatableReverse(
-        animation = tween(
-            durationMillis = BIRD_NOZZLE_DURATION_MILLIS,
-            easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
-        )
+            animation = tween(
+                    durationMillis = BIRD_NOZZLE_DURATION_MILLIS,
+                    easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
+            )
     )
     if (!isAlive) {
         scope.launch { nozzleSpace.snapTo(1f) }
@@ -78,26 +78,26 @@ private fun BirdNozzle(
         val path = Path().apply {
             moveTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.25f)
             lineTo(
-                size.width * (0.5f + direction.m * 1f),
-                size.height * 0.25f + size.height * 0.23f * nozzleSpace.value
+                    size.width * (0.5f + direction.m * 1f),
+                    size.height * 0.25f + size.height * 0.23f * nozzleSpace.value
             )
             lineTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.5f)
             lineTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.25f)
             moveTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.5f)
             lineTo(
-                size.width * (0.5f + direction.m * 0.7f),
-                size.height * 0.75f - size.height * 0.23f * nozzleSpace.value
+                    size.width * (0.5f + direction.m * 0.7f),
+                    size.height * 0.75f - size.height * 0.23f * nozzleSpace.value
             )
             lineTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.75f)
             lineTo(size.width * (0.5f + direction.m * 0.5f), size.height * 0.5f)
         }
         clipPath(
-            path = path,
-            clipOp = ClipOp.Intersect
+                path = path,
+                clipOp = ClipOp.Intersect
         ) {
             drawPath(
-                path = path,
-                color = color,
+                    path = path,
+                    color = color,
             )
             fill(color)
         }
@@ -108,17 +108,17 @@ private const val BIRD_WING_DURATION_MILLIS: Int = 5 * 5 * 2 * 5 * 2
 
 @Composable
 private fun BirdWing(
-    birdSize: Dp,
-    color: Color,
-    isAlive: Boolean,
-    fill: DrawScope.(color: Color) -> Unit,
+        birdSize: Dp,
+        color: Color,
+        isAlive: Boolean,
+        fill: DrawScope.(color: Color) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val wingHeight = AnimateInfiniteRepeatableReverse(
-        animation = tween(
-            durationMillis = BIRD_WING_DURATION_MILLIS,
-            easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
-        )
+            animation = tween(
+                    durationMillis = BIRD_WING_DURATION_MILLIS,
+                    easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
+            )
     )
     if (!isAlive) {
         scope.launch { wingHeight.snapTo(1f) }
@@ -131,12 +131,12 @@ private fun BirdWing(
             lineTo(size.width * 0.25f, size.height * 0.5f)
         }
         clipPath(
-            path = path,
-            clipOp = ClipOp.Intersect
+                path = path,
+                clipOp = ClipOp.Intersect
         ) {
             drawPath(
-                path = path,
-                color = color,
+                    path = path,
+                    color = color,
             )
             fill(color)
         }
@@ -145,25 +145,25 @@ private fun BirdWing(
 
 private val fullFill: DrawScope.(Color) -> Unit = { color ->
     drawRect(
-        topLeft = Offset.Zero,
-        color = color,
-        size = Size(size.width, size.height)
+            topLeft = Offset.Zero,
+            color = color,
+            size = Size(size.width, size.height)
     )
 }
 
 @Composable
 private fun AnimateInfiniteRepeatableReverse(
-    animation: DurationBasedAnimationSpec<Float>,
-    targetValue: Float = 1f,
+        animation: DurationBasedAnimationSpec<Float>,
+        targetValue: Float = 1f,
 ): Animatable<Float, AnimationVector1D> {
     val value = remember { Animatable(0f) }
     LaunchedEffect(value) {
         value.animateTo(
-            targetValue = targetValue,
-            animationSpec = infiniteRepeatable(
-                animation = animation,
-                repeatMode = RepeatMode.Reverse
-            )
+                targetValue = targetValue,
+                animationSpec = infiniteRepeatable(
+                        animation = animation,
+                        repeatMode = RepeatMode.Reverse
+                )
         )
     }
     return value
