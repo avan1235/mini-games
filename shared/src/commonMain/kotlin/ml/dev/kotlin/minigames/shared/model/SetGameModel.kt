@@ -67,9 +67,18 @@ data class SetGameUpdate(
         gameState.table.cardsById.isValidSetProposal(proposal.cardsIds) -> {
             val pointsUpdate = forUser to (gameState.points[forUser] ?: 0) + 1
             val (tableUpdate, deckUpdate) = updateDeckTable(proposal, gameState.table, gameState.deck)
-            gameState.copy(table = tableUpdate, deck = deckUpdate, points = gameState.points + pointsUpdate)
+            when (gameState.table) {
+                tableUpdate -> SetGameState.random(
+                    points = gameState.points + pointsUpdate,
+                    users = gameState.users,
+                )
+                else -> gameState.copy(
+                    table = tableUpdate,
+                    deck = deckUpdate,
+                    points = gameState.points + pointsUpdate
+                )
+            }
         }
-
         else -> gameState
     }
 }
@@ -91,11 +100,14 @@ data class SetGameState(
         CumulativeGameSnapshot.SameForAllUsers(SetGameSnapshot(table, points, users))
 
     companion object {
-        fun random(): SetGameState {
+        fun random(
+            points: Map<Username, Int> = emptyMap(),
+            users: Map<Username, UserData> = emptyMap(),
+        ): SetGameState {
             val cards = SetCard.all().shuffled()
             val table = TableCards(cards.take(TABLE_CARDS).withIndex().associate { it.index to it.value })
             val deck = DeckCards(cards.drop(TABLE_CARDS).toHashSet())
-            return SetGameState(table, deck, points = emptyMap(), users = emptyMap())
+            return SetGameState(table, deck, points, users)
         }
     }
 }
