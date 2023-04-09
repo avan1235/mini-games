@@ -50,18 +50,25 @@ import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
 internal fun Chat(
     vm: ChatViewModel,
     clientMessages: MutableStateFlow<GameClientMessage?>,
-    size: Dp = 56.dp,
+    size: Dp = 64.dp,
+    bottomPadding: Dp = 16.dp
 ) {
     val scope = rememberCoroutineScope()
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val messagesHeight = maxHeight - size
+        val messagesHeight = maxHeight - size - bottomPadding
         Column(
             modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom
         ) {
             Messages(vm.messages, vm.username, messagesHeight)
             MessageInput(vm.userMessageTextState, size = size, onClick = { scope.launch { vm.send(clientMessages) } })
+            BottomPadding(bottomPadding)
         }
     }
+}
+
+@Composable
+private fun BottomPadding(padding: Dp) {
+    Box(modifier = Modifier.fillMaxWidth().height(padding).background(MaterialTheme.colors.background))
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

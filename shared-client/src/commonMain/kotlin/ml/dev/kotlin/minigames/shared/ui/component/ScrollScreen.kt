@@ -35,8 +35,8 @@ internal fun ScrollScreen(
     onUp: () -> Unit,
     onDown: () -> Unit,
     threshold: Float = 0.3f,
-    scrollIconSize: Dp = 24.dp,
-    iconPadding: Dp = 12.dp,
+    scrollIconSize: Dp = 32.dp,
+    iconPadding: Dp = 16.dp,
 ): Unit = with(LocalDensity.current) {
     BoxWithConstraints {
         val fullHeight = maxHeight

@@ -31,7 +31,7 @@ internal fun ToastOverlay(
         AnimatedVisibility(visible, enter = fadeIn(), exit = fadeOut()) {
             Box(
                 modifier = Modifier
-                    .padding(24.dp)
+                    .padding(96.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colors.onBackground.copy(alpha = 0.9f))
                     .padding(16.dp)

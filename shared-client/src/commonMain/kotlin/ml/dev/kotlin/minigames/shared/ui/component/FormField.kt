@@ -25,7 +25,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun FormField(
     text: String,
@@ -53,10 +52,9 @@ internal fun FormField(
         shape = MaterialTheme.shapes.medium,
         singleLine = true,
         visualTransformation = if (password && !showPassword.value) PasswordVisualTransformation() else VisualTransformation.None,
-        keyboardOptions = (
-                if (password) KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
-                else KeyboardOptions.Default
-                ).copy(imeAction = buttonType.imeAction),
+        keyboardOptions = KeyboardOptions.Default.run {
+            if (password) copy(keyboardType = KeyboardType.Password) else this
+        }.copy(imeAction = buttonType.imeAction),
         keyboardActions = KeyboardActions(
             onNext = on(buttonType == FormFieldButtonType.Next) { focusManager.moveFocus(FocusDirection.Down) },
             onDone = on(buttonType == FormFieldButtonType.Done) { focusManager.clearFocus() },
