@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ml.dev.kotlin.minigames.shared.model.UserRole
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
@@ -32,12 +33,13 @@ internal fun GameTopBar(
             AnimatedContent(targetState = points) { targetPoints ->
                 Text(
                     text = "$targetPoints point${if (targetPoints == 1) "" else "s"}",
-                    style = Typography.h5
+                    style = Typography.h5.copy(fontWeight = FontWeight.Bold)
                 )
             }
             Text(
                 text = "Role: $role",
-                style = Typography.subtitle2
+                style = Typography.subtitle2,
+                modifier = Modifier.padding(top = 4.dp),
             )
         }
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
