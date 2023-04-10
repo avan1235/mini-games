@@ -26,9 +26,9 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
     val usernameState: MutableState<String> = mutableStateOf("")
     val passwordState: MutableState<String> = mutableStateOf("")
 
+    val serverNameErrorState: MutableState<Boolean> = mutableStateOf(false)
     val usernameErrorState: MutableState<Boolean> = mutableStateOf(false)
     val passwordErrorState: MutableState<Boolean> = mutableStateOf(false)
-    val serverNameErrorState: MutableState<Boolean> = mutableStateOf(false)
 
     val gameState: MutableState<Game> = mutableStateOf(Game.values().first())
 
@@ -38,11 +38,16 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
     var password: String by passwordState
     var rememberUserLogin: Boolean by mutableStateOf(true)
 
-    val userLogin: UserLogin get() = UserLogin(username, password)
+    private val userLogin: UserLogin get() = UserLogin(username, password)
+
+    private val storableServerName: String?
+        get() = serverName.takeIf { shouldStoreServerName(it) }
 
     init {
-        shuffleGameName()
-        scope.launch { loadUserLogin(context, { username = it }, { password = it }) }
+        scope.launch {
+            loadLoginScreenData()
+            if (storableServerName == null) shuffleGameName()
+        }
     }
 
     fun navigateGame(navigator: Navigator<ScreenRoute>): Unit = when (gameState.value) {
@@ -56,30 +61,34 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
     }
 
     suspend fun loginUser(): Res<UserError, JwtToken>? {
-        val userData = if (rememberUserLogin) userLogin else UserLogin("", "")
-        storeUserLogin(ctx, userData)
+        storeLoginScreenData()
         return client.loginUser(userLogin)
+    }
+
+    @OptIn(ExperimentalSettingsApi::class)
+    private suspend fun loadLoginScreenData(): Unit = getUserSettings(ctx).run {
+        getStringOrNull(USERNAME_KEY)?.let { username = it }
+        getStringOrNull(PASSWORD_KEY)?.let { password = it }
+        getStringOrNull(SERVER_NAME_KEY)?.let { serverName = it }
+        getBooleanOrNull(REMEMBER_KEY)?.let { rememberUserLogin = it }
+    }
+
+    @OptIn(ExperimentalSettingsApi::class)
+    private suspend fun storeLoginScreenData(): Unit = getUserSettings(ctx).run {
+        putString(USERNAME_KEY, if (rememberUserLogin) username else "")
+        putString(PASSWORD_KEY, if (rememberUserLogin) password else "")
+        putString(SERVER_NAME_KEY, storableServerName ?: "")
+        putBoolean(REMEMBER_KEY, rememberUserLogin)
     }
 }
 
-@OptIn(ExperimentalSettingsApi::class)
-private suspend fun storeUserLogin(
-        context: ViewModelContext,
-        userLogin: UserLogin,
-): Unit = getUserSettings(context).run {
-    putString(USERNAME_KEY, userLogin.username)
-    putString(PASSWORD_KEY, userLogin.password)
+private fun shouldStoreServerName(name: String): Boolean {
+    if (name.isBlank()) return false
+
+    return Game.values().all { !name.startsWith("${it.name}-") }
 }
 
-@OptIn(ExperimentalSettingsApi::class)
-private suspend fun loadUserLogin(
-        context: ViewModelContext,
-        username: (String) -> Unit,
-        password: (String) -> Unit,
-): Unit = getUserSettings(context).run {
-    getStringOrNull(USERNAME_KEY)?.let(username)
-    getStringOrNull(PASSWORD_KEY)?.let(password)
-}
-
+private const val SERVER_NAME_KEY: String = "serverName"
+private const val REMEMBER_KEY: String = "remember"
 private const val USERNAME_KEY: String = "username"
 private const val PASSWORD_KEY: String = "password"
