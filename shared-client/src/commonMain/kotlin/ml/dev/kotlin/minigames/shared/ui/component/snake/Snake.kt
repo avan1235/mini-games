@@ -24,10 +24,10 @@ import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
 internal fun Snake(
-        username: Username,
-        snake: Snake,
-        head: V2,
-        mapSize: DpSize,
+    username: Username,
+    snake: Snake,
+    head: V2,
+    mapSize: DpSize,
 ): Unit = with(snake) {
     parts.asReversed().forEachIndexed { idx, part ->
         val degrees = when {
@@ -43,13 +43,13 @@ private val CACHED_COLORS: ComputedMap<Username, Color> = ComputedMap { randomCo
 
 @Composable
 private fun SnakePart(
-        part: SnakePart,
-        head: V2,
-        mapSize: DpSize,
-        size: Dp,
-        degrees: Float?,
-        color: Color,
-        lightScale: Float = 0.5f,
+    part: SnakePart,
+    head: V2,
+    mapSize: DpSize,
+    size: Dp,
+    degrees: Float?,
+    color: Color,
+    lightScale: Float = 0.5f,
 ) {
     val diff = part.pos - head
     val x = (mapSize.width - size) / 2 + diff.x.dp
@@ -57,19 +57,19 @@ private fun SnakePart(
     val radius = size / 2
     if (x !in -radius..mapSize.width + radius || y !in -radius..mapSize.height + radius) return
     Box(
-            modifier = Modifier
-                    .offset(x, y)
-                    .background(
-                            brush = Brush.radialGradient(
-                                    colors = listOf(color, color.lightScaled(lightScale)),
-                                    tileMode = TileMode.Mirror
-                            ),
-                            shape = CircleShape
-                    )
-                    .size(size).run {
-                        if (degrees != null) rotate(degrees) else this
-                    },
-            contentAlignment = Alignment.BottomCenter
+        modifier = Modifier
+            .offset(x, y)
+            .background(
+                brush = Brush.radialGradient(
+                    colors = listOf(color, color.lightScaled(lightScale)),
+                    tileMode = TileMode.Mirror
+                ),
+                shape = CircleShape
+            )
+            .size(size).run {
+                if (degrees != null) rotate(degrees) else this
+            },
+        contentAlignment = Alignment.BottomCenter
     ) {
         if (degrees != null) Row {
             SnakeEye(size)
@@ -82,17 +82,17 @@ private fun SnakePart(
 @Composable
 private fun SnakeEye(size: Dp) {
     Box(
-            modifier = Modifier
-                    .size(size / 3)
-                    .clip(CircleShape)
-                    .background(Color.White),
-            contentAlignment = Alignment.BottomCenter
+        modifier = Modifier
+            .size(size / 3)
+            .clip(CircleShape)
+            .background(Color.White),
+        contentAlignment = Alignment.BottomCenter
     ) {
         Box(
-                modifier = Modifier
-                        .size(size / 5)
-                        .clip(CircleShape)
-                        .background(Color.Black)
+            modifier = Modifier
+                .size(size / 5)
+                .clip(CircleShape)
+                .background(Color.Black)
         )
     }
 }

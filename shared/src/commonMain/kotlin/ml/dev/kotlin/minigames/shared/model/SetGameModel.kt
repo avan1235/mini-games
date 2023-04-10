@@ -20,16 +20,16 @@ enum class CardCount { One, Two, Three }
 
 @Serializable
 data class SetCard(
-        val count: CardCount,
-        val shape: CardShape,
-        val color: CardColor,
-        val fill: CardFill,
+    val count: CardCount,
+    val shape: CardShape,
+    val color: CardColor,
+    val fill: CardFill,
 ) {
     companion object {
         fun all(): Set<SetCard> = HashSet<SetCard>().apply {
             for (cnt in CardCount.values()) for (shape in CardShape.values())
                 for (col in CardColor.values()) for (fill in CardFill.values()) add(
-                        SetCard(cnt, shape, col, fill)
+                    SetCard(cnt, shape, col, fill)
                 )
         }
     }
@@ -37,29 +37,29 @@ data class SetCard(
 
 @Serializable
 data class TableCards(
-        val cardsById: Map<Int, SetCard>
+    val cardsById: Map<Int, SetCard>
 )
 
 @Serializable
 data class DeckCards(
-        val cards: Set<SetCard>,
+    val cards: Set<SetCard>,
 )
 
 @Serializable
 data class SetProposal(
-        val cardsIds: Set<Int>,
+    val cardsIds: Set<Int>,
 )
 
 @Serializable
 data class SetGameSnapshot(
-        val table: TableCards,
-        override val points: Map<Username, Int>,
-        override val users: Map<Username, UserData>,
+    val table: TableCards,
+    override val points: Map<Username, Int>,
+    override val users: Map<Username, UserData>,
 ) : GameSnapshot
 
 @Serializable
 data class SetGameUpdate(
-        private val proposal: SetProposal,
+    private val proposal: SetProposal,
 ) : GameUpdate {
 
     override fun update(forUser: Username, gameState: GameState, currMillis: Long): GameState = when {
@@ -69,14 +69,14 @@ data class SetGameUpdate(
             val (tableUpdate, deckUpdate) = updateDeckTable(proposal, gameState.table, gameState.deck)
             when (gameState.table) {
                 tableUpdate -> SetGameState.random(
-                        points = gameState.points + pointsUpdate,
-                        users = gameState.users,
+                    points = gameState.points + pointsUpdate,
+                    users = gameState.users,
                 )
 
                 else -> gameState.copy(
-                        table = tableUpdate,
-                        deck = deckUpdate,
-                        points = gameState.points + pointsUpdate
+                    table = tableUpdate,
+                    deck = deckUpdate,
+                    points = gameState.points + pointsUpdate
                 )
             }
         }
@@ -86,25 +86,25 @@ data class SetGameUpdate(
 }
 
 data class SetGameState(
-        val table: TableCards,
-        val deck: DeckCards,
-        override val points: Map<Username, Int>,
-        override val users: Map<Username, UserData>,
+    val table: TableCards,
+    val deck: DeckCards,
+    override val points: Map<Username, Int>,
+    override val users: Map<Username, UserData>,
 ) : GameState() {
 
     override fun updateWith(users: Map<Username, UserData>, points: Map<Username, Int>): SetGameState =
-            copy(users = users, points = points)
+        copy(users = users, points = points)
 
     override fun snapshot(forUser: Username): SetGameSnapshot =
-            SetGameSnapshot(table, points, users)
+        SetGameSnapshot(table, points, users)
 
     override fun snapshot(): CumulativeGameSnapshot =
-            CumulativeGameSnapshot.SameForAllUsers(SetGameSnapshot(table, points, users))
+        CumulativeGameSnapshot.SameForAllUsers(SetGameSnapshot(table, points, users))
 
     companion object {
         fun random(
-                points: Map<Username, Int> = emptyMap(),
-                users: Map<Username, UserData> = emptyMap(),
+            points: Map<Username, Int> = emptyMap(),
+            users: Map<Username, UserData> = emptyMap(),
         ): SetGameState {
             val cards = SetCard.all().shuffled()
             val table = TableCards(cards.take(TABLE_CARDS).withIndex().associate { it.index to it.value })
@@ -140,7 +140,7 @@ private fun Map<Int, SetCard>.isValidSetProposal(cardsIds: Set<Int>): Boolean {
 }
 
 private operator fun DeckCards.minus(cards: List<SetCard>): DeckCards =
-        copy(cards = this.cards - cards.toSet())
+    copy(cards = this.cards - cards.toSet())
 
 private data class TableDeckUpdate(val table: TableCards, val deck: DeckCards)
 
@@ -153,8 +153,8 @@ private fun updateDeckTable(proposal: SetProposal, table: TableCards, deck: Deck
         val currUpdated = HashMap(updatedCards)
         proposal.cardsIds.zip(replacementCards).forEach { (id, card) -> currUpdated[id] = card }
         if (currUpdated.validProposal() != null) return TableDeckUpdate(
-                table = TableCards(currUpdated),
-                deck = deck - replacementCards
+            table = TableCards(currUpdated),
+            deck = deck - replacementCards
         )
     }
     return TableDeckUpdate(TableCards(updatedCards), deck)

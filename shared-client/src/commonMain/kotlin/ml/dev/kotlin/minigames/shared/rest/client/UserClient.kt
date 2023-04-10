@@ -16,14 +16,14 @@ class UserClient : Closeable, InstanceKeeper.Instance {
     private val client = RestApiClient()
 
     suspend fun loginUser(userLogin: UserLogin): Res<UserError, JwtToken>? =
-            client.post(USER_LOGIN_POST) {
-                setBody(userLogin)
-            }
+        client.post(USER_LOGIN_POST) {
+            setBody(userLogin)
+        }
 
     suspend fun createUser(userCreate: UserCreate): Res<UserError, Unit>? =
-            client.post(USER_CREATE_POST) {
-                setBody(userCreate)
-            }
+        client.post(USER_CREATE_POST) {
+            setBody(userCreate)
+        }
 
     override fun close(): Unit = client.close()
     override fun onDestroy(): Unit = close()

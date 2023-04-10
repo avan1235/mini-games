@@ -26,33 +26,33 @@ import ml.dev.kotlin.minigames.shared.viewmodel.BirdGameViewModel
 
 @Composable
 internal fun BirdGamePlay(
-        navigator: Navigator<ScreenRoute>,
-        vm: BirdGameViewModel,
-        gameState: BirdGameSnapshot,
-        clientMessages: MutableStateFlow<GameClientMessage?>,
+    navigator: Navigator<ScreenRoute>,
+    vm: BirdGameViewModel,
+    gameState: BirdGameSnapshot,
+    clientMessages: MutableStateFlow<GameClientMessage?>,
 ) {
     val scope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
     Column(
-            modifier = Modifier
-                    .fillMaxSize()
-                    .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                    ) { scope.launch { vm.emitFly(clientMessages) } },
-            verticalArrangement = Arrangement.Top,
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+            ) { scope.launch { vm.emitFly(clientMessages) } },
+        verticalArrangement = Arrangement.Top,
     ) {
         GameTopBar(
-                points = vm.points(gameState),
-                role = vm.userRole(gameState),
-                onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
+            points = vm.points(gameState),
+            role = vm.userRole(gameState),
+            onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
         )
         ProportionKeeper {
             BoxWithConstraints(
-                    modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)
-                            .background(Color.Gray, Shapes.medium)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+                    .background(Color.Gray, Shapes.medium)
             ) {
                 val mapSize = DpSize(maxWidth, maxHeight)
                 var last by remember { mutableStateOf(Pair(V2.ZERO, BirdNozzleDirection.Right)) }
@@ -72,11 +72,11 @@ internal fun BirdGamePlay(
                 }
                 if (!userAlive) {
                     Bird(
-                            last.first,
-                            last.second,
-                            mapSize,
-                            isAlive = false,
-                            theme = CACHED_THEMES[vm.username]
+                        last.first,
+                        last.second,
+                        mapSize,
+                        isAlive = false,
+                        theme = CACHED_THEMES[vm.username]
                     )
                 }
             }

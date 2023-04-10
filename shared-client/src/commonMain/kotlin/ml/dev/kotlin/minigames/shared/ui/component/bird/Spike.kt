@@ -18,8 +18,8 @@ import ml.dev.kotlin.minigames.shared.util.V2
 
 @Composable
 internal fun LeftRightSpikes(
-        spikes: List<V2>,
-        mapSize: DpSize,
+    spikes: List<V2>,
+    mapSize: DpSize,
 ) {
     spikes.forEach { LeftRightSpike(it, mapSize) }
 }
@@ -35,9 +35,9 @@ internal fun UpDownConstantSpikes(mapSize: DpSize, count: Int = 8) {
 
 @Composable
 private fun LeftRightSpike(
-        pos: V2,
-        mapSize: DpSize,
-        size: DpSize = DpSize(20.dp, 40.dp),
+    pos: V2,
+    mapSize: DpSize,
+    size: DpSize = DpSize(20.dp, 40.dp),
 ) {
     Spike(pos, size, mapSize) { spikeSize ->
         val wallX = (pos.x + 1f) / 2f * spikeSize.width
@@ -53,9 +53,9 @@ private fun LeftRightSpike(
 
 @Composable
 private fun UpDownSpike(
-        pos: V2,
-        mapSize: DpSize,
-        size: DpSize = DpSize(40.dp, 20.dp),
+    pos: V2,
+    mapSize: DpSize,
+    size: DpSize = DpSize(40.dp, 20.dp),
 ) {
     Spike(pos, size, mapSize) { spikeSize ->
         val spikeY = (pos.y + 1f) / 2f * spikeSize.height
@@ -71,34 +71,34 @@ private fun UpDownSpike(
 
 @Composable
 private fun Spike(
-        pos: V2,
-        spikeSize: DpSize,
-        mapSize: DpSize,
-        draw: Path.(size: Size) -> Unit
+    pos: V2,
+    spikeSize: DpSize,
+    mapSize: DpSize,
+    draw: Path.(size: Size) -> Unit
 ) {
     Box(
-            modifier = Modifier
-                    .fillMaxSize()
-                    .offset(
-                            x = (mapSize.width - spikeSize.width) * 0.5f * (1f + pos.x),
-                            y = (mapSize.height - spikeSize.height) * 0.5f * (1f - pos.y),
-                    )
+        modifier = Modifier
+            .fillMaxSize()
+            .offset(
+                x = (mapSize.width - spikeSize.width) * 0.5f * (1f + pos.x),
+                y = (mapSize.height - spikeSize.height) * 0.5f * (1f - pos.y),
+            )
     ) {
         val color = MaterialTheme.colors.surface
         SizedCanvas(spikeSize.width, spikeSize.height) {
             val path = Path().apply { draw(size) }
             clipPath(
-                    path = path,
-                    clipOp = ClipOp.Intersect,
+                path = path,
+                clipOp = ClipOp.Intersect,
             ) {
                 drawPath(
-                        path = path,
-                        color = color,
+                    path = path,
+                    color = color,
                 )
                 drawRect(
-                        topLeft = Offset.Zero,
-                        color = color,
-                        size = size
+                    topLeft = Offset.Zero,
+                    color = color,
+                    size = size
                 )
             }
         }

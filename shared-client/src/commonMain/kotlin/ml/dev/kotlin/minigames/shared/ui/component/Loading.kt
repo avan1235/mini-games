@@ -16,22 +16,22 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 internal fun DotsTyping(
-        dotSize: Dp = 16.dp,
-        spaceSize: Dp = 8.dp,
-        delayMillis: Int = 300,
-        maxOffset: Float = 10f,
+    dotSize: Dp = 16.dp,
+    spaceSize: Dp = 8.dp,
+    delayMillis: Int = 300,
+    maxOffset: Float = 10f,
 ) {
     @Composable
     fun Dot(offset: Float) {
         Spacer(
-                Modifier
-                        .size(dotSize)
-                        .offset(y = -offset.dp)
-                        .background(
-                                color = MaterialTheme.colors.primary,
-                                shape = CircleShape
-                        )
-                        .shadow(dotSize)
+            Modifier
+                .size(dotSize)
+                .offset(y = -offset.dp)
+                .background(
+                    color = MaterialTheme.colors.primary,
+                    shape = CircleShape
+                )
+                .shadow(dotSize)
         )
     }
 
@@ -39,16 +39,16 @@ internal fun DotsTyping(
 
     @Composable
     fun animateOffsetWithDelay(delay: Int): State<Float> = infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                    animation = keyframes {
-                        durationMillis = delayMillis * 4
-                        0f at delay with LinearEasing
-                        maxOffset at delay + delayMillis with LinearEasing
-                        0f at delay + delayMillis * 2
-                    }
-            )
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = delayMillis * 4
+                0f at delay with LinearEasing
+                maxOffset at delay + delayMillis with LinearEasing
+                0f at delay + delayMillis * 2
+            }
+        )
     )
 
     val offset1 by animateOffsetWithDelay(0)
@@ -56,9 +56,9 @@ internal fun DotsTyping(
     val offset3 by animateOffsetWithDelay(delayMillis * 2)
 
     Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(top = maxOffset.dp)
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(top = maxOffset.dp)
     ) {
         Dot(offset1)
         Spacer(Modifier.width(spaceSize))

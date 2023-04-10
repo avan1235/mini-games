@@ -17,8 +17,8 @@ enum class UserState { Approved, WaitingForApproval }
 
 @Serializable
 class UserData private constructor(
-        val role: UserRole,
-        val state: UserState,
+    val role: UserRole,
+    val state: UserState,
 ) {
     companion object {
         fun of(role: UserRole): UserData = UserData(role, role.defaultState())
@@ -34,8 +34,8 @@ class UserData private constructor(
     }
 
     override fun equals(other: Any?): Boolean =
-            true == (other as? UserData)
-                    ?.let { it.role == role && it.state == state }
+        true == (other as? UserData)
+            ?.let { it.role == role && it.state == state }
 
     override fun hashCode(): Int {
         var result = role.hashCode()
@@ -66,13 +66,13 @@ abstract class GameState {
     }
 
     open fun removeUser(username: Username): GameState =
-            if (users[username]?.role == UserRole.Admin) {
-                val newAdminUsername = (users - username).keys.random()
-                val adminUser = newAdminUsername to UserData.admin()
-                updateWith(users - username + adminUser, points = points)
-            } else {
-                updateWith(users - username, points = points)
-            }
+        if (users[username]?.role == UserRole.Admin) {
+            val newAdminUsername = (users - username).keys.random()
+            val adminUser = newAdminUsername to UserData.admin()
+            updateWith(users - username + adminUser, points = points)
+        } else {
+            updateWith(users - username, points = points)
+        }
 
     open fun changeUserState(byUser: Username, forUser: Username, action: UserAction): GameState {
         if (byUser == forUser) return this

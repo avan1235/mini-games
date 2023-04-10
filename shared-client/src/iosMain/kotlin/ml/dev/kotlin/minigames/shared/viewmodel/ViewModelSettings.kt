@@ -7,4 +7,4 @@ import com.russhwolf.settings.coroutines.toSuspendSettings
 
 @OptIn(ExperimentalSettingsApi::class)
 internal actual fun getUserSettings(context: ViewModelContext): SuspendSettings =
-        NSUserDefaultsSettings.Factory().create("user_settings").toSuspendSettings()
+    NSUserDefaultsSettings.Factory().create("user_settings").toSuspendSettings()

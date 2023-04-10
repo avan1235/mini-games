@@ -8,8 +8,8 @@ import ml.dev.kotlin.minigames.shared.websocket.client.GameClient
 
 
 internal abstract class GameViewModel<Snapshot : GameSnapshot>(
-        context: ViewModelContext,
-        val gameAccessData: GameAccessData,
+    context: ViewModelContext,
+    val gameAccessData: GameAccessData,
 ) : ViewModel(context) {
 
     abstract val client: GameClient
@@ -23,24 +23,24 @@ internal abstract class GameViewModel<Snapshot : GameSnapshot>(
     fun userRole(snapshot: Snapshot): UserRole = snapshot.users[username]?.role ?: DEFAULT_USER.role
 
     fun canEditUser(username: Username, snapshot: Snapshot): Boolean =
-            userRole(snapshot) == UserRole.Admin && username != this.username
+        userRole(snapshot) == UserRole.Admin && username != this.username
 
     fun heartBeat(): HeartBeatClientMessage = HeartBeatClientMessage(timestamp = now())
 
     suspend fun approve(
-            username: Username,
-            clientMessages: MutableStateFlow<GameClientMessage?>
+        username: Username,
+        clientMessages: MutableStateFlow<GameClientMessage?>
     ): Unit = userAction(username, UserAction.Approve, clientMessages)
 
     suspend fun discard(
-            username: Username,
-            clientMessages: MutableStateFlow<GameClientMessage?>
+        username: Username,
+        clientMessages: MutableStateFlow<GameClientMessage?>
     ): Unit = userAction(username, UserAction.Discard, clientMessages)
 
     private suspend fun userAction(
-            username: Username,
-            action: UserAction,
-            clientMessages: MutableStateFlow<GameClientMessage?>
+        username: Username,
+        action: UserAction,
+        clientMessages: MutableStateFlow<GameClientMessage?>
     ) {
         val message = UserActionClientMessage(username, action, timestamp = now())
         clientMessages.emit(message)

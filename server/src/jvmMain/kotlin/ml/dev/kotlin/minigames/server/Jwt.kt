@@ -17,12 +17,12 @@ object Jwt {
     private const val EXPIRE_IN_MILLIS = 60_000
 
     fun generateToken(username: String): JwtToken = JWT.create()
-            .withAudience(AUDIENCE)
-            .withIssuer(ISSUER)
-            .withClaim(CLAIM, username)
-            .withExpiresAt(Date(System.currentTimeMillis() + EXPIRE_IN_MILLIS))
-            .sign(Algorithm.HMAC256(SECRET))
-            .let(::JwtToken)
+        .withAudience(AUDIENCE)
+        .withIssuer(ISSUER)
+        .withClaim(CLAIM, username)
+        .withExpiresAt(Date(System.currentTimeMillis() + EXPIRE_IN_MILLIS))
+        .sign(Algorithm.HMAC256(SECRET))
+        .let(::JwtToken)
 
     data class User(val username: String) : Principal
 }

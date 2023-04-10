@@ -38,13 +38,13 @@ import ml.dev.kotlin.minigames.shared.ui.theme.*
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun SetCard(
-        setCardData: SetCard,
-        selected: Boolean,
-        width: Dp,
-        height: Dp,
-        padding: Dp = 6.dp,
-        elevation: Dp = 4.dp,
-        onClick: () -> Unit
+    setCardData: SetCard,
+    selected: Boolean,
+    width: Dp,
+    height: Dp,
+    padding: Dp = 6.dp,
+    elevation: Dp = 4.dp,
+    onClick: () -> Unit
 ) {
     val count = when (setCardData.count) {
         CardCount.One -> 1
@@ -67,25 +67,25 @@ internal fun SetCard(
     val elementHeight = (innerHeight - padding * 4) / 3
 
     Box(
-            modifier = Modifier.size(width, height),
-            contentAlignment = Alignment.Center
+        modifier = Modifier.size(width, height),
+        contentAlignment = Alignment.Center
     ) {
         Surface(
-                modifier = Modifier.size(innerWidth, innerHeight),
-                elevation = elevation,
-                shape = Shapes.large,
+            modifier = Modifier.size(innerWidth, innerHeight),
+            elevation = elevation,
+            shape = Shapes.large,
         ) {
             Column(
-                    modifier = Modifier
-                            .fillMaxHeight()
-                            .background(Color.White),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .background(Color.White),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 repeat(count) {
                     Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         when (setCardData.shape) {
                             CardShape.Diamond -> Diamond(elementWidth, elementHeight, color, fill)
@@ -100,44 +100,44 @@ internal fun SetCard(
             }
         }
         AnimatedVisibility(
-                visible = selected,
-                enter = fadeIn(),
-                exit = fadeOut(),
+            visible = selected,
+            enter = fadeIn(),
+            exit = fadeOut(),
         ) {
             Box(
-                    modifier = Modifier
-                            .fillMaxSize()
-                            .padding(12.dp),
-                    contentAlignment = Alignment.BottomEnd
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(12.dp),
+                contentAlignment = Alignment.BottomEnd
             ) {
                 Box(
-                        modifier = Modifier
-                                .size(min(innerWidth, innerHeight) / 5)
-                                .clip(CircleShape)
-                                .background(BlueColor)
-                                .padding(2.dp),
-                        contentAlignment = Alignment.Center
+                    modifier = Modifier
+                        .size(min(innerWidth, innerHeight) / 5)
+                        .clip(CircleShape)
+                        .background(BlueColor)
+                        .padding(2.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = "check", tint = Color.White)
                 }
             }
         }
         Box(
-                modifier = Modifier
-                        .padding(padding)
-                        .size(innerWidth, innerHeight)
-                        .clip(Shapes.large)
-                        .clickable { onClick() }
+            modifier = Modifier
+                .padding(padding)
+                .size(innerWidth, innerHeight)
+                .clip(Shapes.large)
+                .clickable { onClick() }
         )
     }
 }
 
 @Composable
 private fun Diamond(
-        width: Dp,
-        height: Dp,
-        color: Color,
-        fill: DrawScope.(color: Color) -> Unit,
+    width: Dp,
+    height: Dp,
+    color: Color,
+    fill: DrawScope.(color: Color) -> Unit,
 ) {
     SizedCanvas(width, height) {
         val path = Path()
@@ -148,13 +148,13 @@ private fun Diamond(
         path.lineTo(0f, size.height / 2)
 
         clipPath(
-                path = path,
-                clipOp = ClipOp.Intersect
+            path = path,
+            clipOp = ClipOp.Intersect
         ) {
             drawPath(
-                    path = path,
-                    color = color,
-                    style = stroke(width, height, this),
+                path = path,
+                color = color,
+                style = stroke(width, height, this),
             )
             fill(color)
         }
@@ -163,41 +163,41 @@ private fun Diamond(
 
 @Composable
 private fun Oval(
-        width: Dp,
-        height: Dp,
-        color: Color,
-        fill: DrawScope.(color: Color) -> Unit,
+    width: Dp,
+    height: Dp,
+    color: Color,
+    fill: DrawScope.(color: Color) -> Unit,
 ) {
     SizedCanvas(width, height) {
         val path = Path()
         path.arcTo(
-                rect = Rect(
-                        0f, 0f, size.width / 2, size.height
-                ),
-                startAngleDegrees = 90f,
-                sweepAngleDegrees = 180f,
-                forceMoveTo = false,
+            rect = Rect(
+                0f, 0f, size.width / 2, size.height
+            ),
+            startAngleDegrees = 90f,
+            sweepAngleDegrees = 180f,
+            forceMoveTo = false,
         )
 
         path.lineTo(size.width - size.height / 2, 0f)
         path.arcTo(
-                rect = Rect(size.width - size.height, 0f, size.width, size.height),
-                startAngleDegrees = 270f,
-                sweepAngleDegrees = 180f,
-                forceMoveTo = false,
+            rect = Rect(size.width - size.height, 0f, size.width, size.height),
+            startAngleDegrees = 270f,
+            sweepAngleDegrees = 180f,
+            forceMoveTo = false,
         )
         path.lineTo(
-                size.height / 2, size.height
+            size.height / 2, size.height
         )
 
         clipPath(
-                path = path,
-                clipOp = ClipOp.Intersect
+            path = path,
+            clipOp = ClipOp.Intersect
         ) {
             drawPath(
-                    path = path,
-                    color = color,
-                    style = stroke(width, height, this)
+                path = path,
+                color = color,
+                style = stroke(width, height, this)
             )
             fill(color)
         }
@@ -206,57 +206,57 @@ private fun Oval(
 
 @Composable
 private fun Squiggle(
-        width: Dp,
-        height: Dp,
-        color: Color,
-        fill: DrawScope.(color: Color) -> Unit,
+    width: Dp,
+    height: Dp,
+    color: Color,
+    fill: DrawScope.(color: Color) -> Unit,
 ) {
     SizedCanvas(width, height) {
         val path = Path()
         path.moveTo(
-                size.width * 0.936f,
-                size.height * 0.27f
+            size.width * 0.936f,
+            size.height * 0.27f
         )
         path.cubicTo(
-                size.width * 1.0116f, size.height * 0.6642f,
-                size.width * 0.8073f, size.height * 1.0944f,
-                size.width * 0.567f, size.height * 0.972f
+            size.width * 1.0116f, size.height * 0.6642f,
+            size.width * 0.8073f, size.height * 1.0944f,
+            size.width * 0.567f, size.height * 0.972f
         )
         path.cubicTo(
-                size.width * 0.4707f, size.height * 0.9234f,
-                size.width * 0.3798f, size.height * 0.756f,
-                size.width * 0.243f, size.height * 0.954f
+            size.width * 0.4707f, size.height * 0.9234f,
+            size.width * 0.3798f, size.height * 0.756f,
+            size.width * 0.243f, size.height * 0.954f
         )
         path.cubicTo(
-                size.width * 0.0864f, size.height * 1.1808f,
-                size.width * 0.0486f, size.height * 1.0493999999999999f,
-                size.width * 0.045f, size.height * 0.72f
+            size.width * 0.0864f, size.height * 1.1808f,
+            size.width * 0.0486f, size.height * 1.0493999999999999f,
+            size.width * 0.045f, size.height * 0.72f
         )
         path.cubicTo(
-                size.width * 0.0414f, size.height * 0.396f,
-                size.width * 0.1719f, size.height * 0.1746f,
-                size.width * 0.324f, size.height * 0.216f
+            size.width * 0.0414f, size.height * 0.396f,
+            size.width * 0.1719f, size.height * 0.1746f,
+            size.width * 0.324f, size.height * 0.216f
         )
         path.cubicTo(
-                size.width * 0.5328f, size.height * 0.2736f,
-                size.width * 0.5571f, size.height * 0.567f,
-                size.width * 0.801f, size.height * 0.252f
+            size.width * 0.5328f, size.height * 0.2736f,
+            size.width * 0.5571f, size.height * 0.567f,
+            size.width * 0.801f, size.height * 0.252f
         )
         path.cubicTo(
-                size.width * 0.8577f, size.height * 0.18f,
-                size.width * 0.9081f, size.height * 0.1242f,
-                size.width * 0.936f, size.height * 0.27f
+            size.width * 0.8577f, size.height * 0.18f,
+            size.width * 0.9081f, size.height * 0.1242f,
+            size.width * 0.936f, size.height * 0.27f
         )
         path.translate(Offset(0f, -size.height * 0.123f))
 
         clipPath(
-                path = path,
-                clipOp = ClipOp.Intersect
+            path = path,
+            clipOp = ClipOp.Intersect
         ) {
             drawPath(
-                    path = path,
-                    color = color,
-                    style = stroke(width, height, this)
+                path = path,
+                color = color,
+                style = stroke(width, height, this)
             )
             fill(color)
         }
@@ -267,21 +267,21 @@ private val partFill: DrawScope.(Color) -> Unit = { color ->
     val count = 24
     repeat(count) {
         drawRect(
-                topLeft = Offset(it * (1f / (count + 0.5f)) * size.width, 0f),
-                color = color,
-                size = Size(
-                        1f / (count + 0.5f) / 2 * size.width,
-                        size.height
-                )
+            topLeft = Offset(it * (1f / (count + 0.5f)) * size.width, 0f),
+            color = color,
+            size = Size(
+                1f / (count + 0.5f) / 2 * size.width,
+                size.height
+            )
         )
     }
 }
 
 private val fullFill: DrawScope.(Color) -> Unit = { color ->
     drawRect(
-            topLeft = Offset.Zero,
-            color = color,
-            size = Size(size.width, size.height)
+        topLeft = Offset.Zero,
+        color = color,
+        size = Size(size.width, size.height)
     )
 }
 

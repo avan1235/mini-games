@@ -11,10 +11,10 @@ import androidx.compose.ui.unit.Dp
 @Composable
 internal fun SizedCanvas(width: Dp, height: Dp, modifier: Modifier = Modifier, onDraw: DrawScope.() -> Unit) {
     Canvas(
-            modifier = Modifier
-                    .height(height)
-                    .width(width)
-                    .then(modifier),
-            onDraw
+        modifier = Modifier
+            .height(height)
+            .width(width)
+            .then(modifier),
+        onDraw
     )
 }

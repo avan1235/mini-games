@@ -26,24 +26,24 @@ class WebsocketApiClient : Closeable {
 
     @ExperimentalCoroutinesApi
     suspend fun webSocket(
-            path: String,
-            jwtToken: JwtToken,
-            outputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
-            inputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
+        path: String,
+        jwtToken: JwtToken,
+        outputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
+        inputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
     ) {
         wsClient.webSocket(
-                request = {
-                    method = HttpMethod.Get
-                    header(HttpHeaders.Authorization, "Bearer ${jwtToken.value}")
-                    url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
-                },
-                block = {
-                    val messageOutputRoutine = launch { outputMessages() }
-                    val messageInputRoutine = launch { inputMessages() }
+            request = {
+                method = HttpMethod.Get
+                header(HttpHeaders.Authorization, "Bearer ${jwtToken.value}")
+                url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
+            },
+            block = {
+                val messageOutputRoutine = launch { outputMessages() }
+                val messageInputRoutine = launch { inputMessages() }
 
-                    messageInputRoutine.join()
-                    messageOutputRoutine.join()
-                }
+                messageInputRoutine.join()
+                messageOutputRoutine.join()
+            }
         )
     }
 

@@ -19,45 +19,45 @@ import ml.dev.kotlin.minigames.shared.util.Named
 
 @Composable
 internal fun <T : Named> DropdownMenu(
-        selected: MutableState<T>,
-        anyItems: Collection<T>,
+    selected: MutableState<T>,
+    anyItems: Collection<T>,
 ) {
     val items = anyItems.toList()
     var expanded by remember { mutableStateOf(false) }
     BoxWithConstraints(
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.TopStart)
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentSize(Alignment.TopStart)
     ) {
         val dropDownWidth = maxWidth
         Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.CenterEnd
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd
         ) {
             Text(
-                    text = selected.value.name,
-                    modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(Shapes.medium)
-                            .clickable(onClick = { expanded = true })
-                            .background(MaterialTheme.colors.primaryVariant)
-                            .padding(16.dp),
-                    color = MaterialTheme.colors.onPrimary,
-                    style = Typography.subtitle1,
+                text = selected.value.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(Shapes.medium)
+                    .clickable(onClick = { expanded = true })
+                    .background(MaterialTheme.colors.primaryVariant)
+                    .padding(16.dp),
+                color = MaterialTheme.colors.onPrimary,
+                style = Typography.subtitle1,
             )
             Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "dropdown",
-                    modifier = Modifier.padding(16.dp),
-                    tint = MaterialTheme.colors.onPrimary
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "dropdown",
+                modifier = Modifier.padding(16.dp),
+                tint = MaterialTheme.colors.onPrimary
             )
         }
         DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                        .background(MaterialTheme.colors.primaryVariant)
-                        .width(dropDownWidth)
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .background(MaterialTheme.colors.primaryVariant)
+                .width(dropDownWidth)
         ) {
             items.forEach {
                 DropdownMenuItem(onClick = {
@@ -65,9 +65,9 @@ internal fun <T : Named> DropdownMenu(
                     expanded = false
                 }) {
                     Text(
-                            text = it.name,
-                            color = MaterialTheme.colors.onPrimary,
-                            style = Typography.subtitle1,
+                        text = it.name,
+                        color = MaterialTheme.colors.onPrimary,
+                        style = Typography.subtitle1,
                     )
                 }
             }

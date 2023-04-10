@@ -5,7 +5,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.resource
 
 internal actual suspend fun loadLeckerliOneFont(): FontFamily =
-        loadFontFamily("leckerlione_regular.ttf", "font/leckerlione_regular.ttf")
+    loadFontFamily("leckerlione_regular.ttf", "font/leckerlione_regular.ttf")
 
 @OptIn(ExperimentalResourceApi::class)
 private suspend fun loadFontFamily(identity: String, path: String): FontFamily {

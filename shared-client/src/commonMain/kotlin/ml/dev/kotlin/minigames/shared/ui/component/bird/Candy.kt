@@ -28,24 +28,24 @@ import ml.dev.kotlin.minigames.shared.util.random
 
 @Composable
 internal fun Candy(
-        pos: V2,
-        mapSize: DpSize,
-        candySize: DpSize = DpSize(40.dp, 20.dp),
+    pos: V2,
+    mapSize: DpSize,
+    candySize: DpSize = DpSize(40.dp, 20.dp),
 ) {
     val yAnimation by rememberInfiniteFloatUpDownTransition()
     Box(
-            modifier = Modifier
-                    .fillMaxSize()
-                    .offset(
-                            x = (mapSize.width - candySize.width) * 0.5f * (1f + pos.x),
-                            y = (mapSize.height - candySize.height) * 0.5f * (1f - pos.y + yAnimation),
-                    )
+        modifier = Modifier
+            .fillMaxSize()
+            .offset(
+                x = (mapSize.width - candySize.width) * 0.5f * (1f + pos.x),
+                y = (mapSize.height - candySize.height) * 0.5f * (1f - pos.y + yAnimation),
+            )
     ) {
         val color = CACHED_COLORS[pos]
         SizedCanvas(
-                width = candySize.width,
-                height = candySize.height,
-                modifier = Modifier.rotate(CACHED_DEGREES[pos])
+            width = candySize.width,
+            height = candySize.height,
+            modifier = Modifier.rotate(CACHED_DEGREES[pos])
         ) {
             drawSide(Left, color)
             drawSide(Right, color)
@@ -64,8 +64,8 @@ private enum class CandySide {
 private val PARTS_SCALES: FloatArray = floatArrayOf(1.0f, 0.8f)
 
 private fun DrawScope.drawSide(
-        side: CandySide,
-        color: Color,
+    side: CandySide,
+    color: Color,
 ) {
     for (scale in PARTS_SCALES) {
         val path = Path().apply {
@@ -82,18 +82,18 @@ private fun DrawScope.drawSide(
             lineTo(sideX, size.height * 0.5f)
         }
         clipPath(
-                path = path,
-                clipOp = ClipOp.Intersect,
+            path = path,
+            clipOp = ClipOp.Intersect,
         ) {
             val lighterColor = color.lightScaled(scale)
             drawPath(
-                    path = path,
-                    color = lighterColor,
+                path = path,
+                color = lighterColor,
             )
             drawRect(
-                    topLeft = Offset.Zero,
-                    color = lighterColor,
-                    size = size
+                topLeft = Offset.Zero,
+                color = lighterColor,
+                size = size
             )
         }
     }
@@ -101,21 +101,21 @@ private fun DrawScope.drawSide(
 
 @Composable
 private fun rememberInfiniteFloatUpDownTransition(
-        delayMillis: Int = 300,
-        maxOffset: Float = 0.02f,
+    delayMillis: Int = 300,
+    maxOffset: Float = 0.02f,
 ): State<Float> {
     return rememberInfiniteTransition().animateFloat(
-            initialValue = 0f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                    animation = keyframes {
-                        durationMillis = delayMillis * 4
-                        0f at 0 with LinearEasing
-                        maxOffset at delayMillis with LinearEasing
-                        0f at delayMillis * 2 with LinearEasing
-                        -maxOffset at delayMillis * 3 with LinearEasing
-                        0f at delayMillis * 4 with LinearEasing
-                    }
-            )
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = delayMillis * 4
+                0f at 0 with LinearEasing
+                maxOffset at delayMillis with LinearEasing
+                0f at delayMillis * 2 with LinearEasing
+                -maxOffset at delayMillis * 3 with LinearEasing
+                0f at delayMillis * 4 with LinearEasing
+            }
+        )
     )
 }

@@ -17,7 +17,7 @@ import ml.dev.kotlin.minigames.shared.ui.util.LocalBackPressedHandler
 import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
 
 fun ComponentActivity.setMainAndroidApp(
-        backPressedHandler: BackPressedHandler,
+    backPressedHandler: BackPressedHandler,
 ): Unit = setContent {
     LockScreenPortraitOrientation()
     CompositionLocalProvider(LocalBackPressedHandler provides backPressedHandler) {

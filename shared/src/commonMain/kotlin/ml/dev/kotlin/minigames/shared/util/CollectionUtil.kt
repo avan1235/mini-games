@@ -3,15 +3,15 @@ package ml.dev.kotlin.minigames.shared.util
 inline fun <V> Set<V>.everyUnorderedTriple(action: (V, V, V) -> Unit) {
     val list = toList()
     for (i in 0 until list.size - 2) for (j in i + 1 until list.size - 1) for (k in j + 1 until list.size) action(
-            list[i],
-            list[j],
-            list[k],
+        list[i],
+        list[j],
+        list[k],
     )
 }
 
 class ComputedMap<K, V>(
-        private val map: MutableMap<K, V> = HashMap(),
-        private val default: MutableMap<K, V>.(K) -> V
+    private val map: MutableMap<K, V> = HashMap(),
+    private val default: MutableMap<K, V>.(K) -> V
 ) : MutableMap<K, V> by map {
     override fun get(key: K): V = map[key]?.let { return it } ?: default(key).also { map[key] = it }
     override fun remove(key: K): V = map.remove(key) ?: this.default(key)
@@ -21,8 +21,8 @@ class ComputedMap<K, V>(
 }
 
 data class BlockV2Set(
-        private val rangeUnit: Float,
-        private val byRange: Map<BlockIdx, HashSet<V2>> = HashMap(),
+    private val rangeUnit: Float,
+    private val byRange: Map<BlockIdx, HashSet<V2>> = HashMap(),
 ) {
     val values: Set<V2> get() = byRange.values.flatMapTo(HashSet()) { it }
 
@@ -62,7 +62,7 @@ private operator fun IntRange.times(o: IntRange): List<BlockIdx> = buildList {
 }
 
 private infix fun Float.ranged(rangeUnit: Float): Int =
-        if (this >= 0) (this / rangeUnit).toInt() else (-this / rangeUnit).toInt()
+    if (this >= 0) (this / rangeUnit).toInt() else (-this / rangeUnit).toInt()
 
 private infix fun V2.ranged(rangeUnit: Float): BlockIdx = BlockIdx(this.x ranged rangeUnit, this.y ranged rangeUnit)
 

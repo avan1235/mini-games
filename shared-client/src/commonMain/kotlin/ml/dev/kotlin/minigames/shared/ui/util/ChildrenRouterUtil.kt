@@ -20,19 +20,19 @@ typealias ChildAnimation<C, T> = @Composable (RouterState<C, T>, Modifier, Child
 
 typealias ChildAnimator<C, T> =
         @Composable (
-                child: Child.Created<C, T>,
-                factor: Float,
-                placement: ChildPlacement,
-                direction: ChildAnimationDirection,
-                content: @Composable () -> Unit
+            child: Child.Created<C, T>,
+            factor: Float,
+            placement: ChildPlacement,
+            direction: ChildAnimationDirection,
+            content: @Composable () -> Unit
         ) -> Unit
 
 @Composable
 internal fun <C : Any, T : Any> Children(
-        routerState: Value<RouterState<C, T>>,
-        modifier: Modifier = Modifier,
-        animation: ChildAnimation<C, T>,
-        content: ChildContent<C, T>
+    routerState: Value<RouterState<C, T>>,
+    modifier: Modifier = Modifier,
+    animation: ChildAnimation<C, T>,
+    content: ChildContent<C, T>
 ) {
     val state = routerState.subscribeAsState()
 
@@ -90,7 +90,7 @@ private fun SaveableStateHolder.retainStates(currentKeys: Set<Any>) {
 }
 
 private class Keys(
-        var set: Set<Any>
+    var set: Set<Any>
 )
 
 enum class ChildPlacement {
@@ -102,46 +102,46 @@ enum class ChildAnimationDirection {
 }
 
 fun <C : Any, T : Any> crossfadeScale(
-        animationSpec: FiniteAnimationSpec<Float> = tween(),
-        enterScaleFactor: Float = 1.15F,
-        exitScaleFactor: Float = 0.95F
+    animationSpec: FiniteAnimationSpec<Float> = tween(),
+    enterScaleFactor: Float = 1.15F,
+    exitScaleFactor: Float = 0.95F
 ): ChildAnimation<C, T> =
-        childAnimation(animationSpec = animationSpec) { _, factor, placement, _, content ->
-            Box(
-                    modifier = Modifier
-                            .scale(
-                                    when (placement) {
-                                        ChildPlacement.BACK -> exitScaleFactor + (1F - exitScaleFactor) * factor
-                                        ChildPlacement.FRONT -> enterScaleFactor - (enterScaleFactor - 1F) * factor
-                                    }
-                            )
-                            .alpha(factor)
-            ) {
-                content()
-            }
+    childAnimation(animationSpec = animationSpec) { _, factor, placement, _, content ->
+        Box(
+            modifier = Modifier
+                .scale(
+                    when (placement) {
+                        ChildPlacement.BACK -> exitScaleFactor + (1F - exitScaleFactor) * factor
+                        ChildPlacement.FRONT -> enterScaleFactor - (enterScaleFactor - 1F) * factor
+                    }
+                )
+                .alpha(factor)
+        ) {
+            content()
         }
+    }
 
 private fun <C : Any, T : Any> childAnimation(
-        animationSpec: FiniteAnimationSpec<Float> = tween(),
-        animator: ChildAnimator<C, T>
+    animationSpec: FiniteAnimationSpec<Float> = tween(),
+    animator: ChildAnimator<C, T>
 ): ChildAnimation<C, T> =
-        { routerState, modifier, content ->
-            ChildAnimationImpl(
-                    targetPage = Page(routerState.activeChild, routerState.backStack.size),
-                    modifier = modifier,
-                    animationSpec = animationSpec,
-                    animator = animator,
-                    content = content
-            )
-        }
+    { routerState, modifier, content ->
+        ChildAnimationImpl(
+            targetPage = Page(routerState.activeChild, routerState.backStack.size),
+            modifier = modifier,
+            animationSpec = animationSpec,
+            animator = animator,
+            content = content
+        )
+    }
 
 @Composable
 private fun <C : Any, T : Any> ChildAnimationImpl(
-        targetPage: Page<C, T>,
-        modifier: Modifier,
-        animationSpec: FiniteAnimationSpec<Float>,
-        animator: ChildAnimator<C, T>,
-        content: ChildContent<C, T>,
+    targetPage: Page<C, T>,
+    modifier: Modifier,
+    animationSpec: FiniteAnimationSpec<Float>,
+    animator: ChildAnimator<C, T>,
+    content: ChildContent<C, T>,
 ) {
     var pages: Pages<C, T> by remember { mutableStateOf(Pages(target = targetPage)) }
     if (targetPage.configuration != pages.target.configuration) {
@@ -155,9 +155,9 @@ private fun <C : Any, T : Any> ChildAnimationImpl(
 
     LaunchedEffect(new.configuration) {
         animationState.animateTo(
-                targetValue = 1F,
-                animationSpec = animationSpec,
-                sequentialAnimation = !animationState.isFinished
+            targetValue = 1F,
+            animationSpec = animationSpec,
+            sequentialAnimation = !animationState.isFinished
         )
 
         pages = Pages(target = pages.target)
@@ -169,13 +169,13 @@ private fun <C : Any, T : Any> ChildAnimationImpl(
         items.forEach { item ->
             key(item.page.child.configuration) {
                 animator(
-                        item.page.child,
-                        when (item.direction) {
-                            ChildAnimationDirection.ENTER -> animationState.value
-                            ChildAnimationDirection.EXIT -> 1F - animationState.value
-                        },
-                        item.placement,
-                        item.direction
+                    item.page.child,
+                    when (item.direction) {
+                        ChildAnimationDirection.ENTER -> animationState.value
+                        ChildAnimationDirection.EXIT -> 1F - animationState.value
+                    },
+                    item.placement,
+                    item.direction
                 ) {
                     content(item.page.child)
                 }
@@ -186,42 +186,42 @@ private fun <C : Any, T : Any> ChildAnimationImpl(
 
 @Composable
 private fun <C : Any, T : Any> rememberAnimationItems(
-        targetPage: Page<C, T>,
-        previousPage: Page<C, T>?
+    targetPage: Page<C, T>,
+    previousPage: Page<C, T>?
 ): List<AnimationItem<C, T>> =
-        remember(targetPage.configuration, previousPage?.configuration) {
-            when {
-                previousPage == null ->
-                    listOf(AnimationItem(targetPage, ChildPlacement.BACK, ChildAnimationDirection.ENTER))
+    remember(targetPage.configuration, previousPage?.configuration) {
+        when {
+            previousPage == null ->
+                listOf(AnimationItem(targetPage, ChildPlacement.BACK, ChildAnimationDirection.ENTER))
 
-                targetPage.index >= previousPage.index ->
-                    listOf(
-                            AnimationItem(previousPage, ChildPlacement.BACK, ChildAnimationDirection.EXIT),
-                            AnimationItem(targetPage, ChildPlacement.FRONT, ChildAnimationDirection.ENTER),
-                    )
+            targetPage.index >= previousPage.index ->
+                listOf(
+                    AnimationItem(previousPage, ChildPlacement.BACK, ChildAnimationDirection.EXIT),
+                    AnimationItem(targetPage, ChildPlacement.FRONT, ChildAnimationDirection.ENTER),
+                )
 
-                else ->
-                    listOf(
-                            AnimationItem(targetPage, ChildPlacement.BACK, ChildAnimationDirection.ENTER),
-                            AnimationItem(previousPage, ChildPlacement.FRONT, ChildAnimationDirection.EXIT),
-                    )
-            }
+            else ->
+                listOf(
+                    AnimationItem(targetPage, ChildPlacement.BACK, ChildAnimationDirection.ENTER),
+                    AnimationItem(previousPage, ChildPlacement.FRONT, ChildAnimationDirection.EXIT),
+                )
         }
+    }
 
 private class Page<out C : Any, out T : Any>(
-        val child: Child.Created<C, T>,
-        val index: Int,
+    val child: Child.Created<C, T>,
+    val index: Int,
 ) {
     val configuration: C = child.configuration
 }
 
 private class Pages<out C : Any, out T : Any>(
-        val target: Page<C, T>,
-        val previous: Page<C, T>? = null,
+    val target: Page<C, T>,
+    val previous: Page<C, T>? = null,
 )
 
 private class AnimationItem<out C : Any, out T : Any>(
-        val page: Page<C, T>,
-        val placement: ChildPlacement,
-        val direction: ChildAnimationDirection,
+    val page: Page<C, T>,
+    val placement: ChildPlacement,
+    val direction: ChildAnimationDirection,
 )

@@ -19,10 +19,10 @@ fun Application.installJWTAuth() = install(Authentication) {
     jwt(Jwt.CONFIG) {
         realm = Jwt.REALM
         verifier(
-                JWT.require(Algorithm.HMAC256(Jwt.SECRET))
-                        .withAudience(Jwt.AUDIENCE)
-                        .withIssuer(Jwt.ISSUER)
-                        .build()
+            JWT.require(Algorithm.HMAC256(Jwt.SECRET))
+                .withAudience(Jwt.AUDIENCE)
+                .withIssuer(Jwt.ISSUER)
+                .build()
         )
         validate { credential ->
             val username = credential.payload.getClaim(Jwt.CLAIM).asString()

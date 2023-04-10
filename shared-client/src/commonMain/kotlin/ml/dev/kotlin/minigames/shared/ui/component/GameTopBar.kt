@@ -18,35 +18,35 @@ import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 internal fun GameTopBar(
-        points: Int,
-        role: UserRole,
-        onClose: () -> Unit
+    points: Int,
+    role: UserRole,
+    onClose: () -> Unit
 ) {
     Row(
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
             AnimatedContent(targetState = points) { targetPoints ->
                 Text(
-                        text = "$targetPoints point${if (targetPoints == 1) "" else "s"}",
-                        style = Typography.h5.copy(fontWeight = FontWeight.Bold)
+                    text = "$targetPoints point${if (targetPoints == 1) "" else "s"}",
+                    style = Typography.h5.copy(fontWeight = FontWeight.Bold)
                 )
             }
             Text(
-                    text = "Role: $role",
-                    style = Typography.subtitle2,
-                    modifier = Modifier.padding(top = 4.dp),
+                text = "Role: $role",
+                style = Typography.subtitle2,
+                modifier = Modifier.padding(top = 4.dp),
             )
         }
         IconButton(onClick = onClose, modifier = Modifier.size(36.dp)) {
             ShadowIcon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "close",
-                    size = 36.dp,
+                imageVector = Icons.Default.Close,
+                contentDescription = "close",
+                size = 36.dp,
             )
         }
     }

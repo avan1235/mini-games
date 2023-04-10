@@ -24,7 +24,7 @@ fun Project.kapt(dependency: String) {
 }
 
 private fun currentScopeEnvFile(): File =
-        File(ENV_FILE).takeIf { it.exists() } ?: File(FROM_XCODE_ENV_FILE)
+    File(ENV_FILE).takeIf { it.exists() } ?: File(FROM_XCODE_ENV_FILE)
 
 val ENV: Map<String, String>
     get() = currentScopeEnvFile().readLines().mapNotNull { line ->

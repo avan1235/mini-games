@@ -13,6 +13,6 @@ private val Context.USER_LOGIN_DATA_STORE: DataStore<Preferences> by preferences
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
 internal actual fun getUserSettings(context: ViewModelContext): SuspendSettings =
-        with(context.androidContext) {
-            DataStoreSettings(USER_LOGIN_DATA_STORE)
-        }
+    with(context.androidContext) {
+        DataStoreSettings(USER_LOGIN_DATA_STORE)
+    }

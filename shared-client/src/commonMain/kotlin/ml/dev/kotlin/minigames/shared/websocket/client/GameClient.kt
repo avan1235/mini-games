@@ -19,7 +19,7 @@ import ml.dev.kotlin.minigames.shared.util.tryOrNull
 
 
 class GameClient(
-        private val gamePath: (String) -> String
+    private val gamePath: (String) -> String
 ) : Closeable, InstanceKeeper.Instance {
 
     private val wsClient = WebsocketApiClient()
@@ -27,21 +27,21 @@ class GameClient(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun startPlayingGame(
-            accessData: GameAccessData,
-            serverMessages: MutableStateFlow<GameServerMessage?>,
-            clientMessages: MutableStateFlow<GameClientMessage?>,
-            onErrorLogin: () -> Unit = {},
-            onErrorReceive: (Exception) -> Unit = {},
-            onErrorSend: (Exception) -> Unit = {},
+        accessData: GameAccessData,
+        serverMessages: MutableStateFlow<GameServerMessage?>,
+        clientMessages: MutableStateFlow<GameClientMessage?>,
+        onErrorLogin: () -> Unit = {},
+        onErrorReceive: (Exception) -> Unit = {},
+        onErrorSend: (Exception) -> Unit = {},
     ) {
         val jwtToken = userClient.loginUser(accessData.userLogin)
-                .on(ok = { it }, err = { null }, empty = { null })
+            .on(ok = { it }, err = { null }, empty = { null })
         if (jwtToken == null) onErrorLogin()
         else wsClient.webSocket(
-                path = gamePath(accessData.serverName),
-                jwtToken = jwtToken,
-                outputMessages = { processServerMessages(serverMessages, onErrorReceive) },
-                inputMessages = { processClientMessages(clientMessages, onErrorSend) }
+            path = gamePath(accessData.serverName),
+            jwtToken = jwtToken,
+            outputMessages = { processServerMessages(serverMessages, onErrorReceive) },
+            inputMessages = { processClientMessages(clientMessages, onErrorSend) }
         )
     }
 
@@ -57,8 +57,8 @@ data class GameAccessData(val serverName: String, val userLogin: UserLogin)
 
 @OptIn(ExperimentalSerializationApi::class)
 private suspend fun DefaultClientWebSocketSession.processClientMessages(
-        clientMessages: MutableStateFlow<GameClientMessage?>,
-        onErrorSend: (Exception) -> Unit,
+    clientMessages: MutableStateFlow<GameClientMessage?>,
+    onErrorSend: (Exception) -> Unit,
 ) {
     clientMessages.collect {
         if (it != null) try {
@@ -72,8 +72,8 @@ private suspend fun DefaultClientWebSocketSession.processClientMessages(
 
 @OptIn(ExperimentalSerializationApi::class)
 private suspend fun DefaultClientWebSocketSession.processServerMessages(
-        serverMessages: MutableStateFlow<GameServerMessage?>,
-        onErrorReceive: (Exception) -> Unit,
+    serverMessages: MutableStateFlow<GameServerMessage?>,
+    onErrorReceive: (Exception) -> Unit,
 ) {
     for (message in incoming) {
         try {
