@@ -11,7 +11,11 @@ You can find project description in [Essay](ESSAY.md).
 
 ### Android client
 
-![Untitled1](https://user-images.githubusercontent.com/11787040/230712173-e8c3ff55-6d77-4fa4-a90e-4a7127732645.gif)
+![Android](https://user-images.githubusercontent.com/11787040/230712173-e8c3ff55-6d77-4fa4-a90e-4a7127732645.gif)
+
+### iOS client
+
+![iOS](https://user-images.githubusercontent.com/11787040/230871657-8b8ee025-bb77-446e-abd5-7d33023529f7.gif)
 
 ### Local project compilation process
 
