@@ -10,8 +10,10 @@ sealed class Res<out ERROR, out OK> {
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <E, R> R.ok(): Res<E, R> = Res.Ok(this)
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun <E, R> E.err(): Res<E, R> = Res.Err(this)
 
 inline fun <E, R, M> Res<E, R>?.on(
