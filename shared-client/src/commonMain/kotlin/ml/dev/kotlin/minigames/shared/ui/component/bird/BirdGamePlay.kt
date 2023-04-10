@@ -8,10 +8,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.BirdGameSnapshot
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
+import ml.dev.kotlin.minigames.shared.model.GameStateUpdateClientMessage
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
@@ -29,7 +31,7 @@ internal fun BirdGamePlay(
     navigator: Navigator<ScreenRoute>,
     vm: BirdGameViewModel,
     gameState: BirdGameSnapshot,
-    clientMessages: MutableStateFlow<GameClientMessage?>,
+    stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
     val scope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
@@ -39,7 +41,7 @@ internal fun BirdGamePlay(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-            ) { scope.launch { vm.emitFly(clientMessages) } },
+            ) { scope.launch { vm.emitFly(stateMessages) } },
         verticalArrangement = Arrangement.Top,
     ) {
         GameTopBar(

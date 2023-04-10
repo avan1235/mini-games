@@ -1,6 +1,7 @@
 package ml.dev.kotlin.minigames.shared.viewmodel
 
 import androidx.compose.runtime.*
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
 import ml.dev.kotlin.minigames.shared.model.SendMessageClientMessage
@@ -21,7 +22,7 @@ internal class ChatViewModel(context: ViewModelContext, val username: Username) 
         if (idx < 0) _messages.add(-idx - 1, message)
     }
 
-    suspend fun send(clientMessages: MutableStateFlow<GameClientMessage?>) {
+    suspend fun send(clientMessages: MutableSharedFlow<GameClientMessage>) {
         if (userMessageText.isBlank()) return
         val timestamp = now()
         val userMessage = UserMessage(userMessageText, username, timestamp)

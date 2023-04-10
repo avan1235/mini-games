@@ -35,33 +35,29 @@ internal fun MiniGamesRoutes(context: ViewModelContext) {
                 RegisterScreen(navigator, vm)
             }
 
-            is ScreenRoute.SetGameScreen -> {
+            is ScreenRoute.GameScreen -> {
                 val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
-                val vm = remember(accessData) { SetGameViewModel(context, accessData) }
-                val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
-                val notifyVM = remember(accessData) { NotificationsViewModel(context) }
-                GameScreen(navigator, vm, chatVM, notifyVM) { snapshot, messages ->
-                    SetGamePlay(navigator, vm, snapshot, messages)
-                }
-            }
+                when (conf) {
+                    is ScreenRoute.GameScreen.Set -> {
+                        val vm = remember(accessData) { SetGameViewModel(context, accessData) }
+                        GameScreen(accessData, conf, navigator, vm) { snapshot, stateMessages ->
+                            SetGamePlay(navigator, vm, snapshot, stateMessages)
+                        }
+                    }
 
-            is ScreenRoute.SnakeGameScreen -> {
-                val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
-                val vm = remember(context, accessData) { SnakeGameViewModel(context, accessData) }
-                val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
-                val notifyVM = remember(accessData) { NotificationsViewModel(context) }
-                GameScreen(navigator, vm, chatVM, notifyVM) { snapshot, messages ->
-                    SnakeGamePlay(navigator, vm, snapshot, messages)
-                }
-            }
+                    is ScreenRoute.GameScreen.Snake -> {
+                        val vm = remember(context, accessData) { SnakeGameViewModel(context, accessData) }
+                        GameScreen(accessData, conf, navigator, vm) { snapshot, stateMessages ->
+                            SnakeGamePlay(navigator, vm, snapshot, stateMessages)
+                        }
+                    }
 
-            is ScreenRoute.BirdGameScreen -> {
-                val accessData = GameAccessData(conf.serverName, UserLogin(conf.username, conf.password))
-                val vm = remember(context, accessData) { BirdGameViewModel(context, accessData) }
-                val chatVM = remember(accessData) { ChatViewModel(context, conf.username) }
-                val notifyVM = remember(accessData) { NotificationsViewModel(context) }
-                GameScreen(navigator, vm, chatVM, notifyVM) { snapshot, messages ->
-                    BirdGamePlay(navigator, vm, snapshot, messages)
+                    is ScreenRoute.GameScreen.Bird -> {
+                        val vm = remember(context, accessData) { BirdGameViewModel(context, accessData) }
+                        GameScreen(accessData, conf, navigator, vm) { snapshot, stateMessages ->
+                            BirdGamePlay(navigator, vm, snapshot, stateMessages)
+                        }
+                    }
                 }
             }
         }
@@ -75,17 +71,23 @@ sealed interface ScreenRoute : Parcelable {
     @Parcelize
     object RegisterScreen : ScreenRoute
 
-    @Parcelize
-    data class SetGameScreen(val serverName: String, val username: Username, val password: String) :
-            ScreenRoute
+    sealed interface GameScreen : ScreenRoute {
+        val serverName: String
+        val username: Username
+        val password: String
 
-    @Parcelize
-    data class SnakeGameScreen(val serverName: String, val username: Username, val password: String) :
-            ScreenRoute
+        @Parcelize
+        data class Set(override val serverName: String, override val username: Username, override val password: String) :
+            GameScreen
 
-    @Parcelize
-    data class BirdGameScreen(val serverName: String, val username: Username, val password: String) :
-            ScreenRoute
+        @Parcelize
+        data class Snake(override val serverName: String, override val username: Username, override val password: String) :
+            GameScreen
+
+        @Parcelize
+        data class Bird(override val serverName: String, override val username: Username, override val password: String) :
+            GameScreen
+    }
 }
 
 enum class Game : Named {

@@ -1,6 +1,7 @@
 package ml.dev.kotlin.minigames.shared.viewmodel
 
 import com.arkivanov.essenty.instancekeeper.getOrCreate
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ml.dev.kotlin.minigames.shared.api.BIRD_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.model.BirdGameSnapshot
@@ -21,8 +22,8 @@ internal class BirdGameViewModel(
     override val client: GameClient =
         ctx.keeper.getOrCreate(Game.Bird) { GameClient(BIRD_GAME_WEBSOCKET) }
 
-    suspend fun emitFly(clientMessages: MutableStateFlow<GameClientMessage?>) {
+    suspend fun emitFly(stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>) {
         val message = GameStateUpdateClientMessage(BirdGameUpdate, timestamp = now())
-        clientMessages.emit(message)
+        stateMessages.emit(message)
     }
 }

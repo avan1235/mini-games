@@ -51,9 +51,9 @@ internal class LogInViewModel(context: ViewModelContext, scope: CoroutineScope) 
     }
 
     fun navigateGame(navigator: Navigator<ScreenRoute>): Unit = when (gameState.value) {
-        Game.Set -> navigator.navigate(ScreenRoute.SetGameScreen(serverName, username, password))
-        Game.SnakeIO -> navigator.navigate(ScreenRoute.SnakeGameScreen(serverName, username, password))
-        Game.Bird -> navigator.navigate(ScreenRoute.BirdGameScreen(serverName, username, password))
+        Game.Set -> navigator.navigate(ScreenRoute.GameScreen.Set(serverName, username, password))
+        Game.SnakeIO -> navigator.navigate(ScreenRoute.GameScreen.Snake(serverName, username, password))
+        Game.Bird -> navigator.navigate(ScreenRoute.GameScreen.Bird(serverName, username, password))
     }
 
     fun shuffleGameName() {

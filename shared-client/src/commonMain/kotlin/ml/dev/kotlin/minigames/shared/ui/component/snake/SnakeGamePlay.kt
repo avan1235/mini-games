@@ -12,9 +12,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
+import ml.dev.kotlin.minigames.shared.model.GameStateUpdateClientMessage
 import ml.dev.kotlin.minigames.shared.model.SnakeGameSnapshot
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
@@ -28,7 +30,7 @@ internal fun SnakeGamePlay(
     navigator: Navigator<ScreenRoute>,
     vm: SnakeGameViewModel,
     gameState: SnakeGameSnapshot,
-    clientMessages: MutableStateFlow<GameClientMessage?>,
+    stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
     BoxWithConstraints(
         modifier = Modifier
@@ -40,7 +42,7 @@ internal fun SnakeGamePlay(
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(center) { detectDirectionChange(scope, center, vm, clientMessages) }
+                .pointerInput(center) { detectDirectionChange(scope, center, vm, stateMessages) }
         ) box@{
             val head = vm.userSnake(gameState)?.head?.pos?.also { lastHead = it }
             val mapSize = DpSize(maxWidth, maxHeight)
@@ -61,7 +63,7 @@ private suspend fun PointerInputScope.detectDirectionChange(
     coroutineScope: CoroutineScope,
     center: Offset,
     vm: SnakeGameViewModel,
-    clientMessages: MutableStateFlow<GameClientMessage?>,
+    stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
     awaitEachGesture {
         awaitFirstDown()
@@ -69,7 +71,7 @@ private suspend fun PointerInputScope.detectDirectionChange(
             val event = awaitPointerEvent()
             event.changes.fold(Offset.Zero) { acc, c -> acc + c.position - center }
                 .run { V2(x, y) }.takeIf { it != V2.ZERO }
-                ?.let { coroutineScope.launch { vm.emitDirectionChange(it, clientMessages) } }
+                ?.let { coroutineScope.launch { vm.emitDirectionChange(it, stateMessages) } }
             event.changes.forEach { if (it.positionChange() != Offset.Zero) it.consume() }
         } while (event.changes.any { it.pressed })
     }

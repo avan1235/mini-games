@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.GameClientMessage
@@ -20,11 +21,12 @@ import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
 internal fun <Snapshot : GameSnapshot> Players(
     vm: GameViewModel<Snapshot>,
     snapshot: Snapshot,
-    clientMessages: MutableStateFlow<GameClientMessage?>
+    clientMessages: MutableSharedFlow<GameClientMessage>
 ): Unit = with(LocalToastContext.current) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val users = snapshot.users.entries
+        .sortedByDescending { vm.points(it.key, snapshot) }
         .map { IndexedUserData(it.key, it.value) }.let {
             if (vm.username in snapshot.users) it
             else it + IndexedUserData(vm.username, UserData.player())

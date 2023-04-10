@@ -1,5 +1,6 @@
 package ml.dev.kotlin.minigames.shared.viewmodel
 
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.now
@@ -29,18 +30,18 @@ internal abstract class GameViewModel<Snapshot : GameSnapshot>(
 
     suspend fun approve(
         username: Username,
-        clientMessages: MutableStateFlow<GameClientMessage?>
+        clientMessages: MutableSharedFlow<GameClientMessage>
     ): Unit = userAction(username, UserAction.Approve, clientMessages)
 
     suspend fun discard(
         username: Username,
-        clientMessages: MutableStateFlow<GameClientMessage?>
+        clientMessages: MutableSharedFlow<GameClientMessage>
     ): Unit = userAction(username, UserAction.Discard, clientMessages)
 
     private suspend fun userAction(
         username: Username,
         action: UserAction,
-        clientMessages: MutableStateFlow<GameClientMessage?>
+        clientMessages: MutableSharedFlow<GameClientMessage>
     ) {
         val message = UserActionClientMessage(username, action, timestamp = now())
         clientMessages.emit(message)

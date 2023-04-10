@@ -21,10 +21,16 @@ class GameService(
     private val serverLocks = ComputedConcurrentHashMap<ServerName, Mutex> {
         Mutex()
     }
-    private val serverConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameConnection>> {
+    private val serverStateConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameStateConnection>> {
         Collections.synchronizedSet(HashSet())
     }
-    private val userServerConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameConnection>> {
+    private val serverDataConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameDataConnection>> {
+        Collections.synchronizedSet(HashSet())
+    }
+    private val userServerStateConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameStateConnection>> {
+        Collections.synchronizedSet(HashSet())
+    }
+    private val userServerDataConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameDataConnection>> {
         Collections.synchronizedSet(HashSet())
     }
     private val serverGamesStates = ComputedConcurrentHashMap<ServerName, GameState> {
@@ -32,42 +38,56 @@ class GameService(
     }
     private val serverUpdateJobs = HashMap<ServerName, Job>()
 
-    suspend fun addConnection(serverName: ServerName, username: Username, connection: GameConnection): Unit =
+    suspend fun addStateConnection(serverName: ServerName, username: Username, connection: GameStateConnection): Unit =
         lockForGame(serverName) {
-            val role = if (serverConnections[serverName].isEmpty()) {
-                resetServerBackgroundUpdate(serverName)
+            val role = if (serverStateConnections[serverName].isEmpty()) {
+                safeResetServerBackgroundUpdate(serverName)
                 UserRole.Admin
             } else UserRole.Player
             val userAtServer = UserAtServer(serverName, username)
-            serverConnections[serverName] += connection
-            userServerConnections[userAtServer] += connection
+            serverStateConnections[serverName] += connection
+            userServerStateConnections[userAtServer] += connection
             val gameState = serverGamesStates[serverName].addUser(username, role)
             updateGameState(serverName, gameState)
         }
 
-    private fun stopServerBackgroundUpdate(serverName: ServerName) {
+    suspend fun addDataConnection(serverName: ServerName, username: Username, connection: GameDataConnection): Unit =
+        lockForGame(serverName) {
+            val userAtServer = UserAtServer(serverName, username)
+            serverDataConnections[serverName] += connection
+            userServerDataConnections[userAtServer] += connection
+        }
+
+    private fun safeStopServerBackgroundUpdate(serverName: ServerName) {
         serverUpdateJobs.remove(serverName)?.cancel()
     }
 
-    private fun resetServerBackgroundUpdate(serverName: ServerName) {
-        stopServerBackgroundUpdate(serverName)
+    private fun safeResetServerBackgroundUpdate(serverName: ServerName) {
+        safeStopServerBackgroundUpdate(serverName)
         updateDelay?.let { serverUpdateJobs[serverName] = updateInBackground(it, serverName) }
     }
 
-    suspend fun removeConnection(serverName: ServerName, connection: GameConnection): GameState? =
+    suspend fun removeStateConnection(serverName: ServerName, connection: GameStateConnection): GameState? =
         lockForGame(serverName) {
             val userAtServer = UserAtServer(serverName, connection.username)
-            userServerConnections[userAtServer] -= connection
-            serverConnections[serverName] -= connection
+            userServerStateConnections[userAtServer] -= connection
+            serverStateConnections[serverName] -= connection
 
-            if (serverConnections[serverName].isEmpty()) {
-                stopServerBackgroundUpdate(serverName)
+            if (serverStateConnections[serverName].isEmpty()) {
+                safeStopServerBackgroundUpdate(serverName)
                 serverGamesStates[serverName] = default()
                 null
-            } else if (userServerConnections[userAtServer].isEmpty()) {
+            } else if (userServerStateConnections[userAtServer].isEmpty()) {
                 val gameState = serverGamesStates[serverName].removeUser(connection.username)
                 updateGameState(serverName, gameState)
             } else null
+        }
+
+    suspend fun removeDataConnection(serverName: ServerName, connection: GameDataConnection): Unit =
+        lockForGame(serverName) {
+            val userAtServer = UserAtServer(serverName, connection.username)
+            userServerDataConnections[userAtServer] -= connection
+            serverDataConnections[serverName] -= connection
         }
 
     suspend fun updateGameState(
@@ -107,10 +127,17 @@ class GameService(
 
     fun state(serverName: ServerName): GameState = serverGamesStates[serverName]
 
-    fun connections(serverName: ServerName): Set<GameConnection> = serverConnections[serverName]
+    fun stateConnections(serverName: ServerName): Set<GameStateConnection> =
+        serverStateConnections[serverName].toSet()
 
-    fun connections(serverName: ServerName, username: Username): Set<GameConnection> =
-        userServerConnections[UserAtServer(serverName, username)]
+    fun dataConnections(serverName: ServerName): Set<GameDataConnection> =
+        serverDataConnections[serverName].toSet()
+
+    fun stateConnections(serverName: ServerName, username: Username): Set<GameStateConnection> =
+        userServerStateConnections[UserAtServer(serverName, username)].toSet()
+
+    fun dataConnections(serverName: ServerName, username: Username): Set<GameDataConnection> =
+        userServerDataConnections[UserAtServer(serverName, username)].toSet()
 
     private suspend inline fun <T> lockForGame(serverName: ServerName, action: () -> T): T =
         serverLocks[serverName].withLock(action = action)
@@ -123,7 +150,7 @@ class GameService(
                     val updatedGameState = timeUpdateGameState(serverName) ?: return@update
                     val snapshot = updatedGameState.snapshot()
                     supervisorScope {
-                        serverConnections[serverName]
+                        stateConnections(serverName)
                             .map { sendSnapshot(it, snapshot::get) }
                             .joinAll()
                     }
@@ -136,26 +163,38 @@ class GameService(
         }
 }
 
-class GameConnection(
+class GameStateConnection(
     val session: WebSocketSession,
     val username: Username,
 ) {
     override fun hashCode(): Int = session.hashCode()
-    override fun equals(other: Any?): Boolean = (other as? GameConnection)?.session == session
+    override fun equals(other: Any?): Boolean = (other as? GameStateConnection)?.session == session
+}
+
+class GameDataConnection(
+    val session: WebSocketSession,
+    val username: Username,
+) {
+    override fun hashCode(): Int = session.hashCode()
+    override fun equals(other: Any?): Boolean = (other as? GameDataConnection)?.session == session
 }
 
 fun CoroutineScope.sendSnapshot(
-    connection: GameConnection,
+    connection: GameStateConnection,
     snapshot: (Username) -> GameSnapshot?,
 ): Job = launch {
     val userSnapshot = snapshot(connection.username) ?: return@launch
     val message = GameStateSnapshotServerMessage(userSnapshot, timestamp = now())
-    connection.session.sendSerialized(message)
+    connection.sendStateSerialized(message)
 }
 
 @OptIn(ExperimentalSerializationApi::class)
-suspend inline fun WebSocketSession.sendSerialized(content: GameServerMessage): Unit =
-    send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+suspend inline fun GameStateConnection.sendStateSerialized(content: GameStateSnapshotServerMessage): Unit =
+    session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+
+@OptIn(ExperimentalSerializationApi::class)
+suspend inline fun GameDataConnection.sendDataSerialized(content: GameServerMessage): Unit =
+    session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
 
 @JvmInline
 value class ServerName(val name: String)

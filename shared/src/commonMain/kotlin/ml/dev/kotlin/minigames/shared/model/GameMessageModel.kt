@@ -10,8 +10,8 @@ sealed class GameServerMessage {
 @Serializable
 data class GameStateSnapshotServerMessage(
     val snapshot: GameSnapshot,
-    override val timestamp: Long,
-) : GameServerMessage()
+    val timestamp: Long,
+)
 
 @Serializable
 data class UnapprovedGameStateUpdateServerMessage(
@@ -38,8 +38,8 @@ sealed class GameClientMessage {
 @Serializable
 data class GameStateUpdateClientMessage(
     val update: GameUpdate,
-    override val timestamp: Long,
-) : GameClientMessage()
+    val timestamp: Long,
+)
 
 @Serializable
 data class HeartBeatClientMessage(

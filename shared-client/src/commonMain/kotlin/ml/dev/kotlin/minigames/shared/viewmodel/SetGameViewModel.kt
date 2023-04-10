@@ -20,11 +20,11 @@ internal class SetGameViewModel(
 
     suspend fun emitSetProposal(
         cardsIds: Set<Int>,
-        clientMessages: MutableStateFlow<GameClientMessage?>
+        stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>
     ) {
         val proposal = SetProposal(cardsIds)
         val update = SetGameUpdate(proposal)
         val message = GameStateUpdateClientMessage(update, timestamp = now())
-        clientMessages.emit(message)
+        stateMessages.emit(message)
     }
 }
