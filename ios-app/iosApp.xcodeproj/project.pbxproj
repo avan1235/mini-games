@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		999A4DF829E3FD3D0069883C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		99E785A429E1BADC007D6E89 /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B1049432C0C2B312090ABF6 /* Pods_iosApp.framework */; };
 /* End PBXBuildFile section */
 
@@ -162,6 +163,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				999A4DF829E3FD3D0069883C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
