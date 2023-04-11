@@ -9,6 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.cbor.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import ml.dev.kotlin.minigames.shared.model.JwtToken
@@ -38,11 +39,10 @@ class WebsocketApiClient : Closeable {
                 url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
             },
             block = {
-                val messageOutputRoutine = launch { outputMessages() }
-                val messageInputRoutine = launch { inputMessages() }
-
-                messageInputRoutine.join()
-                messageOutputRoutine.join()
+                coroutineScope {
+                    launch { outputMessages() }
+                    launch { inputMessages() }
+                }
             }
         )
     }

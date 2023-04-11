@@ -22,7 +22,7 @@ import ml.dev.kotlin.minigames.shared.util.on
 import ml.dev.kotlin.minigames.shared.util.tryOrNull
 
 
-class GameClient constructor(
+class GameClient(
     private val gamePath: (serverName: String) -> GamePath
 ) : Closeable, InstanceKeeper.Instance {
 
@@ -70,7 +70,7 @@ class GameClient constructor(
     override fun close() {
         tryOrNull { wsDataClient.close() }
         tryOrNull { wsStateClient.close() }
-        tryOrNull { userClient.onDestroy() }
+        tryOrNull { userClient.close() }
     }
 
     override fun onDestroy(): Unit = close()
