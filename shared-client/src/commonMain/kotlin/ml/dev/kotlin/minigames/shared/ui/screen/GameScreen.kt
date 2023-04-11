@@ -5,7 +5,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Leaderboard
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.PeopleAlt
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material.icons.outlined.Notifications
@@ -35,10 +34,10 @@ internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
     val chatVM = remember(accessData) { ChatViewModel(vm.ctx, conf.username) }
     val notifyVM = remember(accessData) { NotificationsViewModel(vm.ctx) }
 
-    val serverMessages = remember { MutableSharedFlow<GameServerMessage>(extraBufferCapacity = 1) }
+    val serverMessages = remember { MutableSharedFlow<GameDataServerMessage>(extraBufferCapacity = 1) }
     val serverStateMessages = remember { MutableStateFlow<GameStateSnapshotServerMessage?>(null) }
 
-    val clientMessages = remember { MutableSharedFlow<GameClientMessage>(extraBufferCapacity = 1) }
+    val clientMessages = remember { MutableSharedFlow<GameDataClientMessage>(extraBufferCapacity = 1) }
     val clientStateMessages = remember { MutableStateFlow<GameStateUpdateClientMessage?>(null) }
 
     var snapshot by remember { mutableStateOf<Snapshot?>(null) }

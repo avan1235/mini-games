@@ -34,10 +34,10 @@ class GameClient constructor(
     suspend fun startPlayingGame(
         accessData: GameAccessData,
 
-        serverMessages: MutableSharedFlow<GameServerMessage>,
+        serverMessages: MutableSharedFlow<GameDataServerMessage>,
         serverStateMessages: MutableSharedFlow<GameStateSnapshotServerMessage?>,
 
-        clientMessages: SharedFlow<GameClientMessage>,
+        clientMessages: SharedFlow<GameDataClientMessage>,
         clientStateMessages: SharedFlow<GameStateUpdateClientMessage?>,
 
         onErrorLogin: () -> Unit = {},

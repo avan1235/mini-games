@@ -8,11 +8,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.model.BirdGameSnapshot
-import ml.dev.kotlin.minigames.shared.model.GameClientMessage
 import ml.dev.kotlin.minigames.shared.model.GameStateUpdateClientMessage
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute

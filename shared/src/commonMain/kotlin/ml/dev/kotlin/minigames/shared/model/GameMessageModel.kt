@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.shared.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class GameServerMessage {
+sealed class GameDataServerMessage {
     abstract val timestamp: Long
 }
 
@@ -16,22 +16,22 @@ data class GameStateSnapshotServerMessage(
 @Serializable
 data class UnapprovedGameStateUpdateServerMessage(
     override val timestamp: Long,
-) : GameServerMessage()
+) : GameDataServerMessage()
 
 @Serializable
 data class UserActionServerMessage(
     val action: UserAction,
     override val timestamp: Long,
-) : GameServerMessage()
+) : GameDataServerMessage()
 
 @Serializable
 data class ReceiveMessageServerMessage(
     val message: UserMessage,
     override val timestamp: Long,
-) : GameServerMessage()
+) : GameDataServerMessage()
 
 @Serializable
-sealed class GameClientMessage {
+sealed class GameDataClientMessage {
     abstract val timestamp: Long
 }
 
@@ -44,14 +44,14 @@ data class GameStateUpdateClientMessage(
 @Serializable
 data class HeartBeatClientMessage(
     override val timestamp: Long,
-) : GameClientMessage()
+) : GameDataClientMessage()
 
 @Serializable
 data class UserActionClientMessage(
     val username: Username,
     val action: UserAction,
     override val timestamp: Long,
-) : GameClientMessage()
+) : GameDataClientMessage()
 
 @Serializable
 enum class UserAction { Approve, Discard }
@@ -60,4 +60,4 @@ enum class UserAction { Approve, Discard }
 data class SendMessageClientMessage(
     val message: UserMessage,
     override val timestamp: Long,
-) : GameClientMessage()
+) : GameDataClientMessage()

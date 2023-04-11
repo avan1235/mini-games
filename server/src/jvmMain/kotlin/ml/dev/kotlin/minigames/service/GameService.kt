@@ -6,6 +6,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToByteArray
+import ml.dev.kotlin.minigames.service.GameServerLocks.Companion.GameServerGuard
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.GameSerialization
@@ -18,194 +19,250 @@ class GameService(
     private val updateDelay: Long? = null,
     private val default: () -> GameState,
 ) {
-    private val serverLocks = ComputedConcurrentHashMap<ServerName, Mutex> {
-        Mutex()
-    }
-    private val serverStateConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameStateConnection>> {
-        Collections.synchronizedSet(HashSet())
-    }
-    private val serverDataConnections = ComputedConcurrentHashMap<ServerName, MutableSet<GameDataConnection>> {
-        Collections.synchronizedSet(HashSet())
-    }
-    private val userServerStateConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameStateConnection>> {
-        Collections.synchronizedSet(HashSet())
-    }
-    private val userServerDataConnections = ComputedConcurrentHashMap<UserAtServer, MutableSet<GameDataConnection>> {
-        Collections.synchronizedSet(HashSet())
-    }
-    private val serverGamesStates = ComputedConcurrentHashMap<ServerName, GameState> {
-        default()
-    }
-    private val serverUpdateJobs = HashMap<ServerName, Job>()
+    private val locks = GameServerLocks()
 
-    suspend fun addStateConnection(serverName: ServerName, username: Username, connection: GameStateConnection): Unit =
-        lockForGame(serverName) {
-            val role = if (serverStateConnections[serverName].isEmpty()) {
-                safeResetServerBackgroundUpdate(serverName)
+    private suspend inline fun <T> lockForGame(serverName: GameServerName, action: GameServerGuard.(GameServerGuard) -> T): T =
+        locks.lockForGame(serverName, action)
+
+    private val serverStateConnections = ComputedMap<GameServerGuard, MutableSet<GameConnection.State>> { HashSet() }
+
+    private val serverDataConnections = ComputedMap<GameServerGuard, MutableSet<GameConnection.Data>> { HashSet() }
+
+    private val userServerStateConnections =
+        ComputedMap<GameServerGuard, ComputedMap<Username, MutableSet<GameConnection.State>>> { ComputedMap { HashSet() } }
+
+    private val userServerDataConnections =
+        ComputedMap<GameServerGuard, ComputedMap<Username, MutableSet<GameConnection.Data>>> { ComputedMap { HashSet() } }
+
+    private val serverGamesStates = ComputedMap<GameServerGuard, GameState> { default() }
+
+    private val serverUpdateJobs = HashMap<GameServerGuard, Job>()
+
+    suspend fun addStateConnection(serverName: GameServerName, username: Username, connection: GameConnection.State): Unit =
+        lockForGame(serverName) { guard ->
+            val role = if (serverStateConnections[guard].isEmpty()) {
+                resetServerBackgroundUpdate()
                 UserRole.Admin
             } else UserRole.Player
-            val userAtServer = UserAtServer(serverName, username)
-            serverStateConnections[serverName] += connection
-            userServerStateConnections[userAtServer] += connection
-            val gameState = serverGamesStates[serverName].addUser(username, role)
-            updateGameState(serverName, gameState)
+            serverStateConnections[guard] += connection
+            userServerStateConnections[guard][username] += connection
+            val gameState = serverGamesStates[guard].addUser(username, role)
+            updateGameState(gameState)
         }
 
-    suspend fun addDataConnection(serverName: ServerName, username: Username, connection: GameDataConnection): Unit =
-        lockForGame(serverName) {
-            val userAtServer = UserAtServer(serverName, username)
-            serverDataConnections[serverName] += connection
-            userServerDataConnections[userAtServer] += connection
+    suspend fun addDataConnection(serverName: GameServerName, username: Username, connection: GameConnection.Data): Unit =
+        lockForGame(serverName) { guard ->
+            serverDataConnections[guard] += connection
+            userServerDataConnections[guard][username] += connection
         }
 
-    private fun safeStopServerBackgroundUpdate(serverName: ServerName) {
-        serverUpdateJobs.remove(serverName)?.cancel()
+    private fun GameServerGuard.stopServerBackgroundUpdate() {
+        serverUpdateJobs.remove(this)?.cancel()
     }
 
-    private fun safeResetServerBackgroundUpdate(serverName: ServerName) {
-        safeStopServerBackgroundUpdate(serverName)
-        updateDelay?.let { serverUpdateJobs[serverName] = updateInBackground(it, serverName) }
+    private fun GameServerGuard.resetServerBackgroundUpdate() {
+        stopServerBackgroundUpdate()
+        updateDelay?.let { serverUpdateJobs[this] = updateInBackground(it, name) }
     }
 
-    suspend fun removeStateConnection(serverName: ServerName, connection: GameStateConnection): GameState? =
-        lockForGame(serverName) {
-            val userAtServer = UserAtServer(serverName, connection.username)
-            userServerStateConnections[userAtServer] -= connection
-            serverStateConnections[serverName] -= connection
+    suspend fun removeStateConnection(serverName: GameServerName, connection: GameConnection.State): GameState? =
+        lockForGame(serverName) { guard ->
+            userServerStateConnections[guard][connection.username] -= connection
+            serverStateConnections[guard] -= connection
 
-            if (serverStateConnections[serverName].isEmpty()) {
-                safeStopServerBackgroundUpdate(serverName)
-                serverGamesStates[serverName] = default()
+            if (serverStateConnections[guard].isEmpty()) {
+                stopServerBackgroundUpdate()
+                serverGamesStates[guard] = default()
                 null
-            } else if (userServerStateConnections[userAtServer].isEmpty()) {
-                val gameState = serverGamesStates[serverName].removeUser(connection.username)
-                updateGameState(serverName, gameState)
+            } else if (userServerStateConnections[guard].isEmpty()) {
+                val gameState = serverGamesStates[guard].removeUser(connection.username)
+                updateGameState(gameState)
             } else null
         }
 
-    suspend fun removeDataConnection(serverName: ServerName, connection: GameDataConnection): Unit =
-        lockForGame(serverName) {
-            val userAtServer = UserAtServer(serverName, connection.username)
-            userServerDataConnections[userAtServer] -= connection
-            serverDataConnections[serverName] -= connection
+    suspend fun removeDataConnection(serverName: GameServerName, connection: GameConnection.Data): Unit =
+        lockForGame(serverName) { guard ->
+            userServerDataConnections[guard][connection.username] -= connection
+            serverDataConnections[guard] -= connection
         }
 
-    suspend fun updateGameState(
-        serverName: ServerName,
+    suspend fun updateGameDataWithClientMessage(
+        serverName: GameServerName,
+        username: Username,
+        msg: GameDataClientMessage,
+    ): Unit = when (msg) {
+        is HeartBeatClientMessage -> sendAllUpdatedGameState(serverName, state(serverName))
+
+        is UserActionClientMessage -> updateGameState(
+            serverName = serverName,
+            byUser = username,
+            forUser = msg.username,
+            action = msg.action
+        )?.let { gameState ->
+            val message = UserActionServerMessage(action = msg.action, timestamp = now())
+            val connections = dataConnections(serverName, msg.username)
+            connections.forEach { it.sendSerialized(message) }
+            sendAllUpdatedGameState(serverName, gameState)
+        }
+
+        is SendMessageClientMessage -> sendAllUserMessage(serverName, msg.message)
+    } ?: Unit
+
+    suspend fun updateGameStateWithClientMessage(
+        serverName: GameServerName,
+        username: Username,
+        msg: GameStateUpdateClientMessage,
+    ): Unit = when (val updateResult = updateGameState(serverName, username, msg.update)) {
+        UnapprovedGameStateUpdate -> sendUnapprovedGameStateUpdate(serverName, username)
+        is UpdatedGameState -> sendAllUpdatedGameState(serverName, updateResult.gameState)
+        null -> Unit
+    }
+
+    private suspend fun updateGameState(
+        serverName: GameServerName,
         username: Username,
         update: GameUpdate,
-    ): GameStateUpdateResult? = lockForGame(serverName) update@{
-        val oldGame = serverGamesStates[serverName]
+    ): GameStateUpdateResult? = lockForGame(serverName) update@{ guard ->
+        val oldGame = serverGamesStates[guard]
         val userData = oldGame.users[username]
         if (userData?.state != UserState.Approved) return@update UnapprovedGameStateUpdate
         val gameState = update.update(username, oldGame, currMillis = now())
-        updateGameState(serverName, gameState)?.let { UpdatedGameState(it) }
+        updateGameState(gameState)?.let { UpdatedGameState(it) }
     }
 
-    suspend fun updateGameState(
-        serverName: ServerName,
+    private suspend fun updateGameState(
+        serverName: GameServerName,
         byUser: Username,
         forUser: Username,
         action: UserAction,
-    ): GameState? = lockForGame(serverName) update@{
-        val gameState = serverGamesStates[serverName].changeUserState(byUser, forUser, action)
-        updateGameState(serverName, gameState)
+    ): GameState? = lockForGame(serverName) { guard ->
+        val gameState = serverGamesStates[guard].changeUserState(byUser, forUser, action)
+        updateGameState(gameState)
     }
 
     private suspend fun timeUpdateGameState(
-        serverName: ServerName,
-    ): GameState? = lockForGame(serverName) update@{
-        val gameState = serverGamesStates[serverName].update(currMillis = now())
-        updateGameState(serverName, gameState)
+        serverName: GameServerName,
+    ): GameState? = lockForGame(serverName) { guard ->
+        val gameState = serverGamesStates[guard].update(currMillis = now())
+        updateGameState(gameState)
     }
 
-    private fun updateGameState(serverName: ServerName, gameState: GameState): GameState? {
-        val oldState = serverGamesStates[serverName]
+    private fun GameServerGuard.updateGameState(gameState: GameState): GameState? {
+        val oldState = serverGamesStates[this]
         return if (oldState == gameState) null
-        else gameState.also { serverGamesStates[serverName] = it }
+        else gameState.also { serverGamesStates[this] = it }
     }
 
-    fun state(serverName: ServerName): GameState = serverGamesStates[serverName]
+    suspend fun state(serverName: GameServerName): GameState =
+        lockForGame(serverName) { guard -> serverGamesStates[guard] }
 
-    fun stateConnections(serverName: ServerName): Set<GameStateConnection> =
-        serverStateConnections[serverName].toSet()
+    private suspend inline fun stateConnections(serverName: GameServerName): Set<GameConnection.State> =
+        lockForGame(serverName) { guard -> serverStateConnections[guard].toSet() }
 
-    fun dataConnections(serverName: ServerName): Set<GameDataConnection> =
-        serverDataConnections[serverName].toSet()
+    private suspend inline fun dataConnections(serverName: GameServerName): Set<GameConnection.Data> =
+        lockForGame(serverName) { guard -> serverDataConnections[guard].toSet() }
 
-    fun stateConnections(serverName: ServerName, username: Username): Set<GameStateConnection> =
-        userServerStateConnections[UserAtServer(serverName, username)].toSet()
+    private suspend inline fun dataConnections(serverName: GameServerName, username: Username): Set<GameConnection.Data> =
+        lockForGame(serverName) { guard -> userServerDataConnections[guard][username].toSet() }
 
-    fun dataConnections(serverName: ServerName, username: Username): Set<GameDataConnection> =
-        userServerDataConnections[UserAtServer(serverName, username)].toSet()
+    suspend fun sendAllUpdatedGameState(
+        serverName: GameServerName,
+        gameState: GameState,
+    ) {
+        val snapshot = gameState.snapshot()
+        supervisorScope {
+            stateConnections(serverName)
+                .map { launchSendSnapshot(it, snapshot::get) }
+                .joinAll()
+        }
+    }
 
-    private suspend inline fun <T> lockForGame(serverName: ServerName, action: () -> T): T =
-        serverLocks[serverName].withLock(action = action)
+    private suspend fun sendAllUserMessage(
+        serverName: GameServerName,
+        userMessage: UserMessage,
+    ): Unit = supervisorScope {
+        dataConnections(serverName).map {
+            launch { it.sendSerialized(ReceiveMessageServerMessage(userMessage, timestamp = now())) }
+        }.joinAll()
+    }
 
-    private fun updateInBackground(delayMillis: Long, serverName: ServerName): Job =
+    private suspend fun sendUnapprovedGameStateUpdate(serverName: GameServerName, username: Username) {
+        val message = UnapprovedGameStateUpdateServerMessage(timestamp = now())
+        dataConnections(serverName, username).forEach { it.sendSerialized(message) }
+    }
+
+    private fun updateInBackground(delayMillis: Long, serverName: GameServerName): Job =
         CoroutineScope(Dispatchers.IO).launch {
             var now = 0L
-            while (isActive) {
-                tryOrNull update@{
-                    val updatedGameState = timeUpdateGameState(serverName) ?: return@update
-                    val snapshot = updatedGameState.snapshot()
-                    supervisorScope {
-                        stateConnections(serverName)
-                            .map { sendSnapshot(it, snapshot::get) }
-                            .joinAll()
-                    }
-                    val last = now
-                    now = now()
-                    val passedMillis = now - last
-                    delay(delayMillis - passedMillis)
-                }
+            while (isActive) tryOrNull update@{
+                val updatedGameState = timeUpdateGameState(serverName) ?: return@update
+                sendAllUpdatedGameState(serverName, updatedGameState)
+
+                val last = now
+                now = now()
+                val passedMillis = now - last
+                delay(delayMillis - passedMillis)
             }
         }
 }
 
-class GameStateConnection(
-    val session: WebSocketSession,
+sealed class GameConnection(
+    protected val session: WebSocketSession,
     val username: Username,
 ) {
     override fun hashCode(): Int = session.hashCode()
-    override fun equals(other: Any?): Boolean = (other as? GameStateConnection)?.session == session
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (this::class.java != other::class.java) return false
+        return (other as? GameConnection)?.session == session
+    }
+
+    class State(session: WebSocketSession, username: Username) : GameConnection(session, username) {
+        @OptIn(ExperimentalSerializationApi::class)
+        suspend fun sendSerialized(content: GameStateSnapshotServerMessage): Unit =
+            session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+    }
+
+    class Data(session: WebSocketSession, username: Username) : GameConnection(session, username) {
+        @OptIn(ExperimentalSerializationApi::class)
+        suspend fun sendSerialized(content: GameDataServerMessage): Unit =
+            session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+    }
 }
 
-class GameDataConnection(
-    val session: WebSocketSession,
-    val username: Username,
-) {
-    override fun hashCode(): Int = session.hashCode()
-    override fun equals(other: Any?): Boolean = (other as? GameDataConnection)?.session == session
-}
-
-fun CoroutineScope.sendSnapshot(
-    connection: GameStateConnection,
+private fun CoroutineScope.launchSendSnapshot(
+    connection: GameConnection.State,
     snapshot: (Username) -> GameSnapshot?,
 ): Job = launch {
     val userSnapshot = snapshot(connection.username) ?: return@launch
     val message = GameStateSnapshotServerMessage(userSnapshot, timestamp = now())
-    connection.sendStateSerialized(message)
+    connection.sendSerialized(message)
 }
 
-@OptIn(ExperimentalSerializationApi::class)
-suspend inline fun GameStateConnection.sendStateSerialized(content: GameStateSnapshotServerMessage): Unit =
-    session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+private class GameServerLocks {
+    private val serverLocks: MutableMap<GameServerName, Mutex> =
+        Collections.synchronizedMap(ComputedMap { Mutex() })
 
-@OptIn(ExperimentalSerializationApi::class)
-suspend inline fun GameDataConnection.sendDataSerialized(content: GameServerMessage): Unit =
-    session.send(Frame.Binary(true, GameSerialization.encodeToByteArray(content)))
+    suspend inline fun <T> lockForGame(serverName: GameServerName, action: GameServerGuard.(GameServerGuard) -> T): T =
+        serverLocks[serverName]!!.withLock {
+            val guard = GameServerGuard(serverName)
+            guard.action(guard)
+        }
+
+    companion object {
+        @JvmInline
+        value class GameServerGuard(val name: GameServerName)
+    }
+}
 
 @JvmInline
-value class ServerName(val name: String)
+value class GameServerName(val name: String)
 
-fun String.toServerName(): ServerName = ServerName(this)
+fun String.toGameServerName(): GameServerName = GameServerName(this)
 
 sealed interface GameStateUpdateResult
 data class UpdatedGameState(val gameState: GameState) : GameStateUpdateResult
 object UnapprovedGameStateUpdate : GameStateUpdateResult
-
-private data class UserAtServer(val serverName: ServerName, val username: Username)
 
 private fun <K, V> ComputedConcurrentHashMap(default: (K) -> V): ComputedMap<K, V> =
     ComputedMap(map = ConcurrentHashMap()) { default(it) }

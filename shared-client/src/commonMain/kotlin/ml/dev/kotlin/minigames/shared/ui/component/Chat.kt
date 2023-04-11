@@ -33,9 +33,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import ml.dev.kotlin.minigames.shared.model.GameClientMessage
+import ml.dev.kotlin.minigames.shared.model.GameDataClientMessage
 import ml.dev.kotlin.minigames.shared.model.UserMessage
 import ml.dev.kotlin.minigames.shared.model.Username
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
@@ -50,7 +49,7 @@ import ml.dev.kotlin.minigames.shared.viewmodel.ChatViewModel
 @Composable
 internal fun Chat(
     vm: ChatViewModel,
-    clientMessages: MutableSharedFlow<GameClientMessage>,
+    clientMessages: MutableSharedFlow<GameDataClientMessage>,
     size: Dp = 64.dp,
     bottomPadding: Dp = 16.dp
 ) {
