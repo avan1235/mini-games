@@ -9,8 +9,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray
 import ml.dev.kotlin.minigames.server.Jwt
 import ml.dev.kotlin.minigames.service.GameConnection
+import ml.dev.kotlin.minigames.service.GameServerName
 import ml.dev.kotlin.minigames.service.GameService
-import ml.dev.kotlin.minigames.service.toGameServerName
 import ml.dev.kotlin.minigames.shared.api.BIRD_GAME_WEBSOCKET
 import ml.dev.kotlin.minigames.shared.api.GamePath
 import ml.dev.kotlin.minigames.shared.api.SET_GAME_WEBSOCKET
@@ -51,7 +51,7 @@ private class GameHandler(
         user: Jwt.User,
     ): Unit = with(session) {
         val connection = GameConnection.State(session, user.username)
-        val serverName = call.parameters[SERVER_NAME]?.toGameServerName() ?: return
+        val serverName = call.parameters[SERVER_NAME]?.let<String, GameServerName>(::GameServerName) ?: return
         val username = user.username
         service.addStateConnection(serverName, username, connection)
 
@@ -80,7 +80,7 @@ private class GameHandler(
         user: Jwt.User,
     ): Unit = with(session) {
         val connection = GameConnection.Data(session, user.username)
-        val serverName = call.parameters[SERVER_NAME]?.toGameServerName() ?: return
+        val serverName = call.parameters[SERVER_NAME]?.let(::GameServerName) ?: return
         val username = user.username
         service.addDataConnection(serverName, username, connection)
 

@@ -7,13 +7,17 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToByteArray
 import ml.dev.kotlin.minigames.service.GameServerLocks.Companion.GameServerGuard
+import ml.dev.kotlin.minigames.service.GameStateUpdateResult.Unapproved
+import ml.dev.kotlin.minigames.service.GameStateUpdateResult.Updated
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.GameSerialization
 import ml.dev.kotlin.minigames.shared.util.now
 import ml.dev.kotlin.minigames.shared.util.tryOrNull
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+
+@JvmInline
+value class GameServerName(val name: String)
 
 class GameService(
     private val updateDelay: Long? = null,
@@ -113,8 +117,8 @@ class GameService(
         username: Username,
         msg: GameStateUpdateClientMessage,
     ): Unit = when (val updateResult = updateGameState(serverName, username, msg.update)) {
-        UnapprovedGameStateUpdate -> sendUnapprovedGameStateUpdate(serverName, username)
-        is UpdatedGameState -> sendAllUpdatedGameState(serverName, updateResult.gameState)
+        Unapproved -> sendUnapprovedGameStateUpdate(serverName, username)
+        is Updated -> sendAllUpdatedGameState(serverName, updateResult.gameState)
         null -> Unit
     }
 
@@ -125,9 +129,9 @@ class GameService(
     ): GameStateUpdateResult? = lockForGame(serverName) update@{ guard ->
         val oldGame = serverGamesStates[guard]
         val userData = oldGame.users[username]
-        if (userData?.state != UserState.Approved) return@update UnapprovedGameStateUpdate
+        if (userData?.state != UserState.Approved) return@update Unapproved
         val gameState = update.update(username, oldGame, currMillis = now())
-        updateGameState(gameState)?.let { UpdatedGameState(it) }
+        updateGameState(gameState)?.let { Updated(it) }
     }
 
     private suspend fun updateGameState(
@@ -255,14 +259,9 @@ private class GameServerLocks {
     }
 }
 
-@JvmInline
-value class GameServerName(val name: String)
+private sealed interface GameStateUpdateResult {
+    object Unapproved : GameStateUpdateResult
 
-fun String.toGameServerName(): GameServerName = GameServerName(this)
-
-sealed interface GameStateUpdateResult
-data class UpdatedGameState(val gameState: GameState) : GameStateUpdateResult
-object UnapprovedGameStateUpdate : GameStateUpdateResult
-
-private fun <K, V> ComputedConcurrentHashMap(default: (K) -> V): ComputedMap<K, V> =
-    ComputedMap(map = ConcurrentHashMap()) { default(it) }
+    @JvmInline
+    value class Updated(val gameState: GameState) : GameStateUpdateResult
+}
