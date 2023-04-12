@@ -14,6 +14,7 @@ object Dependencies {
     }
 
     val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.3.2"
+    val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
     val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
     val uuid = "com.benasher44:uuid:0.7.0"
 

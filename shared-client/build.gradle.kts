@@ -71,6 +71,8 @@ kotlin {
                 implementation(Dependencies.napierLogger)
                 implementation(Dependencies.multiplatformSettings)
                 implementation(Dependencies.multiplatformSettingsCoroutines)
+
+                implementation(Dependencies.kotlinxAtomicFu)
             }
         }
         named("androidMain") {

@@ -1,6 +1,8 @@
 package ml.dev.kotlin.minigames.shared.ui.screen
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeableState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Forum
 import androidx.compose.material.icons.filled.Leaderboard
@@ -8,6 +10,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Forum
 import androidx.compose.material.icons.outlined.Leaderboard
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.rememberSwipeableState
 import androidx.compose.runtime.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,11 +19,15 @@ import kotlinx.coroutines.isActive
 import ml.dev.kotlin.minigames.shared.model.*
 import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.*
+import ml.dev.kotlin.minigames.shared.ui.component.ScrollScreenSection.Companion.section
+import ml.dev.kotlin.minigames.shared.ui.component.SelectedScreen.LEFT
+import ml.dev.kotlin.minigames.shared.ui.component.SelectedScreen.RIGHT
 import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.takeTyped
 import ml.dev.kotlin.minigames.shared.viewmodel.*
 import ml.dev.kotlin.minigames.shared.websocket.client.GameAccessData
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
     accessData: GameAccessData,
@@ -31,8 +38,11 @@ internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
         snapshot: Snapshot, stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
     ) -> Unit
 ): Unit = with(LocalToastContext.current) {
-    val chatVM = remember(accessData) { ChatViewModel(vm.ctx, conf.username) }
-    val notifyVM = remember(accessData) { NotificationsViewModel(vm.ctx) }
+    val selectedScreen = remember { mutableStateOf(SelectedScreen.CENTER) }
+    val swipeState = rememberSwipeableState(ScreenLocation.UP)
+
+    val chatVM = remember(accessData) { ChatViewModel(vm.ctx, swipeState.notUp(selectedScreen, LEFT), conf.username) }
+    val notifyVM = remember(accessData) { NotificationsViewModel(vm.ctx, swipeState.notUp(selectedScreen, RIGHT)) }
 
     val serverMessages = remember { MutableSharedFlow<GameDataServerMessage>(extraBufferCapacity = 1) }
     val serverStateMessages = remember { MutableStateFlow<GameStateSnapshotServerMessage?>(null) }
@@ -84,19 +94,38 @@ internal inline fun <reified Snapshot : GameSnapshot> GameScreen(
     when (val state = snapshot) {
         null -> LoadingScreen("Loading game")
         else -> ScrollScreen(
+            selectedScreen = selectedScreen,
+            swipeState = swipeState,
             up = { gamePlay(state, clientStateMessages) },
-            leftScreen = { Chat(chatVM, clientMessages) },
-            centerScreen = { Players(vm, state, clientMessages) },
-            rightScreen = { Notifications(notifyVM) },
-            leftIcon = Icons.Outlined.Forum,
-            leftIconSelected = Icons.Filled.Forum,
-            centerIcon = Icons.Outlined.Leaderboard,
-            centerIconSelected = Icons.Filled.Leaderboard,
-            rightIcon = Icons.Outlined.Notifications,
-            rightIconSelected = Icons.Filled.Notifications,
+            left = section(
+                icon = Icons.Outlined.Forum,
+                iconSelected = Icons.Filled.Forum,
+                iconCount = chatVM.count,
+                onSelected = chatVM::clearNewNotificationsCount,
+                screen = { Chat(chatVM, clientMessages) }
+            ),
+            center = section(
+                icon = Icons.Outlined.Leaderboard,
+                iconSelected = Icons.Filled.Leaderboard,
+                screen = { Players(vm, state, clientMessages) }
+            ),
+            right = section(
+                icon = Icons.Outlined.Notifications,
+                iconSelected = Icons.Filled.Notifications,
+                iconCount = notifyVM.count,
+                onSelected = notifyVM::clearNewNotificationsCount,
+                screen = { Notifications(notifyVM) }
+            ),
             backPressedHandler = navigator,
             onUp = { vm.ctx.adjustPan() },
             onDown = { vm.ctx.adjustResize() },
         )
     }
 }
+
+@OptIn(ExperimentalMaterialApi::class)
+private fun SwipeableState<ScreenLocation>.notUp(
+    selectedScreen: MutableState<SelectedScreen>,
+    screen: SelectedScreen,
+): () -> Boolean =
+    fun() = selectedScreen.value != screen || targetValue == ScreenLocation.UP

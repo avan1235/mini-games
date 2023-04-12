@@ -6,9 +6,17 @@ import ml.dev.kotlin.minigames.shared.model.GameDataClientMessage
 import ml.dev.kotlin.minigames.shared.model.SendMessageClientMessage
 import ml.dev.kotlin.minigames.shared.model.UserMessage
 import ml.dev.kotlin.minigames.shared.model.Username
+import ml.dev.kotlin.minigames.shared.ui.component.SelectedScreen
 import ml.dev.kotlin.minigames.shared.util.now
 
-internal class ChatViewModel(context: ViewModelContext, val username: Username) : ViewModel(context) {
+internal class ChatViewModel(
+    context: ViewModelContext,
+    countPredicate: () -> Boolean,
+    val username: Username,
+) : CountingViewModel<SelectedScreen>(
+    ctx = context,
+    countPredicate = countPredicate
+) {
 
     private val _messages: MutableList<UserMessage> = mutableStateListOf()
     val messages: List<UserMessage> get() = _messages
@@ -17,6 +25,7 @@ internal class ChatViewModel(context: ViewModelContext, val username: Username) 
     var userMessageText by userMessageTextState
 
     fun addMessage(message: UserMessage) {
+        countNew()
         val idx = _messages.binarySearch(message, USER_MESSAGES_COMPARATOR)
         if (idx < 0) _messages.add(-idx - 1, message)
     }

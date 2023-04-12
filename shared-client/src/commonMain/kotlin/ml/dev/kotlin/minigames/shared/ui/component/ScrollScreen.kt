@@ -9,28 +9,46 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkivanov.essenty.backpressed.BackPressedHandler
 import kotlinx.coroutines.launch
+import ml.dev.kotlin.minigames.shared.util.zip
 import kotlin.math.roundToInt
+
+internal class ScrollScreenSection private constructor(
+    val icon: ImageVector,
+    val iconSelected: ImageVector,
+    val iconCount: MutableState<Int>,
+    val onSelected: () -> Unit,
+    val screen: @Composable (BoxScope.() -> Unit)
+) {
+    companion object {
+        fun section(
+            icon: ImageVector,
+            iconSelected: ImageVector,
+            iconCount: MutableState<Int> = mutableStateOf(0),
+            onSelected: () -> Unit = {},
+            screen: @Composable BoxScope.() -> Unit
+        ): ScrollScreenSection = ScrollScreenSection(icon, iconSelected, iconCount, onSelected, screen)
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ScrollScreen(
+    selectedScreen: MutableState<SelectedScreen>,
+    swipeState: SwipeableState<ScreenLocation>,
     up: @Composable BoxScope.() -> Unit,
-    leftScreen: @Composable BoxScope.() -> Unit,
-    centerScreen: @Composable BoxScope.() -> Unit,
-    rightScreen: @Composable BoxScope.() -> Unit,
-    leftIcon: ImageVector,
-    leftIconSelected: ImageVector,
-    centerIcon: ImageVector,
-    centerIconSelected: ImageVector,
-    rightIcon: ImageVector,
-    rightIconSelected: ImageVector,
+    left: ScrollScreenSection,
+    center: ScrollScreenSection,
+    right: ScrollScreenSection,
     backPressedHandler: BackPressedHandler,
     onUp: () -> Unit,
     onDown: () -> Unit,
@@ -42,17 +60,16 @@ internal fun ScrollScreen(
         val fullHeight = maxHeight
         val fullWidth = maxWidth
         val height = fullHeight - scrollIconSize - (iconPadding * 2)
-        val swipeState = rememberSwipeableState(ScreenLocation.UP)
         val scope = rememberCoroutineScope()
-        var selectedScreen by remember { mutableStateOf(SelectedScreen.CENTER) }
-        val screens = remember { listOf(leftScreen, centerScreen, rightScreen) }
-        val iconScreens = when (selectedScreen) {
-            SelectedScreen.LEFT -> listOf(leftIconSelected, centerIcon, rightIcon)
-            SelectedScreen.CENTER -> listOf(leftIcon, centerIconSelected, rightIcon)
-            SelectedScreen.RIGHT -> listOf(leftIcon, centerIcon, rightIconSelected)
-        }.zip(SelectedScreen.values())
+        val sections = remember { listOf(left, center, right) }
+        val iconSection = when (selectedScreen.value) {
+            SelectedScreen.LEFT -> listOf(left.iconSelected, center.icon, right.icon)
+            SelectedScreen.CENTER -> listOf(left.icon, center.iconSelected, right.icon)
+            SelectedScreen.RIGHT -> listOf(left.icon, center.icon, right.iconSelected)
+        }
+            .let { icons -> SelectedScreen.values().zip(icons, sections) }
 
-        val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.ordinal)
+        val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.value.ordinal)
         val handler = remember { fun() = true.also { scope.launch { swipeState.animateTo(ScreenLocation.UP) } } }
         when (swipeState.targetValue) {
             ScreenLocation.DOWN -> {
@@ -99,12 +116,14 @@ internal fun ScrollScreen(
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            iconScreens.forEach { (icon, screen) ->
-                                BottomIcon(icon, iconPadding, scrollIconSize, onClick = {
-                                    selectedScreen = screen
+                            iconSection.forEach { (screen, icon, section) ->
+                                val iconCount by section.iconCount
+                                BottomIcon(icon, iconPadding, scrollIconSize, iconCount, onClick = {
+                                    selectedScreen.value = screen
                                     if (swipeState.targetValue == ScreenLocation.UP) scope.launch {
                                         swipeState.animateTo(ScreenLocation.DOWN)
                                     }
+                                    section.onSelected()
                                 })
                             }
                         }
@@ -114,12 +133,12 @@ internal fun ScrollScreen(
                             .offset(scrollOffset)
                             .wrapContentWidth(unbounded = true, align = Alignment.Start)
                     ) {
-                        screens.forEach {
+                        sections.forEach {
                             Box(
                                 modifier = Modifier
                                     .width(fullWidth)
                                     .height(height),
-                                content = it
+                                content = it.screen
                             )
                         }
                     }
@@ -135,22 +154,44 @@ private fun BottomIcon(
     icon: ImageVector,
     padding: Dp,
     iconsSize: Dp,
+    badgeCount: Int = 0,
     onClick: () -> Unit,
 ) {
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier.padding(padding)
+        BadgedBox(
+            badge = {
+                if (badgeCount > 0) Badge(
+                    modifier = Modifier.offset(
+                        x = (-20).dp,
+                        y = 44.dp,
+                    ),
+                    backgroundColor = Color.Red,
+                    contentColor = Color.White,
+                ) {
+                    val badgeText = if (badgeCount > 999) "999+" else "$badgeCount"
+                    Text(
+                        text = badgeText,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(2.dp)
+                    )
+                }
+            },
         ) {
-            ShadowIcon(
-                imageVector = icon,
-                contentDescription = "selectIcon",
-                size = iconsSize
-            )
+            IconButton(
+                onClick = onClick,
+                modifier = Modifier.padding(padding)
+            ) {
+                ShadowIcon(
+                    imageVector = icon,
+                    contentDescription = "selectIcon",
+                    size = iconsSize
+                )
+            }
         }
     }
 }
 
-private enum class SelectedScreen { LEFT, CENTER, RIGHT }
+enum class SelectedScreen { LEFT, CENTER, RIGHT }
 
-private enum class ScreenLocation { UP, DOWN }
+enum class ScreenLocation { UP, DOWN }

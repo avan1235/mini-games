@@ -9,6 +9,15 @@ inline fun <V> Set<V>.everyUnorderedTriple(action: (V, V, V) -> Unit) {
     )
 }
 
+inline fun <T, R, V> Array<out T>.zip(other1: List<R>, other2: List<V>): List<Triple<T, R, V>> {
+    val arraySize = minOf(size, other1.count(), other2.count())
+    val list = ArrayList<Triple<T, R, V>>(arraySize)
+    for (idx in 0 until arraySize) {
+        list.add(Triple(this[idx], other1[idx], other2[idx]))
+    }
+    return list
+}
+
 class ComputedMap<K, V>(
     private val map: MutableMap<K, V> = HashMap(),
     private val default: MutableMap<K, V>.(K) -> V
