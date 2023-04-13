@@ -3,6 +3,21 @@
 [![Release](https://github.com/avan1235/mini-games/actions/workflows/release.yml/badge.svg)](https://github.com/avan1235/mini-games/releases/latest)
 [![Docker](https://github.com/avan1235/mini-games/actions/workflows/push-docker-image.yml/badge.svg)](https://hub.docker.com/repository/docker/avan1235/mini-games/tags?ordering=last_updated)
 
+## News
+
+[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) just got released as an alpha version.
+I highly encourage you to try to use this project as a starting point for your own multiplatform project.
+
+You can find here how to:
+
+- configure build files to build for Android, iOS, Linux, MacOS and Windows
+- release your application with GitHub actions
+- write and use multiplatform clients and share model code with the backend of your application
+
+I'm going to publish some blog posts at [my website](https://kotlin-dev.ml/) about the multipaltform project development so stay tuned and give a
+<a class="github-button" href="https://github.com/avan1235/mini-games" data-icon="octicon-star" data-show-count="true" aria-label="Star avan1235/mini-games on GitHub">star</a>
+to this repository to follow the latest changes!
+
 ## Project description
 
 You can find project description in [Essay](ESSAY.md).
@@ -37,9 +52,11 @@ you should compile server and clients by yourself.
 
 Please note that for running unsigned version of macOS application, you need to temporarily
 disable Gatekeeper, so executing command
+
 ```shell
 sudo xattr -dr com.apple.quarantine  /Applications/MiniGames.app
 ```
+
 is required to be able to run the app on macOS. You can learn more about this
 [here](https://web.archive.org/web/20230318124537/https://disable-gatekeeper.github.io/).
 
@@ -136,14 +153,14 @@ from the root directory of project.
 
 #### Run from terminal
 
-To run iOS version of client cocoapods pod needs to be compiled and installed to XCode project 
+To run iOS version of client cocoapods pod needs to be compiled and installed to XCode project
 located in `ios-app`. The easiest way to compile and link all ios targets is to run
 
 ```shell
 ./gradlew linkPodReleaseFrameworkIosFat linkPodDebugFrameworkIosFat
 ```
 
-from the root directory of project and then 
+from the root directory of project and then
 
 ```shell
 ./gradlew podInstall
@@ -152,7 +169,7 @@ from the root directory of project and then
 to install the compiled resources to XCode.
 
 The last step is to set up the XCode project by first changing the value of `TEAM_ID` in
-`ios-app/Configuration/Config.xcconfig` to your own and then open XCode workspace available 
+`ios-app/Configuration/Config.xcconfig` to your own and then open XCode workspace available
 in `ios-app`.
 
 ### Android
@@ -187,6 +204,6 @@ file.
 
 - `dev-env` - useful tools that **should** be used by developers that are working
   locally to test their current code and solutions
-  - docker environment with Postgres database can be run with `start.sh`
-  - `http` contains http requests definitions that can be run from Intellij. They're
-    configured by the `http-client.env.json` to switch between different environments
+    - docker environment with Postgres database can be run with `start.sh`
+    - `http` contains http requests definitions that can be run from Intellij. They're
+      configured by the `http-client.env.json` to switch between different environments
