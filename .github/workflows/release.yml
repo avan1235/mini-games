@@ -262,4 +262,4 @@ jobs:
           git config --global user.name "${{ secrets.CI_COMMIT_AUTHOR }}"
           git config --global user.email "${{ secrets.CI_COMMIT_EMAIL }}"
           git commit version.properties -m "update version properties"
-          git push
+          git push origin HEAD:master
