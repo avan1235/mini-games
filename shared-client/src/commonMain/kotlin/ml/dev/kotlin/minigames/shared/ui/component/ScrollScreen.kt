@@ -1,6 +1,11 @@
 package ml.dev.kotlin.minigames.shared.ui.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
@@ -160,21 +165,33 @@ private fun BottomIcon(
     CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
         BadgedBox(
             badge = {
-                if (badgeCount > 0) Badge(
-                    modifier = Modifier.offset(
-                        x = (-20).dp,
-                        y = 44.dp,
+                AnimatedVisibility(
+                    visible = badgeCount > 0,
+                    enter = expandIn(
+                        animationSpec = tween(durationMillis = 200, easing = LinearEasing),
+                        expandFrom = Alignment.Center
                     ),
-                    backgroundColor = Color.Red,
-                    contentColor = Color.White,
+                    exit = shrinkOut(
+                        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
+                        shrinkTowards = Alignment.Center
+                    ),
                 ) {
-                    val badgeText = if (badgeCount > 999) "999+" else "$badgeCount"
-                    Text(
-                        text = badgeText,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(2.dp)
-                    )
+                    Badge(
+                        modifier = Modifier.offset(
+                            x = (-20).dp,
+                            y = 44.dp,
+                        ),
+                        backgroundColor = Color.Red,
+                        contentColor = Color.White,
+                    ) {
+                        val badgeText = if (badgeCount > 999) "999+" else "$badgeCount"
+                        Text(
+                            text = badgeText,
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(2.dp)
+                        )
+                    }
                 }
             },
         ) {
