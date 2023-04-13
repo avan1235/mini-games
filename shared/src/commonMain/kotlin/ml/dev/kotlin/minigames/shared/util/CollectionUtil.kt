@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package ml.dev.kotlin.minigames.shared.util
 
 inline fun <V> Set<V>.everyUnorderedTriple(action: (V, V, V) -> Unit) {
