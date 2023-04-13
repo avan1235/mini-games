@@ -52,8 +52,7 @@ private class GameHandler(
     ): Unit = with(session) {
         val connection = GameConnection.State(session, user.username)
         val serverName = call.parameters[SERVER_NAME]?.let<String, GameServerName>(::GameServerName) ?: return
-        val username = user.username
-        service.addStateConnection(serverName, username, connection)
+        service.addStateConnection(serverName, connection)
 
         try {
             val initialState = service.state(serverName)
@@ -63,7 +62,7 @@ private class GameHandler(
                 frame as? Frame.Binary ?: continue
                 val bytes = frame.readBytes()
                 val clientMessage = GameSerialization.decodeFromByteArray<GameStateUpdateClientMessage>(bytes)
-                service.updateGameStateWithClientMessage(serverName, username, clientMessage)
+                service.updateGameStateWithClientMessage(serverName, user.username, clientMessage)
             }
         } catch (e: Exception) {
             eprintln(e.localizedMessage)
@@ -81,15 +80,14 @@ private class GameHandler(
     ): Unit = with(session) {
         val connection = GameConnection.Data(session, user.username)
         val serverName = call.parameters[SERVER_NAME]?.let(::GameServerName) ?: return
-        val username = user.username
-        service.addDataConnection(serverName, username, connection)
+        service.addDataConnection(serverName, connection)
 
         try {
             for (frame in incoming) {
                 frame as? Frame.Binary ?: continue
                 val bytes = frame.readBytes()
                 val clientMessage = GameSerialization.decodeFromByteArray<GameDataClientMessage>(bytes)
-                service.updateGameDataWithClientMessage(serverName, username, clientMessage)
+                service.updateGameDataWithClientMessage(serverName, connection.username, clientMessage)
             }
         } catch (e: Exception) {
             eprintln(e.localizedMessage)
