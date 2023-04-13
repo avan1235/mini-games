@@ -13,9 +13,9 @@ object Dependencies {
         const val multiplatformSettings = "1.0.0"
     }
 
-    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.3.2"
+    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.5.0"
     val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
-    val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.3.2"
+    val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
     val uuid = "com.benasher44:uuid:0.7.0"
 
     val ktorServerCore = "io.ktor:ktor-server-core:${Version.ktor}"
@@ -33,14 +33,14 @@ object Dependencies {
     val ktorClientDarwin = "io.ktor:ktor-client-darwin:${Version.ktor}"
     val ktorClientDesktop = "io.ktor:ktor-client-okhttp:${Version.ktor}"
     val ktorClientWebsockets = "io.ktor:ktor-client-websockets:${Version.ktor}"
-    val logbackClassic = "ch.qos.logback:logback-classic:1.2.6"
+    val logbackClassic = "ch.qos.logback:logback-classic:1.4.6"
 
     val simpleMailCore = "net.axay:simplekotlinmail-core:${Version.simpleMail}"
     val simpleMailClient = "net.axay:simplekotlinmail-client:${Version.simpleMail}"
 
     val bCrypt = "at.favre.lib:bcrypt:0.9.0"
 
-    val napierLogger = "io.github.aakira:napier:2.4.0"
+    val napierLogger = "io.github.aakira:napier:2.6.1"
 
     val multiplatformSettings = "com.russhwolf:multiplatform-settings:${Version.multiplatformSettings}"
     val multiplatformSettingsCoroutines = "com.russhwolf:multiplatform-settings-coroutines:${Version.multiplatformSettings}"
