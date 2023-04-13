@@ -260,6 +260,6 @@ jobs:
       - name: Commit version code changes
         run: |
           git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
-          git config --global user.email "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --global user.email "${{ env.CI_COMMIT_EMAIL }}"
           git commit version.properties -m "update version properties"
           git push
