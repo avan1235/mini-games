@@ -198,6 +198,7 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_STORE_FILE: ${{ steps.decode_keystore.outputs.filePath }}
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+          BUMP_FILE_VERSION_CODE: true
 
       - name: Upload debug artifact file to workflow run results
         uses: actions/upload-artifact@v2
@@ -255,3 +256,10 @@ jobs:
             releaseFiles: ./android-app/build/outputs/bundle/release/android-app-release.aab
             track: production
             releaseName: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
+
+      - name: Commit version code changes
+        run: |
+          git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --global user.email "${{ env.CI_COMMIT_AUTHOR }}"
+          git commit version.properties -m "update version properties"
+          git push

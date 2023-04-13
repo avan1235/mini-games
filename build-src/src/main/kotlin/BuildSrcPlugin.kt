@@ -33,3 +33,12 @@ val ENV: Map<String, String>
     }.toMap().let { it + getenv() }
 
 val VERSION: String get() = ENV["VERSION"] ?: "1.0.0"
+
+private val VERSION_CODE_PREFIX = "version.code="
+
+val VERSION_CODE: Int
+    get() = if (ENV["BUMP_FILE_VERSION_CODE"]?.toBoolean() == true) {
+        val line = File("version.properties").readLines().first()
+        val number = line.removePrefix(VERSION_CODE_PREFIX).toInt()
+        number.also { File("version.properties").writeText("$VERSION_CODE_PREFIX${it + 1}") }
+    } else 1
