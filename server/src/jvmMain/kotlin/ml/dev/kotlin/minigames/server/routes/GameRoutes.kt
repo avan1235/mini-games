@@ -23,8 +23,8 @@ import ml.dev.kotlin.minigames.util.eprintln
 import ml.dev.kotlin.minigames.util.get
 
 private val SET_GAME_HANDLER = GameService { SetGameState.random() }.let(::GameHandler)
-private val SNAKE_GAME_HANDLER = GameService(updateDelay = 20) { SnakeGameState.empty() }.let(::GameHandler)
-private val BIRD_GAME_HANDLER = GameService(updateDelay = 20) { BirdGameState.empty() }.let(::GameHandler)
+private val SNAKE_GAME_HANDLER = GameService(updateDelay = 30) { SnakeGameState.empty() }.let(::GameHandler)
+private val BIRD_GAME_HANDLER = GameService(updateDelay = 30) { BirdGameState.empty() }.let(::GameHandler)
 
 fun Application.gameSockets() = routing {
     authJwtGameHandlerWebSockets(SET_GAME_WEBSOCKET, SET_GAME_HANDLER)
