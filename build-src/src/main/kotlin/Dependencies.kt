@@ -4,7 +4,7 @@ object Dependencies {
         val kotlinVersion by System.getProperties()
         val composeVersion by System.getProperties()
         val parcelizeDarwinVersion by System.getProperties()
-        const val ktor = "2.2.4"
+        const val ktor = "2.3.0"
         const val exposed = "0.41.1" // Keep this version compatible with the version of exposed used by krush
         const val krush = "1.2.0"
         const val simpleMail = "1.3.3"
@@ -23,9 +23,10 @@ object Dependencies {
     val ktorServerSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
     val ktorServerWebsockets = "io.ktor:ktor-server-websockets:${Version.ktor}"
     val ktorServerContentNegotiation = "io.ktor:ktor-server-content-negotiation:${Version.ktor}"
-    val ktorAuth = "io.ktor:ktor-server-auth:${Version.ktor}"
-    val ktorAuthJwt = "io.ktor:ktor-server-auth-jwt:${Version.ktor}"
-    val ktorHtmlBuilder = "io.ktor:ktor-server-html-builder:${Version.ktor}"
+    val ktorServerAuth = "io.ktor:ktor-server-auth:${Version.ktor}"
+    val ktorServerAuthJwt = "io.ktor:ktor-server-auth-jwt:${Version.ktor}"
+    val ktorServerHtmlBuilder = "io.ktor:ktor-server-html-builder:${Version.ktor}"
+
     val ktorClientSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
     val ktorClientContentNegotiation = "io.ktor:ktor-client-content-negotiation:${Version.ktor}"
     val ktorClientCore = "io.ktor:ktor-client-core:${Version.ktor}"
@@ -33,6 +34,7 @@ object Dependencies {
     val ktorClientDarwin = "io.ktor:ktor-client-darwin:${Version.ktor}"
     val ktorClientDesktop = "io.ktor:ktor-client-okhttp:${Version.ktor}"
     val ktorClientWebsockets = "io.ktor:ktor-client-websockets:${Version.ktor}"
+
     val logbackClassic = "ch.qos.logback:logback-classic:1.4.6"
 
     val simpleMailCore = "net.axay:simplekotlinmail-core:${Version.simpleMail}"

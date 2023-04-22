@@ -26,9 +26,9 @@ kotlin {
                 implementation(Dependencies.ktorServerSerialization)
                 implementation(Dependencies.ktorServerWebsockets)
                 implementation(Dependencies.ktorServerContentNegotiation)
-                implementation(Dependencies.ktorAuth)
-                implementation(Dependencies.ktorAuthJwt)
-                implementation(Dependencies.ktorHtmlBuilder)
+                implementation(Dependencies.ktorServerAuth)
+                implementation(Dependencies.ktorServerAuthJwt)
+                implementation(Dependencies.ktorServerHtmlBuilder)
                 implementation(Dependencies.logbackClassic)
 
                 implementation(Dependencies.simpleMailCore)
