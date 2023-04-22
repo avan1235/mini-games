@@ -5,6 +5,7 @@ services:
   mini-games-dev-server:
     build:
       dockerfile: ./Dockerfile
+      context: .
       args:
         POSTGRES_PORT: ${POSTGRES_PORT}
         POSTGRES_DB: ${POSTGRES_DB}
