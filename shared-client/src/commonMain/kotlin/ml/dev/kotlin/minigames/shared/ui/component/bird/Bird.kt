@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -18,7 +17,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.ui.component.SizedCanvas
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
 import ml.dev.kotlin.minigames.shared.util.V2
@@ -31,7 +29,7 @@ internal fun Bird(
     mapSize: DpSize,
     isAlive: Boolean,
     theme: BirdTheme,
-    birdSize: Dp = 32.dp
+    birdSize: Dp = 32.dp,
 ) {
     Positioned(pos, DpSize(birdSize, birdSize), mapSize) {
         Box(
@@ -64,15 +62,14 @@ private fun BirdNozzle(
     isAlive: Boolean,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val nozzleSpace = AnimateInfiniteRepeatableReverse(
         animation = tween(
             durationMillis = BIRD_NOZZLE_DURATION_MILLIS,
             easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
         )
     )
-    if (!isAlive) {
-        scope.launch { nozzleSpace.snapTo(1f) }
+    if (!isAlive) LaunchedEffect(Unit) {
+        nozzleSpace.snapTo(1f)
     }
     SizedCanvas(birdSize, birdSize) {
         val path = Path().apply {
@@ -113,15 +110,14 @@ private fun BirdWing(
     isAlive: Boolean,
     fill: DrawScope.(color: Color) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
     val wingHeight = AnimateInfiniteRepeatableReverse(
         animation = tween(
             durationMillis = BIRD_WING_DURATION_MILLIS,
             easing = CubicBezierEasing(1.0f, 0.2f, 0.0f, 0.4f),
         )
     )
-    if (!isAlive) {
-        scope.launch { wingHeight.snapTo(1f) }
+    if (!isAlive) LaunchedEffect(Unit) {
+        wingHeight.snapTo(1f)
     }
     SizedCanvas(birdSize, birdSize) {
         val path = Path().apply {

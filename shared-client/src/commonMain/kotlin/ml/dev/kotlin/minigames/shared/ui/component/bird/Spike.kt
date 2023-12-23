@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.shared.ui.component.bird
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -74,7 +74,7 @@ private fun Spike(
     pos: V2,
     spikeSize: DpSize,
     mapSize: DpSize,
-    draw: Path.(size: Size) -> Unit
+    draw: Path.(size: Size) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -84,7 +84,7 @@ private fun Spike(
                 y = (mapSize.height - spikeSize.height) * 0.5f * (1f - pos.y),
             )
     ) {
-        val color = MaterialTheme.colors.surface
+        val color = MaterialTheme.colorScheme.surface
         SizedCanvas(spikeSize.width, spikeSize.height) {
             val path = Path().apply { draw(size) }
             clipPath(

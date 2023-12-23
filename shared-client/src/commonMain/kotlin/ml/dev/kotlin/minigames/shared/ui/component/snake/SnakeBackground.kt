@@ -5,7 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +21,7 @@ import kotlin.math.*
 internal fun SnakeBackground(
     head: V2,
     mapSize: DpSize,
-    itemSize: Dp = 72.dp
+    itemSize: Dp = 72.dp,
 ) {
     val xItems = ceil(mapSize.width / itemSize).roundToInt() * 2 / 3
     val yItems = ceil(mapSize.height / itemSize).roundToInt()
@@ -31,7 +31,7 @@ internal fun SnakeBackground(
         modifier = Modifier
             .offset(-xOffset.dp, -yOffset.dp)
             .size(mapSize.width, mapSize.height)
-            .background(MaterialTheme.colors.surface)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         for (y in -2..yItems + 2) for (x in -2..xItems + 2) {
             Box(
@@ -55,9 +55,9 @@ internal fun SnakeBackground(
 @Composable
 private fun SnakeBackgroundItem(
     itemSize: Dp,
-    padding: Dp = 4.dp
+    padding: Dp = 4.dp,
 ) {
-    val color = MaterialTheme.colors.background
+    val color = MaterialTheme.colorScheme.background
     val colors = listOf(color.copy(alpha = 1f), color.copy(alpha = 0.8f))
     Box(
         modifier = Modifier.size(itemSize),

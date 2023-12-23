@@ -1,10 +1,11 @@
 package ml.dev.kotlin.minigames.shared.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Shuffle
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -14,48 +15,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import io.github.aakira.napier.Napier
-import ml.dev.kotlin.minigames.shared.ui.GAMES
-import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
+import ml.dev.kotlin.minigames.shared.component.Game
+import ml.dev.kotlin.minigames.shared.component.LogInComponent
 import ml.dev.kotlin.minigames.shared.ui.component.*
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 import ml.dev.kotlin.minigames.shared.ui.theme.capitals
 import ml.dev.kotlin.minigames.shared.ui.theme.loadLeckerliOneFont
-import ml.dev.kotlin.minigames.shared.ui.util.Navigator
-import ml.dev.kotlin.minigames.shared.ui.util.set
-import ml.dev.kotlin.minigames.shared.util.on
-import ml.dev.kotlin.minigames.shared.viewmodel.CONNECT_ERROR_MESSAGE
-import ml.dev.kotlin.minigames.shared.viewmodel.LogInViewModel
-import ml.dev.kotlin.minigames.shared.viewmodel.message
 
 @Composable
-internal fun LogInScreen(
-    navigator: Navigator<ScreenRoute>,
-    vm: LogInViewModel
-): Unit = with(LocalToastContext.current) {
+internal fun LogInScreen(component: LogInComponent) {
     LoadingScreen(
         loadingText = "Logging in",
         loadingInitState = false,
         loadingAction = { loading ->
-            vm.loginUser().on(
-                ok = {
-                    toast("Logged in")
-                    vm.navigateGame(navigator)
-                },
-                err = {
-                    toast(it.reason.message())
-                    loading.value = false
-                },
-                empty = {
-                    toast(CONNECT_ERROR_MESSAGE)
-                    loading.value = false
-                }
+            component.loginUser(
+                onError = { loading.value = false }
             )
         },
         loadedScreen = { loading ->
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
                 contentAlignment = Alignment.BottomEnd
             ) {
                 ProportionKeeper {
@@ -75,50 +59,61 @@ internal fun LogInScreen(
                                 text = "Mini Games",
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center,
-                                style = Typography.h3.copy(
+                                style = Typography.displaySmall.copy(
                                     fontFeatureSettings = capitals,
                                     fontFamily = fontFamily ?: FontFamily.Cursive
                                 ),
                             )
                             Spacer(Modifier.size(16.dp))
-                            DropdownMenu(vm.gameState, GAMES)
+                            val game by component.game.subscribeAsState()
+                            DropdownMenu(game, component::onGameChanged, Game.entries)
                             Spacer(Modifier.size(8.dp))
-                            FormField("Game Server Name", vm.serverNameState, vm.serverNameErrorState) {
-                                IconButton(onClick = vm::shuffleGameName) {
+                            val serverName by component.serverName.subscribeAsState()
+                            val serverNameError by component.serverNameError.subscribeAsState()
+                            FormField(
+                                text = "Game Server Name",
+                                textInput = serverName,
+                                onTextInputChange = component::onServerNameChanged,
+                                errorState = serverNameError,
+                                onErrorStateChange = component::onServerNameErrorChanged
+                            ) {
+                                IconButton(onClick = component::shuffleGameName) {
                                     Icon(imageVector = Icons.Default.Shuffle, contentDescription = "shuffle")
                                 }
                             }
                             Spacer(Modifier.size(8.dp))
-                            FormField("Username", vm.usernameState, vm.usernameErrorState)
-                            Spacer(Modifier.size(8.dp))
+                            val username by component.username.subscribeAsState()
+                            val usernameError by component.usernameError.subscribeAsState()
                             FormField(
-                                "Password",
-                                vm.passwordState,
-                                vm.passwordErrorState,
+                                text = "Username",
+                                textInput = username,
+                                onTextInputChange = component::onUsernameChanged,
+                                errorState = usernameError,
+                                onErrorStateChange = component::onUsernameErrorChanged
+                            )
+                            Spacer(Modifier.size(8.dp))
+                            val password by component.password.subscribeAsState()
+                            val passwordError by component.passwordError.subscribeAsState()
+                            FormField(
+                                text = "Password",
+                                textInput = password,
+                                onTextInputChange = component::onPasswordChanged,
+                                errorState = passwordError,
+                                onErrorStateChange = component::onPasswordErrorChanged,
                                 password = true,
                                 buttonType = FormFieldButtonType.Done
                             )
                             Spacer(Modifier.size(8.dp))
-                            RememberCheckBox(vm)
+                            RememberCheckBox(component)
                             Spacer(Modifier.size(8.dp))
-                            RegisterButton(onClick = { navigator.navigate(ScreenRoute.RegisterScreen) })
+                            RegisterButton(onClick = component::navigateRegister)
                         }
                     }
                 }
                 CircleButton(
                     icon = Icons.Filled.ArrowForward,
                     contentDescription = "login",
-                    onClick = {
-                        when {
-                            vm.serverName.isEmpty() -> true.set(vm.serverNameErrorState)
-                            vm.username.isEmpty() -> true.set(vm.usernameErrorState)
-                            vm.password.isEmpty() -> true.set(vm.passwordErrorState)
-                            else -> {
-                                false.set(vm.serverNameErrorState, vm.usernameErrorState, vm.passwordErrorState)
-                                loading.value = true
-                            }
-                        }
-                    }
+                    onClick = { loading.value = component.verifyInputFields() }
                 )
             }
         }
@@ -141,17 +136,18 @@ private fun RegisterButton(onClick: () -> Unit) {
 }
 
 @Composable
-private fun RememberCheckBox(vm: LogInViewModel) {
+private fun RememberCheckBox(component: LogInComponent) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val rememberUserLogin by component.rememberUserLogin.subscribeAsState()
         Checkbox(
-            checked = vm.rememberUserLogin,
-            onCheckedChange = { vm.rememberUserLogin = !vm.rememberUserLogin }
+            checked = rememberUserLogin,
+            onCheckedChange = component::onRememberUserLoginChanged,
         )
-        Text(text = "Remember", style = Typography.subtitle2)
+        Text(text = "Remember", style = Typography.titleSmall)
     }
 }
 

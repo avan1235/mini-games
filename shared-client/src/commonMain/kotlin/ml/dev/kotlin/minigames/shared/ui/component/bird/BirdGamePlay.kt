@@ -9,29 +9,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import ml.dev.kotlin.minigames.shared.component.BirdComponent
 import ml.dev.kotlin.minigames.shared.model.BirdGameSnapshot
 import ml.dev.kotlin.minigames.shared.model.GameStateUpdateClientMessage
 import ml.dev.kotlin.minigames.shared.model.Username
-import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
 import ml.dev.kotlin.minigames.shared.ui.component.ProportionKeeper
 import ml.dev.kotlin.minigames.shared.ui.component.bird.BirdNozzleDirection.Companion.fromVelocity
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
-import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.ComputedMap
 import ml.dev.kotlin.minigames.shared.util.V2
-import ml.dev.kotlin.minigames.shared.viewmodel.BirdGameViewModel
 
 @Composable
 internal fun BirdGamePlay(
-    navigator: Navigator<ScreenRoute>,
-    vm: BirdGameViewModel,
+    component: BirdComponent,
     gameState: BirdGameSnapshot,
     stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
-    val scope = rememberCoroutineScope()
     val interactionSource = remember { MutableInteractionSource() }
     Column(
         modifier = Modifier
@@ -39,13 +34,13 @@ internal fun BirdGamePlay(
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-            ) { scope.launch { vm.emitFly(stateMessages) } },
+            ) { component.emitFly(stateMessages) },
         verticalArrangement = Arrangement.Top,
     ) {
         GameTopBar(
-            points = vm.points(gameState),
-            role = vm.userRole(gameState),
-            onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
+            points = component.points(gameState),
+            role = component.userRole(gameState),
+            onClose = component::closeGame,
         )
         ProportionKeeper {
             BoxWithConstraints(
@@ -64,7 +59,7 @@ internal fun BirdGamePlay(
                 var userAlive = false
                 for ((username, bird) in gameState.birds) {
                     val direction = fromVelocity(bird.vel)
-                    if (vm.username == username) {
+                    if (component.username == username) {
                         last = Pair(bird.pos, direction)
                         userAlive = true
                     }
@@ -76,7 +71,7 @@ internal fun BirdGamePlay(
                         last.second,
                         mapSize,
                         isAlive = false,
-                        theme = CACHED_THEMES[vm.username]
+                        theme = CACHED_THEMES[component.username]
                     )
                 }
             }

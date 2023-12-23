@@ -27,6 +27,11 @@ pluginManagement {
     }
 }
 
+plugins {
+    val foojayResolverVersion: String by System.getProperties()
+    id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolverVersion
+}
+
 rootProject.name = "mini-games"
 
 includeBuild("build-src")

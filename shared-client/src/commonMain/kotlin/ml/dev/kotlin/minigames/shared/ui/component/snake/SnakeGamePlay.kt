@@ -11,22 +11,17 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.platform.LocalDensity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import ml.dev.kotlin.minigames.shared.component.SnakeComponent
 import ml.dev.kotlin.minigames.shared.model.GameStateUpdateClientMessage
 import ml.dev.kotlin.minigames.shared.model.SnakeGameSnapshot
-import ml.dev.kotlin.minigames.shared.ui.ScreenRoute
 import ml.dev.kotlin.minigames.shared.ui.component.GameTopBar
 import ml.dev.kotlin.minigames.shared.ui.util.DpSize
-import ml.dev.kotlin.minigames.shared.ui.util.Navigator
 import ml.dev.kotlin.minigames.shared.util.V2
-import ml.dev.kotlin.minigames.shared.viewmodel.SnakeGameViewModel
 
 @Composable
 internal fun SnakeGamePlay(
-    navigator: Navigator<ScreenRoute>,
-    vm: SnakeGameViewModel,
+    component: SnakeComponent,
     gameState: SnakeGameSnapshot,
     stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
@@ -35,22 +30,21 @@ internal fun SnakeGamePlay(
             .fillMaxSize()
     ) {
         val center = with(LocalDensity.current) { Offset(maxWidth.toPx() / 2, maxHeight.toPx() / 2) }
-        val scope = rememberCoroutineScope()
         var lastHead by remember { mutableStateOf(V2.ZERO) }
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .pointerInput(center) { detectDirectionChange(scope, center, vm, stateMessages) }
+                .pointerInput(center) { detectDirectionChange(center, component, stateMessages) }
         ) box@{
-            val head = vm.userSnake(gameState)?.head?.pos?.also { lastHead = it }
+            val head = component.userSnake(gameState)?.head?.pos?.also { lastHead = it }
             val mapSize = DpSize(maxWidth, maxHeight)
             SnakeBackground(head ?: lastHead, mapSize)
             gameState.items.forEach { SnakePointItem(it, head ?: lastHead, mapSize) }
             gameState.snakes.forEach { Snake(it.key, it.value, head ?: lastHead, mapSize) }
             GameTopBar(
-                points = vm.points(gameState),
-                role = vm.userRole(gameState),
-                onClose = { navigator.navigate(ScreenRoute.LogInScreen, dropAll = true) }
+                points = component.points(gameState),
+                role = component.userRole(gameState),
+                onClose = component::closeGame
             )
         }
     }
@@ -58,9 +52,8 @@ internal fun SnakeGamePlay(
 }
 
 private suspend fun PointerInputScope.detectDirectionChange(
-    coroutineScope: CoroutineScope,
     center: Offset,
-    vm: SnakeGameViewModel,
+    component: SnakeComponent,
     stateMessages: MutableStateFlow<GameStateUpdateClientMessage?>,
 ) {
     awaitEachGesture {
@@ -69,7 +62,7 @@ private suspend fun PointerInputScope.detectDirectionChange(
             val event = awaitPointerEvent()
             event.changes.fold(Offset.Zero) { acc, c -> acc + c.position - center }
                 .run { V2(x, y) }.takeIf { it != V2.ZERO }
-                ?.let { coroutineScope.launch { vm.emitDirectionChange(it, stateMessages) } }
+                ?.let { component.emitDirectionChange(it, stateMessages) }
             event.changes.forEach { if (it.positionChange() != Offset.Zero) it.consume() }
         } while (event.changes.any { it.pressed })
     }

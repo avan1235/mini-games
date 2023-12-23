@@ -2,8 +2,8 @@ package ml.dev.kotlin.minigames.shared.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +30,7 @@ internal fun LoadingScreen(
 @Composable
 internal fun LoadingScreen(
     text: String? = null,
-    action: suspend CoroutineScope.() -> Unit = {}
+    action: suspend CoroutineScope.() -> Unit = {},
 ) {
     LaunchedEffect(Unit) {
         delay(MIN_LOADING_ANIMATION_TIME_MILLIS)
@@ -39,7 +39,7 @@ internal fun LoadingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface),
+            .background(MaterialTheme.colorScheme.surface),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -48,7 +48,7 @@ internal fun LoadingScreen(
         text?.let {
             Text(
                 text = text,
-                style = Typography.subtitle1,
+                style = Typography.titleMedium,
             )
         }
     }

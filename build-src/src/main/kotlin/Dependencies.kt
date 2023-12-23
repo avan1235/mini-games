@@ -4,16 +4,15 @@ object Dependencies {
         val kotlinVersion by System.getProperties()
         val composeVersion by System.getProperties()
         val parcelizeDarwinVersion by System.getProperties()
-        const val ktor = "2.3.0"
-        const val exposed = "0.41.1" // Keep this version compatible with the version of exposed used by krush
-        const val krush = "1.2.0"
+        const val ktor = "2.3.7"
+        const val exposed = "0.45.0"
         const val simpleMail = "1.3.3"
-        const val decompose = "0.5.0"
-        const val essenty = "0.2.2"
-        const val multiplatformSettings = "1.0.0"
+        const val decompose = "3.0.0-alpha03"
+        const val multiplatformSettings = "1.1.1"
+        const val coroutines = "1.7.3"
     }
 
-    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.5.0"
+    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.6.2"
     val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
     val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
     val uuid = "com.benasher44:uuid:0.7.0"
@@ -48,17 +47,16 @@ object Dependencies {
     val multiplatformSettingsCoroutines = "com.russhwolf:multiplatform-settings-coroutines:${Version.multiplatformSettings}"
     val multiplatformSettingsDatastore = "com.russhwolf:multiplatform-settings-datastore:${Version.multiplatformSettings}"
 
-    val androidGoogleMaterial = "com.google.android.material:material:1.4.0"
+    val kotlinxCoroutinesSwing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Version.coroutines}"
+    val kotlinxCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Version.coroutines}"
+
     val androidXDataStorePreferences = "androidx.datastore:datastore-preferences:1.0.0"
     val androidXActivity = "androidx.activity:activity:1.4.0"
     val androidXActivityCompose = "androidx.activity:activity-compose:1.4.0"
 
     val decompose = "com.arkivanov.decompose:decompose:${Version.decompose}"
+    val decomposeExtensions = "com.arkivanov.decompose:extensions-compose:${Version.decompose}"
 
-    val essentyParcelable = "com.arkivanov.essenty:parcelable:${Version.essenty}"
-    val essentyLifecycle = "com.arkivanov.essenty:lifecycle:${Version.essenty}"
-    val essentyStateKeeper = "com.arkivanov.essenty:state-keeper:${Version.essenty}"
-    val essentyInstanceKeeper = "com.arkivanov.essenty:instance-keeper:${Version.essenty}"
     val parcelizeDarwinRuntime = "com.arkivanov.parcelize.darwin:runtime:${Version.parcelizeDarwinVersion}"
 
     val exposedCore = "org.jetbrains.exposed:exposed-core:${Version.exposed}"
@@ -66,9 +64,5 @@ object Dependencies {
     val exposedJdbc = "org.jetbrains.exposed:exposed-jdbc:${Version.exposed}"
     val exposedJavaTime = "org.jetbrains.exposed:exposed-java-time:${Version.exposed}"
 
-    val postgresSqlDriver = "org.postgresql:postgresql:42.3.0"
-
-    val krushAnnotationProcessor = "pl.touk.krush:krush-annotation-processor:${Version.krush}"
-    val krushRuntime = "pl.touk.krush:krush-runtime:${Version.krush}"
-    val krushRuntimePostgresql = "pl.touk.krush:krush-runtime-postgresql:${Version.krush}"
+    val postgresSqlDriver = "org.postgresql:postgresql:42.7.1"
 }

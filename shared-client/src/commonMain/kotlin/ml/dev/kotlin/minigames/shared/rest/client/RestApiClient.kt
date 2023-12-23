@@ -27,7 +27,7 @@ class RestApiClient : Closeable {
     @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> post(
         path: String,
-        block: HttpRequestBuilder.() -> Unit = {}
+        block: HttpRequestBuilder.() -> Unit = {},
     ): Res<E, T>? = try {
         httpClient.post {
             url {
@@ -52,7 +52,7 @@ class RestApiClient : Closeable {
     @OptIn(ExperimentalSerializationApi::class)
     suspend inline fun <reified E, reified T> get(
         path: String,
-        block: HttpRequestBuilder.() -> Unit = {}
+        block: HttpRequestBuilder.() -> Unit = {},
     ): Res<E, T>? = try {
         httpClient.get {
             url {

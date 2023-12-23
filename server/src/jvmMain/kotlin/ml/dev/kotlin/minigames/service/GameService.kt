@@ -95,12 +95,12 @@ class GameService(
         is UserActionClientMessage -> updateGameState(
             serverName = serverName,
             byUser = username,
-            forUser = msg.username,
+            forUser = msg.forUsername,
             action = msg.action
         )?.let { gameState ->
             val message = UserActionServerMessage(action = msg.action, timestamp = now())
             val connections = serverDataConnections.safeGet(serverName)
-            connections.forEach { if (it.username == username) it.sendSerialized(message) }
+            connections.forEach { if (it.username == msg.forUsername) it.sendSerialized(message) }
             sendAllUpdatedGameState(serverName, gameState)
         }
 
@@ -198,11 +198,6 @@ class GameService(
         }
 }
 
-data class UserAtServer(
-    val username: Username,
-    val serverName: GameServerName,
-)
-
 sealed class GameConnection(
     protected val session: WebSocketSession,
     val username: Username,
@@ -253,7 +248,7 @@ private class GameServerLocks {
 }
 
 private sealed interface GameStateUpdateResult {
-    object Unapproved : GameStateUpdateResult
+    data object Unapproved : GameStateUpdateResult
 
     @JvmInline
     value class Updated(val gameState: GameState) : GameStateUpdateResult

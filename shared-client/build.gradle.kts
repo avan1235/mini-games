@@ -1,7 +1,6 @@
-@file:Suppress("OPT_IN_IS_NOT_ENABLED")
-
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -17,13 +16,20 @@ plugins {
 }
 
 kotlin {
-    android()
+    jvmToolchain(17)
+
+    androidTarget()
 
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
-    jvm("desktop")
+    jvm()
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     cocoapods {
         homepage = "https://github.com/avan1235/mini-games"
@@ -35,56 +41,44 @@ kotlin {
             isStatic = true
             baseName = "shared_client"
         }
-        extraSpecAttributes["resources"] = "['src/commonMain/res/**', 'src/iosMain/res/**']"
     }
 
     sourceSets {
-        val commonMain by named("commonMain") {
-            dependencies {
-                implementation(project(":shared"))
+        commonMain.dependencies {
+            implementation(project(":shared"))
 
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.material)
-                api(compose.material3)
-                api(compose.materialIconsExtended)
-                api(compose.ui)
-                api(compose.animation)
-                api(compose.animationGraphics)
+            api(compose.runtime)
+            api(compose.foundation)
+            api(compose.material3)
+            api(compose.materialIconsExtended)
+            api(compose.ui)
+            api(compose.animation)
+            api(compose.animationGraphics)
 
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.components.resources)
 
-                implementation(Dependencies.decompose)
+            implementation(Dependencies.decompose)
+            implementation(Dependencies.decomposeExtensions)
 
-                implementation(Dependencies.essentyLifecycle)
-                implementation(Dependencies.essentyStateKeeper)
-                implementation(Dependencies.essentyParcelable)
-                implementation(Dependencies.essentyInstanceKeeper)
+            implementation(Dependencies.kotlinxSerialization)
+            implementation(Dependencies.ktorClientCore)
+            implementation(Dependencies.ktorClientWebsockets)
+            implementation(Dependencies.ktorClientSerialization)
+            implementation(Dependencies.ktorClientContentNegotiation)
 
-                implementation(Dependencies.kotlinxSerialization)
-                implementation(Dependencies.ktorClientCore)
-                implementation(Dependencies.ktorClientWebsockets)
-                implementation(Dependencies.ktorClientSerialization)
-                implementation(Dependencies.ktorClientContentNegotiation)
+            implementation(Dependencies.napierLogger)
+            implementation(Dependencies.multiplatformSettings)
+            implementation(Dependencies.multiplatformSettingsCoroutines)
 
-                implementation(Dependencies.napierLogger)
-                implementation(Dependencies.multiplatformSettings)
-                implementation(Dependencies.multiplatformSettingsCoroutines)
-
-                implementation(Dependencies.kotlinxAtomicFu)
-            }
+            implementation(Dependencies.kotlinxAtomicFu)
         }
-        named("androidMain") {
-            dependsOn(commonMain)
-
+        androidMain {
             resources.srcDirs("src/commonMain/res")
 
             dependencies {
                 implementation(Dependencies.androidXActivity)
                 implementation(Dependencies.androidXActivityCompose)
-                implementation(Dependencies.androidGoogleMaterial)
-                implementation(Dependencies.essentyInstanceKeeper)
                 implementation(Dependencies.decompose)
 
                 implementation(Dependencies.ktorClientAndroid)
@@ -93,36 +87,25 @@ kotlin {
                 implementation(Dependencies.multiplatformSettings)
                 implementation(Dependencies.multiplatformSettingsCoroutines)
                 implementation(Dependencies.multiplatformSettingsDatastore)
+                implementation(Dependencies.kotlinxCoroutinesAndroid)
             }
         }
-        named("desktopMain") {
-            dependsOn(commonMain)
-
+        jvmMain {
             resources.srcDirs("src/commonMain/res")
 
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
-                implementation(Dependencies.essentyInstanceKeeper)
 
                 implementation(Dependencies.ktorClientDesktop)
                 implementation(Dependencies.multiplatformSettings)
                 implementation(Dependencies.multiplatformSettingsCoroutines)
+                implementation(Dependencies.kotlinxCoroutinesSwing)
             }
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-
-        val iosMain by creating {
-            dependsOn(commonMain)
-
+        iosMain {
             resources.srcDirs("src/commonMain/res")
-
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
 
             dependencies {
                 implementation(Dependencies.ktorClientDarwin)
@@ -147,10 +130,16 @@ buildkonfig {
         create("android") {
             buildConfigField<String>("ANDROID_CLIENT_API_HOST")
         }
-        create("ios") {
-            buildConfigField<String>("IOS_CLIENT_API_HOST")
+        listOf(
+            "iosX64",
+            "iosArm64",
+            "iosSimulatorArm64",
+        ).forEach {
+            create(it) {
+                buildConfigField<String>("IOS_CLIENT_API_HOST")
+            }
         }
-        create("desktop") {
+        create("jvm") {
             buildConfigField<String>("DESKTOP_CLIENT_API_HOST")
         }
     }
@@ -162,14 +151,13 @@ android {
 
     defaultConfig {
         minSdk = Constants.Android.minSdk
-        targetSdk = Constants.Android.targetSdk
     }
 
     sourceSets {
         named("main") {
             res.srcDirs(
-                    "src/androidMain/res",
-                    "src/commonMain/res",
+                "src/androidMain/res",
+                "src/commonMain/res",
             )
         }
     }

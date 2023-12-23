@@ -23,7 +23,7 @@ import ml.dev.kotlin.minigames.shared.util.tryOrNull
 
 
 class GameClient(
-    private val gamePath: (serverName: String) -> GamePath
+    private val gamePath: (serverName: String) -> GamePath,
 ) : Closeable, InstanceKeeper.Instance {
 
     private val wsStateClient = WebsocketApiClient()
@@ -53,7 +53,8 @@ class GameClient(
                     path = gamePath(accessData.serverName).dataPath,
                     jwtToken = jwtToken,
                     outputMessages = { receiveMessages(serverMessages, onErrorReceive) },
-                    inputMessages = { sendMessages(clientMessages, onErrorSend) }
+                    inputMessages = { sendMessages(clientMessages, onErrorSend) },
+                    onError = onErrorReceive
                 )
             }
             launch {
@@ -61,7 +62,8 @@ class GameClient(
                     path = gamePath(accessData.serverName).statePath,
                     jwtToken = jwtToken,
                     outputMessages = { receiveMessages(serverStateMessages, onErrorReceive) },
-                    inputMessages = { sendMessages(clientStateMessages, onErrorSend) }
+                    inputMessages = { sendMessages(clientStateMessages, onErrorSend) },
+                    onError = onErrorReceive,
                 )
             }
         }

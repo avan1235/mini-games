@@ -1,6 +1,6 @@
 package ml.dev.kotlin.minigames.shared.ui.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -17,75 +17,75 @@ val textShadow = Shadow(
 )
 
 val Typography = Typography(
-    h1 = TextStyle(
+    displayLarge = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 96.sp,
         letterSpacing = (-1.5).sp,
         shadow = textShadow,
     ),
-    h2 = TextStyle(
+    displayMedium = TextStyle(
         fontWeight = FontWeight.Light,
         fontSize = 60.sp,
         letterSpacing = (-0.5).sp,
         shadow = textShadow,
     ),
-    h3 = TextStyle(
+    displaySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 48.sp,
         letterSpacing = 0.sp,
         shadow = textShadow,
     ),
-    h4 = TextStyle(
+    headlineMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 34.sp,
         letterSpacing = 0.25.sp,
         shadow = textShadow,
     ),
-    h5 = TextStyle(
+    headlineSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 24.sp,
         letterSpacing = 0.sp,
         shadow = textShadow,
     ),
-    h6 = TextStyle(
+    titleLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         letterSpacing = 0.15.sp,
         shadow = textShadow,
     ),
-    subtitle1 = TextStyle(
+    titleMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 18.sp,
         letterSpacing = 0.1.sp,
         shadow = textShadow,
     ),
-    subtitle2 = TextStyle(
+    titleSmall = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         letterSpacing = 0.1.sp,
         shadow = textShadow,
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         letterSpacing = 0.5.sp,
     ),
-    body2 = TextStyle(
+    bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         letterSpacing = 0.25.sp,
     ),
-    button = TextStyle(
+    labelLarge = TextStyle(
         fontWeight = FontWeight.Medium,
         fontSize = 18.sp,
         letterSpacing = 1.sp,
     ),
-    caption = TextStyle(
+    bodySmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         letterSpacing = 0.4.sp,
     ),
-    overline = TextStyle(
+    labelSmall = TextStyle(
         fontWeight = FontWeight.Normal,
         fontSize = 10.sp,
         letterSpacing = 1.5.sp,

@@ -35,7 +35,7 @@ fun Application.gameSockets() = routing {
 @KtorDsl
 private fun Route.authJwtGameHandlerWebSockets(
     gamePathSource: (String) -> GamePath,
-    handler: GameHandler
+    handler: GameHandler,
 ) {
     val gamePath = gamePathSource("{$SERVER_NAME}")
     authJwtWebSocket(gamePath.statePath, handler::handleState)

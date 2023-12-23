@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.shared.ui.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -17,7 +17,7 @@ internal fun ShadowIcon(
     imageVector: ImageVector,
     contentDescription: String,
     size: Dp,
-    elevation: Dp = 1.dp
+    elevation: Dp = 1.dp,
 ) {
     Box(modifier = Modifier.size(size + elevation)) {
         Icon(

@@ -8,11 +8,12 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.coroutines.SuspendSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
+import ml.dev.kotlin.minigames.shared.component.MiniGamesAppComponentContext
 
 private val Context.USER_LOGIN_DATA_STORE: DataStore<Preferences> by preferencesDataStore("user_settings")
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
-internal actual fun getUserSettings(context: ViewModelContext): SuspendSettings =
-    with(context.androidContext) {
+internal actual fun getUserSettings(context: MiniGamesAppComponentContext): SuspendSettings =
+    with(context.applicationContext) {
         DataStoreSettings(USER_LOGIN_DATA_STORE)
     }

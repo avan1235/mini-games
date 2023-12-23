@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("multiplatform")
-    kotlin("kapt")
     id("org.gradle.java")
     id("com.github.johnrengelman.shadow")
     id("build-src-plugin")
@@ -14,57 +13,49 @@ version = VERSION
 
 kotlin {
     jvm()
+
     sourceSets {
-        named("jvmMain") {
-            kotlin.srcDir("${buildDir.absolutePath}/generated/source/kaptKotlin/main/")
+        jvmMain.dependencies {
+            implementation(project(":shared"))
 
-            dependencies {
-                implementation(project(":shared"))
+            implementation(Dependencies.ktorServerCore)
+            implementation(Dependencies.ktorServerNetty)
+            implementation(Dependencies.ktorServerSerialization)
+            implementation(Dependencies.ktorServerWebsockets)
+            implementation(Dependencies.ktorServerContentNegotiation)
+            implementation(Dependencies.ktorServerAuth)
+            implementation(Dependencies.ktorServerAuthJwt)
+            implementation(Dependencies.ktorServerHtmlBuilder)
+            implementation(Dependencies.logbackClassic)
 
-                implementation(Dependencies.ktorServerCore)
-                implementation(Dependencies.ktorServerNetty)
-                implementation(Dependencies.ktorServerSerialization)
-                implementation(Dependencies.ktorServerWebsockets)
-                implementation(Dependencies.ktorServerContentNegotiation)
-                implementation(Dependencies.ktorServerAuth)
-                implementation(Dependencies.ktorServerAuthJwt)
-                implementation(Dependencies.ktorServerHtmlBuilder)
-                implementation(Dependencies.logbackClassic)
+            implementation(Dependencies.simpleMailCore)
+            implementation(Dependencies.simpleMailClient)
 
-                implementation(Dependencies.simpleMailCore)
-                implementation(Dependencies.simpleMailClient)
+            implementation(Dependencies.bCrypt)
 
-                implementation(Dependencies.bCrypt)
-
-                implementation(Dependencies.exposedCore)
-                implementation(Dependencies.exposedDao)
-                implementation(Dependencies.exposedJdbc)
-                implementation(Dependencies.exposedJavaTime)
-                implementation(Dependencies.postgresSqlDriver)
-
-                api(Dependencies.krushAnnotationProcessor)
-                api(Dependencies.krushRuntime)
-                api(Dependencies.krushRuntimePostgresql)
-                kapt(Dependencies.krushAnnotationProcessor)
-            }
+            implementation(Dependencies.exposedCore)
+            implementation(Dependencies.exposedDao)
+            implementation(Dependencies.exposedJdbc)
+            implementation(Dependencies.exposedJavaTime)
+            implementation(Dependencies.postgresSqlDriver)
         }
     }
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 }
 
 tasks.withType<JavaCompile> {
-    sourceCompatibility = "${JavaVersion.VERSION_11}"
-    targetCompatibility = "${JavaVersion.VERSION_11}"
+    sourceCompatibility = "${JavaVersion.VERSION_17}"
+    targetCompatibility = "${JavaVersion.VERSION_17}"
 }
 
 val shadowJarTasks = tasks.withType<ShadowJar> {

@@ -59,7 +59,7 @@ data class BirdGameSnapshot(
 ) : GameSnapshot
 
 @Serializable
-object BirdGameUpdate : GameUpdate {
+data object BirdGameUpdate : GameUpdate {
 
     override fun update(forUser: Username, gameState: GameState, currMillis: Long): GameState {
         if (gameState !is BirdGameState) return gameState

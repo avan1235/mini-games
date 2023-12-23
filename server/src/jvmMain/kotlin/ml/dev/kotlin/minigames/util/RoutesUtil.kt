@@ -21,7 +21,7 @@ inline fun RoutesCtx.log(): Logger = this.application.environment.log
 @KtorDsl
 inline fun <reified R : Any> Route.authJwtPost(
     path: String,
-    crossinline body: suspend RoutesCtx.(R, Jwt.User) -> Unit
+    crossinline body: suspend RoutesCtx.(R, Jwt.User) -> Unit,
 ): Route = authenticate(Jwt.CONFIG) {
     post(path) {
         val principal = call.principal<Jwt.User>()
@@ -33,7 +33,7 @@ inline fun <reified R : Any> Route.authJwtPost(
 @KtorDsl
 inline fun Route.authJwtGet(
     path: String,
-    crossinline body: suspend RoutesCtx.(Jwt.User) -> Unit
+    crossinline body: suspend RoutesCtx.(Jwt.User) -> Unit,
 ): Route = authenticate(Jwt.CONFIG) {
     get(path) {
         val principal = call.principal<Jwt.User>()
@@ -45,7 +45,7 @@ inline fun Route.authJwtGet(
 @KtorDsl
 fun Route.authJwtWebSocket(
     path: String,
-    handler: suspend (DefaultWebSocketServerSession, Jwt.User) -> Unit
+    handler: suspend (DefaultWebSocketServerSession, Jwt.User) -> Unit,
 ): Route = authenticate(Jwt.CONFIG) {
     webSocket(path) {
         val principal = call.principal<Jwt.User>()

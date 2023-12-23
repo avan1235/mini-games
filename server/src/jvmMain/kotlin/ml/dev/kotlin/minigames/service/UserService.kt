@@ -2,9 +2,7 @@ package ml.dev.kotlin.minigames.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import ml.dev.kotlin.minigames.db.model.UserEntity
-import ml.dev.kotlin.minigames.db.model.UserEntityTable
-import ml.dev.kotlin.minigames.db.model.insert
-import ml.dev.kotlin.minigames.db.model.toUserEntity
+import ml.dev.kotlin.minigames.db.model.UsersTable
 import ml.dev.kotlin.minigames.db.suspendedTxn
 import ml.dev.kotlin.minigames.shared.api.USER_CONFIRM_GET
 import ml.dev.kotlin.minigames.shared.model.UserCreate
@@ -15,8 +13,8 @@ import ml.dev.kotlin.minigames.shared.util.Res
 import ml.dev.kotlin.minigames.shared.util.err
 import ml.dev.kotlin.minigames.shared.util.ok
 import ml.dev.kotlin.minigames.util.envVar
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.update
+import ml.dev.kotlin.minigames.util.sha256
+import java.util.*
 
 object UserService {
 
@@ -29,7 +27,7 @@ object UserService {
     private val HOST_EMAIL_VERIFY = envVar<String>("HOST_EMAIL_VERIFY")
 
     suspend fun loginUser(userLogin: UserLogin): Res<UserError, UserEntity> = suspendedTxn {
-        UserEntityTable.select { UserEntityTable.username eq userLogin.username }.singleOrNull()?.toUserEntity()
+        UserEntity.find { UsersTable.username eq userLogin.username }.singleOrNull()
     }?.let {
         val passwordMatch = userLogin.password matchesHash it.passwordHash
         when {
@@ -40,18 +38,22 @@ object UserService {
     } ?: UserError(userLogin.username, Reason.NotExists).err()
 
     suspend fun createUser(userCreate: UserCreate): Res<UserError, UserEntity> = suspendedTxn {
-        val existingUserName = UserEntityTable.select {
-            UserEntityTable.username eq userCreate.username
-        }.singleOrNull()?.toUserEntity()
+        val existingUserName = UserEntity.find {
+            UsersTable.username eq userCreate.username
+        }.singleOrNull()
 
-        val existingUserEmail = UserEntityTable.select {
-            UserEntityTable.email eq userCreate.email
-        }.singleOrNull()?.toUserEntity()
+        val existingUserEmail = UserEntity.find {
+            UsersTable.email eq userCreate.email
+        }.singleOrNull()
 
         when {
-            existingUserName == null && existingUserEmail == null -> UserEntityTable.insert(with(userCreate) {
-                UserEntity(email, username, password.bcrypt(), confirmed = !REQUIRE_EMAIL_VERIFY)
-            }).ok()
+            existingUserName == null && existingUserEmail == null -> UserEntity.new {
+                this.email = userCreate.email
+                this.username = userCreate.username
+                this.passwordHash = userCreate.password.bcrypt()
+                this.confirmed = !REQUIRE_EMAIL_VERIFY
+                this.confirmHash = UUID.randomUUID().toString().sha256()
+            }.ok()
 
             existingUserEmail != null && !existingUserEmail.confirmed ->
                 UserError(userCreate.username, Reason.NotConfirmed).err()
@@ -61,10 +63,9 @@ object UserService {
     }
 
     suspend fun confirmUser(confirmHash: String): Boolean = suspendedTxn {
-        UserEntityTable.update(where = { UserEntityTable.confirmHash eq confirmHash }) { it[confirmed] = true }
-        UserEntityTable.select {
-            UserEntityTable.confirmHash eq confirmHash
-        }.singleOrNull()?.toUserEntity()?.confirmed == true
+        UserEntity.find { UsersTable.confirmHash eq confirmHash }.apply {
+            forEach { it.confirmed = true }
+        }.empty().not()
     }
 
     suspend fun sendConfirmationEmail(userEntity: UserEntity) {

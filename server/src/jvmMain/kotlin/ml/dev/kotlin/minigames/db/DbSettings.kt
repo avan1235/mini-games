@@ -24,11 +24,10 @@ object DbSettings {
 
 fun <T> txn(
     transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
-    repetitionAttempts: Int = DbSettings.db.transactionManager.defaultRepetitionAttempts,
     readOnly: Boolean = false,
     logger: SqlLogger? = DbSettings.defaultLogger,
-    statement: Transaction.() -> T
-): T = transaction(transactionIsolation, repetitionAttempts, readOnly, DbSettings.db) {
+    statement: Transaction.() -> T,
+): T = transaction(transactionIsolation, readOnly, DbSettings.db) {
     logger?.let { addLogger(it) }
     statement()
 }
@@ -37,7 +36,7 @@ suspend fun <T> suspendedTxn(
     context: CoroutineDispatcher? = null,
     transactionIsolation: Int = DbSettings.db.transactionManager.defaultIsolationLevel,
     logger: SqlLogger? = DbSettings.defaultLogger,
-    statement: Transaction.() -> T
+    statement: Transaction.() -> T,
 ): T = newSuspendedTransaction(context, DbSettings.db, transactionIsolation) {
     logger?.let { addLogger(it) }
     statement()

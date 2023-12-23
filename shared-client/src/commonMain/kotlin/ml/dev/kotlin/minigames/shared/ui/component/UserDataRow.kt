@@ -5,9 +5,9 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +24,7 @@ import ml.dev.kotlin.minigames.shared.ui.theme.DiscardColor
 import ml.dev.kotlin.minigames.shared.ui.theme.Shapes
 import ml.dev.kotlin.minigames.shared.ui.theme.Typography
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun UserDataRow(
     username: String,
@@ -34,14 +34,16 @@ internal fun UserDataRow(
     onApprove: () -> Unit,
     onDiscard: () -> Unit,
 ) {
-    val dismissState = rememberDismissState(confirmStateChange = {
-        when (it) {
-            DismissValue.Default -> Unit
-            DismissValue.DismissedToEnd -> onDiscard()
-            DismissValue.DismissedToStart -> onApprove()
-        }
-        true
-    })
+    val dismissState = rememberDismissState(
+        confirmValueChange = {
+            when (it) {
+                DismissValue.Default -> Unit
+                DismissValue.DismissedToEnd -> onDiscard()
+                DismissValue.DismissedToStart -> onApprove()
+            }
+            true
+        },
+        positionalThreshold = { totalDistance -> 0.2f * totalDistance })
     if (dismissState.currentValue != DismissValue.Default) LaunchedEffect(Unit) { dismissState.reset() }
 
     @Composable
@@ -49,20 +51,20 @@ internal fun UserDataRow(
         val elevation by animateDpAsState(targetValue = if (dismissState.dismissDirection != null) 4.dp else 0.dp)
         Card(
             modifier = Modifier.fillMaxWidth(),
-            elevation = elevation,
+            elevation = CardDefaults.cardElevation(elevation),
             shape = Shapes.small,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(modifier = Modifier.fillMaxWidth(0.5f)) {
                     Text(
                         text = username,
-                        style = Typography.h6,
+                        style = Typography.titleLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -73,7 +75,7 @@ internal fun UserDataRow(
                 ) {
                     Text(
                         text = "$userPoints point${if (userPoints == 1) "" else "s"}",
-                        style = Typography.h6
+                        style = Typography.titleLarge
                     )
                 }
                 Box(
@@ -88,12 +90,11 @@ internal fun UserDataRow(
     if (!canEdit) UserDataRaw()
     else SwipeToDismiss(
         state = dismissState,
-        dismissThresholds = { FractionalThreshold(0.2f) },
         background = {
             val direction = dismissState.dismissDirection ?: return@SwipeToDismiss
             val color by animateColorAsState(
                 targetValue = when (dismissState.targetValue) {
-                    DismissValue.Default -> MaterialTheme.colors.surface
+                    DismissValue.Default -> MaterialTheme.colorScheme.surface
                     DismissValue.DismissedToEnd -> DiscardColor
                     DismissValue.DismissedToStart -> ApproveColor
                 }

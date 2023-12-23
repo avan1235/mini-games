@@ -9,7 +9,7 @@ import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,30 +22,36 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arkivanov.essenty.backpressed.BackPressedHandler
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.backhandler.BackCallback
+import com.arkivanov.essenty.backhandler.BackHandler
 import kotlinx.coroutines.launch
+import ml.dev.kotlin.minigames.shared.ui.util.ConstantValue
+import ml.dev.kotlin.minigames.shared.util.unit
 import ml.dev.kotlin.minigames.shared.util.zip
+import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 
 internal class ScrollScreenSection private constructor(
     val icon: ImageVector,
     val iconSelected: ImageVector,
-    val iconCount: MutableState<Int>,
+    val iconCount: Value<Int>,
     val onSelected: () -> Unit,
-    val screen: @Composable (BoxScope.() -> Unit)
+    val screen: @Composable (BoxScope.() -> Unit),
 ) {
     companion object {
         fun section(
             icon: ImageVector,
             iconSelected: ImageVector,
-            iconCount: MutableState<Int> = mutableStateOf(0),
+            iconCount: Value<Int> = ConstantValue(0),
             onSelected: () -> Unit = {},
-            screen: @Composable BoxScope.() -> Unit
+            screen: @Composable BoxScope.() -> Unit,
         ): ScrollScreenSection = ScrollScreenSection(icon, iconSelected, iconCount, onSelected, screen)
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ScrollScreen(
     selectedScreen: MutableState<SelectedScreen>,
@@ -54,7 +60,7 @@ internal fun ScrollScreen(
     left: ScrollScreenSection,
     center: ScrollScreenSection,
     right: ScrollScreenSection,
-    backPressedHandler: BackPressedHandler,
+    backHandler: BackHandler,
     onUp: () -> Unit,
     onDown: () -> Unit,
     threshold: Float = 0.3f,
@@ -75,15 +81,19 @@ internal fun ScrollScreen(
             .let { icons -> SelectedScreen.values().zip(icons, sections) }
 
         val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.value.ordinal)
-        val handler = remember { fun() = true.also { scope.launch { swipeState.animateTo(ScreenLocation.UP) } } }
+        val handler = remember {
+            object : BackCallback() {
+                override fun onBack() = scope.launch { swipeState.animateTo(ScreenLocation.UP) }.unit()
+            }.also(backHandler::register)
+        }
         when (swipeState.targetValue) {
             ScreenLocation.DOWN -> {
-                backPressedHandler.register(handler)
+                handler.isEnabled = true
                 onDown()
             }
 
             ScreenLocation.UP -> {
-                backPressedHandler.unregister(handler)
+                handler.isEnabled = true
                 onUp()
             }
         }
@@ -97,15 +107,16 @@ internal fun ScrollScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(height)
-                    .background(MaterialTheme.colors.surface),
+                    .background(MaterialTheme.colorScheme.surface),
                 content = up
             )
+
             Box(
                 modifier = Modifier
                     .offset { IntOffset(0, swipeState.offset.value.roundToInt()) }
                     .fillMaxWidth()
                     .height(fullHeight)
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .swipeable(
                         state = swipeState,
                         anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
@@ -117,12 +128,12 @@ internal fun ScrollScreen(
                     Surface(modifier = Modifier.shadow(elevation = 2.dp)) {
                         Row(
                             modifier = Modifier
-                                .background(MaterialTheme.colors.background)
+                                .background(MaterialTheme.colorScheme.background)
                                 .fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             iconSection.forEach { (screen, icon, section) ->
-                                val iconCount by section.iconCount
+                                val iconCount by section.iconCount.subscribeAsState()
                                 BottomIcon(icon, iconPadding, scrollIconSize, iconCount, onClick = {
                                     selectedScreen.value = screen
                                     if (swipeState.targetValue == ScreenLocation.UP) scope.launch {
@@ -153,7 +164,7 @@ internal fun ScrollScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomIcon(
     icon: ImageVector,
@@ -181,7 +192,7 @@ private fun BottomIcon(
                             x = (-20).dp,
                             y = 44.dp,
                         ),
-                        backgroundColor = Color.Red,
+                        containerColor = Color.Red,
                         contentColor = Color.White,
                     ) {
                         val badgeText = if (badgeCount > 999) "999+" else "$badgeCount"

@@ -1,17 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
-    <style name="Theme.MiniGames" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MiniGames" parent="Theme.AppCompat.DayNight.DarkActionBar">
 
-        <item name="colorPrimary">@color/PrimaryColor</item>
-        <item name="colorPrimaryVariant">@color/PrimaryVariantColor</item>
-        <item name="colorOnPrimary">@color/OnPrimaryColor</item>
-
-        <item name="colorSecondary">@color/SecondaryColor</item>
-        <item name="colorSecondaryVariant">@color/SecondaryVariantColor</item>
-        <item name="colorOnSecondary">@color/OnSecondaryColor</item>
-        <item name="colorOnBackground">@color/OnBackgroundColor</item>
-
-        <item name="android:statusBarColor" tools:targetApi="l">@color/BackgroundColor</item>
+        <item name="android:statusBarColor">@color/BackgroundColor</item>
     </style>
 
     <style name="Theme.MiniGames.NoActionBar">

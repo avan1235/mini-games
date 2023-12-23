@@ -3,10 +3,10 @@ package ml.dev.kotlin.minigames.shared.ui.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -28,8 +28,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 @Composable
 internal fun FormField(
     text: String,
-    textInput: MutableState<String>,
-    errorState: MutableState<Boolean>,
+    textInput: String,
+    onTextInputChange: (String) -> Unit,
+    errorState: Boolean,
+    onErrorStateChange: (Boolean) -> Unit,
     buttonType: FormFieldButtonType = FormFieldButtonType.Next,
     password: Boolean = false,
     inputRegex: Regex = Regex("[^\\s]*"),
@@ -39,12 +41,12 @@ internal fun FormField(
     val showPassword = remember { mutableStateOf(false) }
 
     OutlinedTextField(
-        value = textInput.value,
+        value = textInput,
         onValueChange = {
-            errorState.value = false
-            textInput.value = if (inputRegex.matches(it)) it else textInput.value
+            onErrorStateChange(false)
+            onTextInputChange(if (inputRegex.matches(it)) it else textInput)
         },
-        isError = errorState.value,
+        isError = errorState,
         modifier = Modifier
             .fillMaxWidth()
             .onKeyEvent { handleTabKey(it, focusManager) },

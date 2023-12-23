@@ -6,32 +6,21 @@ plugins {
 }
 
 kotlin {
-    android()
+    jvmToolchain(17)
+
+    androidTarget()
 
     iosX64()
     iosArm64()
     iosSimulatorArm64()
 
-    jvm("desktop")
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(Dependencies.kotlinxSerialization)
-                implementation(Dependencies.kotlinxDateTime)
-                implementation(Dependencies.uuid)
-            }
-        }
-
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+        commonMain.dependencies {
+            implementation(Dependencies.kotlinxSerialization)
+            implementation(Dependencies.kotlinxDateTime)
+            implementation(Dependencies.uuid)
         }
     }
 }
@@ -42,7 +31,6 @@ android {
 
     defaultConfig {
         minSdk = Constants.Android.minSdk
-        targetSdk = Constants.Android.targetSdk
     }
 
     sourceSets {

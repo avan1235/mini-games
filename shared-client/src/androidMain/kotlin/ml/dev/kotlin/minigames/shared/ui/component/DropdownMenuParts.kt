@@ -9,8 +9,8 @@ internal actual fun DropdownMenu(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier,
-    content: @Composable ColumnScope.() -> Unit
-): Unit = androidx.compose.material.DropdownMenu(
+    content: @Composable ColumnScope.() -> Unit,
+): Unit = androidx.compose.material3.DropdownMenu(
     expanded = expanded,
     onDismissRequest = onDismissRequest,
     modifier = modifier,
@@ -20,8 +20,8 @@ internal actual fun DropdownMenu(
 @Composable
 internal actual fun DropdownMenuItem(
     onClick: () -> Unit,
-    content: @Composable () -> Unit
-): Unit = androidx.compose.material.DropdownMenuItem(
+    content: @Composable () -> Unit,
+): Unit = androidx.compose.material3.DropdownMenuItem(
     onClick = onClick,
-    content = { content() },
+    text = { content() },
 )

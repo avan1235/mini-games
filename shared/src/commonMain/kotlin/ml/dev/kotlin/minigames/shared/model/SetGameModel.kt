@@ -37,7 +37,7 @@ data class SetCard(
 
 @Serializable
 data class TableCards(
-    val cardsById: Map<Int, SetCard>
+    val cardsById: Map<Int, SetCard>,
 )
 
 @Serializable

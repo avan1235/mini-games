@@ -5,30 +5,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
+import ml.dev.kotlin.minigames.shared.component.GameComponent
 import ml.dev.kotlin.minigames.shared.model.GameDataClientMessage
 import ml.dev.kotlin.minigames.shared.model.GameSnapshot
 import ml.dev.kotlin.minigames.shared.model.UserData
 import ml.dev.kotlin.minigames.shared.model.Username
-import ml.dev.kotlin.minigames.shared.ui.screen.LocalToastContext
-import ml.dev.kotlin.minigames.shared.viewmodel.GameViewModel
 
 @Composable
 internal fun <Snapshot : GameSnapshot> Players(
-    vm: GameViewModel<Snapshot>,
+    component: GameComponent<Snapshot>,
     snapshot: Snapshot,
-    clientMessages: MutableSharedFlow<GameDataClientMessage>
-): Unit = with(LocalToastContext.current) {
+    clientMessages: MutableSharedFlow<GameDataClientMessage>,
+) {
     val listState = rememberLazyListState()
-    val scope = rememberCoroutineScope()
     val users = snapshot.users.entries
-        .sortedByDescending { vm.points(it.key, snapshot) }
+        .sortedByDescending { component.points(it.key, snapshot) }
         .map { IndexedUserData(it.key, it.value) }.let {
-            if (vm.username in snapshot.users) it
-            else it + IndexedUserData(vm.username, UserData.player())
+            if (component.username in snapshot.users) it
+            else it + IndexedUserData(component.username, UserData.player())
         }
 
     LazyColumn(
@@ -39,16 +35,10 @@ internal fun <Snapshot : GameSnapshot> Players(
             UserDataRow(
                 username = data.username,
                 userData = data.userData,
-                userPoints = vm.points(data.username, snapshot),
-                canEdit = vm.canEditUser(data.username, snapshot),
-                onApprove = {
-                    toast("Approving ${data.username}")
-                    scope.launch { vm.approve(data.username, clientMessages) }
-                },
-                onDiscard = {
-                    toast("Discarding ${data.username}")
-                    scope.launch { vm.discard(data.username, clientMessages) }
-                },
+                userPoints = component.points(data.username, snapshot),
+                canEdit = component.canEditUser(data.username, snapshot),
+                onApprove = { component.approve(data.username, clientMessages) },
+                onDiscard = { component.discard(data.username, clientMessages) },
             )
         }
     }

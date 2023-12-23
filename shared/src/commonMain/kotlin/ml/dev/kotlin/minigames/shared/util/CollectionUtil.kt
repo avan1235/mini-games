@@ -22,7 +22,7 @@ inline fun <T, R, V> Array<out T>.zip(other1: List<R>, other2: List<V>): List<Tr
 
 class ComputedMap<K, V>(
     private val map: MutableMap<K, V> = HashMap(),
-    private val default: MutableMap<K, V>.(K) -> V
+    private val default: MutableMap<K, V>.(K) -> V,
 ) : MutableMap<K, V> by map {
     override fun get(key: K): V = map[key]?.let { return it } ?: default(key).also { map[key] = it }
     override fun remove(key: K): V = map.remove(key) ?: this.default(key)

@@ -7,15 +7,15 @@ plugins {
 }
 
 kotlin {
-    jvm("desktop")
+    jvmToolchain(17)
+
+    jvm()
+
     sourceSets {
-        named("desktopMain") {
-            dependencies {
-                implementation(project(":shared-client"))
-                implementation(compose.desktop.common)
-                implementation(compose.desktop.currentOs)
-                implementation(Dependencies.essentyInstanceKeeper)
-            }
+        jvmMain.dependencies {
+            implementation(project(":shared-client"))
+            implementation(compose.desktop.common)
+            implementation(compose.desktop.currentOs)
         }
     }
 }
@@ -32,17 +32,17 @@ compose.desktop {
             windows {
                 menu = true
                 upgradeUuid = "e60c3562-48f8-47db-91d9-ca54dfa92f35"
-                iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.ico"))
+                iconFile.set(projectDir.resolve("src/jvmMain/resources/ic_launcher.ico"))
             }
 
             linux {
-                iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.png"))
+                iconFile.set(projectDir.resolve("src/jvmMain/resources/ic_launcher.png"))
             }
 
             macOS {
                 bundleID = "ml.dev.kotlin.minigames.app"
                 appStore = false
-                iconFile.set(projectDir.resolve("src/desktopMain/resources/ic_launcher.icns"))
+                iconFile.set(projectDir.resolve("src/jvmMain/resources/ic_launcher.icns"))
                 signing {
                     sign.set(false)
                 }

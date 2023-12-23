@@ -8,7 +8,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.cbor.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -25,12 +24,12 @@ class WebsocketApiClient : Closeable {
         install(WebSockets)
     }
 
-    @ExperimentalCoroutinesApi
     suspend fun webSocket(
         path: String,
         jwtToken: JwtToken,
         outputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
         inputMessages: suspend DefaultClientWebSocketSession.() -> Unit,
+        onError: (Exception) -> Unit,
     ) {
         wsClient.webSocket(
             request = {
@@ -39,9 +38,13 @@ class WebsocketApiClient : Closeable {
                 url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
             },
             block = {
-                coroutineScope {
-                    launch { outputMessages() }
-                    launch { inputMessages() }
+                try {
+                    coroutineScope {
+                        launch { outputMessages() }
+                        launch { inputMessages() }
+                    }
+                } catch (e: Exception) {
+                    onError(e)
                 }
             }
         )

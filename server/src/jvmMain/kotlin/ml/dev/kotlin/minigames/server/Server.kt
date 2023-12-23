@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.server
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import ml.dev.kotlin.minigames.db.model.UserEntityTable
+import ml.dev.kotlin.minigames.db.model.UsersTable
 import ml.dev.kotlin.minigames.db.txn
 import ml.dev.kotlin.minigames.server.routes.gameSockets
 import ml.dev.kotlin.minigames.server.routes.userRoutes
@@ -14,7 +14,7 @@ import org.jetbrains.exposed.sql.SchemaUtils.createMissingTablesAndColumns
 
 fun main() {
     try {
-        txn { createMissingTablesAndColumns(UserEntityTable) }
+        txn { createMissingTablesAndColumns(UsersTable) }
 
         embeddedServer(
             factory = Netty,

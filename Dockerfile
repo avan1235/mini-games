@@ -1,9 +1,9 @@
-FROM openjdk:11-jdk-slim AS build
+FROM openjdk:17-jdk-slim AS build
 COPY . .
 RUN chmod +x ./gradlew
 RUN ./gradlew server:shadowJar
 
-FROM openjdk:11-jdk-slim
+FROM openjdk:17-jdk-slim
 
 ARG POSTGRES_PORT
 ARG POSTGRES_DB

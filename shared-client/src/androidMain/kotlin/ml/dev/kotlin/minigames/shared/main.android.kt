@@ -8,23 +8,15 @@ import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
-import com.arkivanov.essenty.backpressed.BackPressedHandler
-import com.arkivanov.essenty.instancekeeper.InstanceKeeper
-import ml.dev.kotlin.minigames.shared.ui.util.LocalBackPressedHandler
-import ml.dev.kotlin.minigames.shared.viewmodel.ViewModelContext
+import ml.dev.kotlin.minigames.shared.component.MiniGamesAppComponent
 
 fun ComponentActivity.setMainAndroidApp(
-    backPressedHandler: BackPressedHandler,
+    component: MiniGamesAppComponent,
 ): Unit = setContent {
     LockScreenPortraitOrientation()
-    CompositionLocalProvider(LocalBackPressedHandler provides backPressedHandler) {
-        val keeper = InstanceKeeper(viewModelStore)
-        val context = ViewModelContext(keeper, LocalContext.current, window)
-        MiniGamesApp(context)
-    }
+    MiniGamesApp(component)
 }
 
 @SuppressLint("SourceLockedOrientationActivity")

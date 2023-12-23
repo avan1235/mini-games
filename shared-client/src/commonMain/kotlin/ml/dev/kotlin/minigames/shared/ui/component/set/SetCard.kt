@@ -8,10 +8,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +44,7 @@ internal fun SetCard(
     height: Dp,
     padding: Dp = 6.dp,
     elevation: Dp = 4.dp,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     val count = when (setCardData.count) {
         CardCount.One -> 1
@@ -72,7 +72,7 @@ internal fun SetCard(
     ) {
         Surface(
             modifier = Modifier.size(innerWidth, innerHeight),
-            elevation = elevation,
+            shadowElevation = elevation,
             shape = Shapes.large,
         ) {
             Column(

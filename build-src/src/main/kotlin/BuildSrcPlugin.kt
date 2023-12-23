@@ -1,6 +1,5 @@
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.tasks.JavaExec
 import java.io.File
 import java.lang.System.getenv
@@ -15,12 +14,6 @@ class BuildSrcPlugin : Plugin<Project> {
             ENV.forEach { (k, v) -> environment(k, v) }
         }
     }
-}
-
-fun Project.kapt(dependency: String) {
-    val (group, name, version) = dependency.split(":")
-    val moduleDependency = DefaultExternalModuleDependency(group, name, version)
-    configurations.getByName("kapt").dependencies.add(moduleDependency)
 }
 
 private fun currentScopeEnvFile(): File =

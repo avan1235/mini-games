@@ -48,7 +48,7 @@ data class HeartBeatClientMessage(
 
 @Serializable
 data class UserActionClientMessage(
-    val username: Username,
+    val forUsername: Username,
     val action: UserAction,
     override val timestamp: Long,
 ) : GameDataClientMessage()

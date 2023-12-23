@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,15 +22,15 @@ internal fun CircleButton(
     icon: ImageVector? = null,
     contentDescription: String? = null,
     text: String? = null,
-    color: Color = MaterialTheme.colors.primaryVariant,
-    onClick: () -> Unit
+    color: Color = MaterialTheme.colorScheme.inversePrimary,
+    onClick: () -> Unit,
 ) {
     Surface(
         shape = CircleShape,
         modifier = Modifier
             .padding(16.dp)
             .size(56.dp),
-        elevation = 8.dp,
+        shadowElevation = 8.dp,
         color = color
     ) {
         Box(
@@ -43,7 +43,7 @@ internal fun CircleButton(
                 Icon(
                     imageVector = icon,
                     contentDescription = contentDescription,
-                    tint = MaterialTheme.colors.onPrimary,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
             }
             if (text != null) {

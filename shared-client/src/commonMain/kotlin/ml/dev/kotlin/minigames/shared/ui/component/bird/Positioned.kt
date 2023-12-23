@@ -14,7 +14,7 @@ internal fun Positioned(
     pos: V2,
     size: DpSize,
     mapSize: DpSize,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = Modifier
