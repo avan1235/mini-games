@@ -3,23 +3,25 @@ import SwiftUI
 import shared_client
 
 struct ComposeView: UIViewControllerRepresentable {
+    
+    let component: MiniGamesAppComponent
+    
     func makeUIViewController(context: Context) -> UIViewController {
-        Main_iosKt.MainViewController()
+        Main_iosKt.MainViewController(component: component)
     }
-
+    
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
 
 struct ContentView: View {
+    
+    let component: MiniGamesAppComponent
+    
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
-        ComposeView()
-            .ignoresSafeArea(.keyboard)
-            .edgesIgnoringSafeArea(.bottom)
-            .overlay(alignment: .top, content: {
-                Color(red: 0.208, green: 0.208, blue: 0.208)
-                    .background(.regularMaterial)
-                    .edgesIgnoringSafeArea(.top)
-                    .frame(height: 0)
-            })
+        ComposeView(component: component)
+            .ignoresSafeArea(.all)
     }
 }
+

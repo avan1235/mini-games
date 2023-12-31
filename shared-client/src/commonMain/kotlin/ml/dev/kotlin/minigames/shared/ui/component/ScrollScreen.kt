@@ -26,11 +26,11 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.backhandler.BackCallback
 import com.arkivanov.essenty.backhandler.BackHandler
+import `in`.procyk.compose.util.SystemBarsScreen
 import kotlinx.coroutines.launch
 import ml.dev.kotlin.minigames.shared.ui.util.ConstantValue
 import ml.dev.kotlin.minigames.shared.util.unit
 import ml.dev.kotlin.minigames.shared.util.zip
-import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 
 internal class ScrollScreenSection private constructor(
@@ -66,96 +66,103 @@ internal fun ScrollScreen(
     threshold: Float = 0.3f,
     scrollIconSize: Dp = 32.dp,
     iconPadding: Dp = 16.dp,
-): Unit = with(LocalDensity.current) {
-    BoxWithConstraints {
-        val fullHeight = maxHeight
-        val fullWidth = maxWidth
-        val height = fullHeight - scrollIconSize - (iconPadding * 2)
-        val scope = rememberCoroutineScope()
-        val sections = remember { listOf(left, center, right) }
-        val iconSection = when (selectedScreen.value) {
-            SelectedScreen.LEFT -> listOf(left.iconSelected, center.icon, right.icon)
-            SelectedScreen.CENTER -> listOf(left.icon, center.iconSelected, right.icon)
-            SelectedScreen.RIGHT -> listOf(left.icon, center.icon, right.iconSelected)
-        }
-            .let { icons -> SelectedScreen.values().zip(icons, sections) }
-
-        val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.value.ordinal)
-        val handler = remember {
-            object : BackCallback() {
-                override fun onBack() = scope.launch { swipeState.animateTo(ScreenLocation.UP) }.unit()
-            }.also(backHandler::register)
-        }
-        when (swipeState.targetValue) {
-            ScreenLocation.DOWN -> {
-                handler.isEnabled = true
-                onDown()
-            }
-
-            ScreenLocation.UP -> {
-                handler.isEnabled = true
-                onUp()
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(fullHeight)
+) {
+    with(LocalDensity.current) {
+        SystemBarsScreen(
+            top = MaterialTheme.colorScheme.surface,
+            bottom = MaterialTheme.colorScheme.surface,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(height)
-                    .background(MaterialTheme.colorScheme.surface),
-                content = up
-            )
+            BoxWithConstraints {
+                val fullHeight = maxHeight
+                val fullWidth = maxWidth
+                val height = fullHeight - scrollIconSize - (iconPadding * 2)
+                val scope = rememberCoroutineScope()
+                val sections = remember { listOf(left, center, right) }
+                val iconSection = when (selectedScreen.value) {
+                    SelectedScreen.LEFT -> listOf(left.iconSelected, center.icon, right.icon)
+                    SelectedScreen.CENTER -> listOf(left.icon, center.iconSelected, right.icon)
+                    SelectedScreen.RIGHT -> listOf(left.icon, center.icon, right.iconSelected)
+                }
+                    .let { icons -> SelectedScreen.values().zip(icons, sections) }
 
-            Box(
-                modifier = Modifier
-                    .offset { IntOffset(0, swipeState.offset.value.roundToInt()) }
-                    .fillMaxWidth()
-                    .height(fullHeight)
-                    .background(MaterialTheme.colorScheme.surface)
-                    .swipeable(
-                        state = swipeState,
-                        anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
-                        thresholds = { _, _ -> FractionalThreshold(threshold) },
-                        orientation = Orientation.Vertical
-                    )
-            ) {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Surface(modifier = Modifier.shadow(elevation = 2.dp)) {
-                        Row(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.background)
-                                .fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            iconSection.forEach { (screen, icon, section) ->
-                                val iconCount by section.iconCount.subscribeAsState()
-                                BottomIcon(icon, iconPadding, scrollIconSize, iconCount, onClick = {
-                                    selectedScreen.value = screen
-                                    if (swipeState.targetValue == ScreenLocation.UP) scope.launch {
-                                        swipeState.animateTo(ScreenLocation.DOWN)
-                                    }
-                                    section.onSelected()
-                                })
-                            }
-                        }
+                val scrollOffset by animateDpAsState(targetValue = -fullWidth * selectedScreen.value.ordinal)
+                val handler = remember {
+                    object : BackCallback() {
+                        override fun onBack() = scope.launch { swipeState.animateTo(ScreenLocation.UP) }.unit()
+                    }.also(backHandler::register)
+                }
+                when (swipeState.targetValue) {
+                    ScreenLocation.DOWN -> {
+                        handler.isEnabled = true
+                        onDown()
                     }
-                    Row(
+
+                    ScreenLocation.UP -> {
+                        handler.isEnabled = true
+                        onUp()
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(fullHeight)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .offset(scrollOffset)
-                            .wrapContentWidth(unbounded = true, align = Alignment.Start)
-                    ) {
-                        sections.forEach {
-                            Box(
-                                modifier = Modifier
-                                    .width(fullWidth)
-                                    .height(height),
-                                content = it.screen
+                            .fillMaxWidth()
+                            .height(height)
+                            .background(MaterialTheme.colorScheme.surface),
+                        content = up
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .offset { IntOffset(0, swipeState.offset.value.roundToInt()) }
+                            .fillMaxWidth()
+                            .height(fullHeight)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .swipeable(
+                                state = swipeState,
+                                anchors = mapOf(0f to ScreenLocation.DOWN, height.toPx() to ScreenLocation.UP),
+                                thresholds = { _, _ -> FractionalThreshold(threshold) },
+                                orientation = Orientation.Vertical
                             )
+                    ) {
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            Surface(modifier = Modifier.shadow(elevation = 2.dp)) {
+                                Row(
+                                    modifier = Modifier
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    iconSection.forEach { (screen, icon, section) ->
+                                        val iconCount by section.iconCount.subscribeAsState()
+                                        BottomIcon(icon, iconPadding, scrollIconSize, iconCount, onClick = {
+                                            selectedScreen.value = screen
+                                            if (swipeState.targetValue == ScreenLocation.UP) scope.launch {
+                                                swipeState.animateTo(ScreenLocation.DOWN)
+                                            }
+                                            section.onSelected()
+                                        })
+                                    }
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .offset(scrollOffset)
+                                    .wrapContentWidth(unbounded = true, align = Alignment.Start)
+                            ) {
+                                sections.forEach {
+                                    Box(
+                                        modifier = Modifier
+                                            .width(fullWidth)
+                                            .height(height),
+                                        content = it.screen
+                                    )
+                                }
+                            }
                         }
                     }
                 }

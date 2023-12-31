@@ -5,14 +5,17 @@ object Dependencies {
         val composeVersion by System.getProperties()
         val parcelizeDarwinVersion by System.getProperties()
         const val ktor = "2.3.7"
+        const val kotlinxSerialization = "1.6.2"
         const val exposed = "0.45.0"
         const val simpleMail = "1.3.3"
-        const val decompose = "3.0.0-alpha03"
+        const val decompose = "3.0.0-alpha04"
+        const val essenty = "2.0.0-alpha02"
         const val multiplatformSettings = "1.1.1"
         const val coroutines = "1.7.3"
     }
 
-    val kotlinxSerialization = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:1.6.2"
+    val kotlinxSerializationCbor = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:${Version.kotlinxSerialization}"
+    val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}"
     val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
     val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
     val uuid = "com.benasher44:uuid:0.7.0"
@@ -55,7 +58,11 @@ object Dependencies {
     val androidXActivityCompose = "androidx.activity:activity-compose:1.4.0"
 
     val decompose = "com.arkivanov.decompose:decompose:${Version.decompose}"
+    val essenty = "com.arkivanov.essenty:lifecycle:${Version.essenty}"
+    val stateKeeper = "com.arkivanov.essenty:state-keeper:${Version.essenty}"
     val decomposeExtensions = "com.arkivanov.decompose:extensions-compose:${Version.decompose}"
+
+    val composeUtil = "in.procyk.compose:util:1.5.11.0"
 
     val parcelizeDarwinRuntime = "com.arkivanov.parcelize.darwin:runtime:${Version.parcelizeDarwinVersion}"
 

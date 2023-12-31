@@ -40,6 +40,10 @@ kotlin {
         framework {
             isStatic = true
             baseName = "shared_client"
+            export(Dependencies.decompose)
+            export(Dependencies.essenty)
+            export(Dependencies.stateKeeper)
+            export(Dependencies.parcelizeDarwinRuntime)
         }
     }
 
@@ -61,7 +65,10 @@ kotlin {
             implementation(Dependencies.decompose)
             implementation(Dependencies.decomposeExtensions)
 
-            implementation(Dependencies.kotlinxSerialization)
+            implementation(Dependencies.composeUtil)
+
+            implementation(Dependencies.kotlinxSerializationCbor)
+            implementation(Dependencies.kotlinxSerializationJson)
             implementation(Dependencies.ktorClientCore)
             implementation(Dependencies.ktorClientWebsockets)
             implementation(Dependencies.ktorClientSerialization)
@@ -109,7 +116,10 @@ kotlin {
 
             dependencies {
                 implementation(Dependencies.ktorClientDarwin)
-                implementation(Dependencies.parcelizeDarwinRuntime)
+                api(Dependencies.decompose)
+                api(Dependencies.essenty)
+                api(Dependencies.stateKeeper)
+                api(Dependencies.parcelizeDarwinRuntime)
                 implementation(Dependencies.multiplatformSettings)
                 implementation(Dependencies.multiplatformSettingsCoroutines)
             }

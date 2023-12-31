@@ -18,7 +18,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(Dependencies.kotlinxSerialization)
+            implementation(Dependencies.kotlinxSerializationCbor)
             implementation(Dependencies.kotlinxDateTime)
             implementation(Dependencies.uuid)
         }
