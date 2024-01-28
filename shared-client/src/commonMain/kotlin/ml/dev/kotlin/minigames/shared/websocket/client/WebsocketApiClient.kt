@@ -35,6 +35,7 @@ class WebsocketApiClient : Closeable {
             request = {
                 method = HttpMethod.Get
                 header(HttpHeaders.Authorization, "Bearer ${jwtToken.value}")
+                parameter(HttpHeaders.Authorization, jwtToken.value) // hack for web CORS restrictions
                 url(WebsocketApiConfig.scheme, WebsocketApiConfig.host, DEFAULT_PORT, path)
             },
             block = {

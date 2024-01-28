@@ -5,7 +5,7 @@ import java.io.File
 import java.lang.System.getenv
 
 private const val ENV_FILE: String = ".env"
-
+private const val FROM_APP_ENV_FILE: String = "../.env"
 private const val FROM_XCODE_ENV_FILE: String = "../../.env"
 
 class BuildSrcPlugin : Plugin<Project> {
@@ -17,7 +17,7 @@ class BuildSrcPlugin : Plugin<Project> {
 }
 
 private fun currentScopeEnvFile(): File =
-    File(ENV_FILE).takeIf { it.exists() } ?: File(FROM_XCODE_ENV_FILE)
+    File(ENV_FILE).takeIf { it.exists() } ?: File(FROM_APP_ENV_FILE).takeIf { it.exists() }  ?: File(FROM_XCODE_ENV_FILE)
 
 val ENV: Map<String, String>
     get() = currentScopeEnvFile().readLines().mapNotNull { line ->
@@ -26,6 +26,8 @@ val ENV: Map<String, String>
     }.toMap().let { it + getenv() }
 
 val VERSION: String get() = ENV["VERSION"] ?: "1.0.0"
+
+val CORS_PORT: Int get() = ENV["CORS_PORT"]?.toIntOrNull()!!
 
 private val VERSION_CODE_PREFIX = "version.code="
 

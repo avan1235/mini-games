@@ -1,8 +1,8 @@
 package ml.dev.kotlin.minigames.shared.websocket
 
-import ml.dev.kotlin.minigames.shared.BuildConfiguration
+import ml.dev.kotlin.minigames.shared.ClientBuildConfiguration
 
 actual object WebsocketApiConfig {
-    actual val host = BuildConfiguration.IOS_CLIENT_API_HOST
-    actual val scheme = BuildConfiguration.WEBSOCKET_CLIENT_API_SCHEME
+    actual val host = ClientBuildConfiguration.IOS_CLIENT_API_HOST
+    actual val scheme = ClientBuildConfiguration.WEBSOCKET_CLIENT_API_SCHEME
 }

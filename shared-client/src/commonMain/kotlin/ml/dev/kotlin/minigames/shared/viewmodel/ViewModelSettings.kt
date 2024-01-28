@@ -1,8 +1,6 @@
 package ml.dev.kotlin.minigames.shared.viewmodel
 
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.coroutines.SuspendSettings
+import com.russhwolf.settings.Settings
 import ml.dev.kotlin.minigames.shared.component.MiniGamesAppComponentContext
 
-@OptIn(ExperimentalSettingsApi::class)
-internal expect fun getUserSettings(context: MiniGamesAppComponentContext): SuspendSettings
+internal expect fun getUserSettings(context: MiniGamesAppComponentContext): Settings

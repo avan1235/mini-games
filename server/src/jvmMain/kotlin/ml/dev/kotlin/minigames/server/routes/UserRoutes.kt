@@ -13,7 +13,6 @@ import ml.dev.kotlin.minigames.shared.api.USER_LOGIN_POST
 import ml.dev.kotlin.minigames.shared.model.UserCreate
 import ml.dev.kotlin.minigames.shared.model.UserLogin
 import ml.dev.kotlin.minigames.shared.util.on
-import ml.dev.kotlin.minigames.util.RoutesCtx
 import ml.dev.kotlin.minigames.util.StringValuesKey
 import ml.dev.kotlin.minigames.util.get
 
@@ -23,7 +22,7 @@ fun Application.userRoutes() = routing {
     get(USER_CONFIRM_GET("{$CONFIRM_HASH}")) { handleUserConfirm() }
 }
 
-private suspend fun RoutesCtx.handleUserLogin() {
+private suspend fun RoutingContext.handleUserLogin() {
     val userLogin = call.receive<UserLogin>()
     val user = UserService.loginUser(userLogin)
     val token = user.map { Jwt.generateToken(it.username) }
@@ -33,7 +32,7 @@ private suspend fun RoutesCtx.handleUserLogin() {
     )
 }
 
-private suspend fun RoutesCtx.handleUserCreate() {
+private suspend fun RoutingContext.handleUserCreate() {
     val userCreate = call.receive<UserCreate>()
     val user = UserService.createUser(userCreate)
     user.on(
@@ -45,7 +44,7 @@ private suspend fun RoutesCtx.handleUserCreate() {
     )
 }
 
-private suspend fun RoutesCtx.handleUserConfirm() {
+private suspend fun RoutingContext.handleUserConfirm() {
     val confirmHash = call.parameters[CONFIRM_HASH] ?: return
     val confirmed = UserService.confirmUser(confirmHash)
     confirmed.on(

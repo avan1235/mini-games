@@ -32,7 +32,7 @@ abstract class AbstractComponent(
     componentContext: ComponentContext,
 ) : ComponentContext by componentContext, Component {
 
-    protected val scope: CoroutineScope = coroutineScope(Dispatchers.Main.immediate)
+    protected val scope: CoroutineScope = coroutineScope()
 
     override fun toast(
         message: String,

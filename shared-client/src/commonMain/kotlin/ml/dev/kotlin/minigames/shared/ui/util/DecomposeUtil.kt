@@ -6,16 +6,13 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnDestroy
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-fun LifecycleOwner.coroutineScope(context: CoroutineContext): CoroutineScope {
-    val scope = CoroutineScope(context)
+fun LifecycleOwner.coroutineScope(context: CoroutineContext = Dispatchers.Main.immediate): CoroutineScope {
+    val scope = CoroutineScope(context + SupervisorJob())
     lifecycle.doOnDestroy(scope::cancel)
     return scope
 }

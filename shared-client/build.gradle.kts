@@ -2,6 +2,7 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
@@ -25,6 +26,11 @@ kotlin {
     iosSimulatorArm64()
 
     jvm()
+
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+    }
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     compilerOptions {
@@ -76,7 +82,6 @@ kotlin {
 
             implementation(Dependencies.napierLogger)
             implementation(Dependencies.multiplatformSettings)
-            implementation(Dependencies.multiplatformSettingsCoroutines)
 
             implementation(Dependencies.kotlinxAtomicFu)
         }
@@ -88,11 +93,12 @@ kotlin {
                 implementation(Dependencies.androidXActivityCompose)
                 implementation(Dependencies.decompose)
 
+                implementation("androidx.preference:preference-ktx:1.2.1")
+
                 implementation(Dependencies.ktorClientAndroid)
 
                 implementation(Dependencies.androidXDataStorePreferences)
                 implementation(Dependencies.multiplatformSettings)
-                implementation(Dependencies.multiplatformSettingsCoroutines)
                 implementation(Dependencies.multiplatformSettingsDatastore)
                 implementation(Dependencies.kotlinxCoroutinesAndroid)
             }
@@ -106,9 +112,17 @@ kotlin {
 
                 implementation(Dependencies.ktorClientDesktop)
                 implementation(Dependencies.multiplatformSettings)
-                implementation(Dependencies.multiplatformSettingsCoroutines)
                 implementation(Dependencies.kotlinxCoroutinesSwing)
             }
+        }
+        getByName("wasmJsMain").dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.ui)
+            implementation(compose.material3)
+
+            implementation(Dependencies.ktorClientWeb)
+            implementation(Dependencies.multiplatformSettings)
         }
 
         iosMain {
@@ -121,7 +135,6 @@ kotlin {
                 api(Dependencies.stateKeeper)
                 api(Dependencies.parcelizeDarwinRuntime)
                 implementation(Dependencies.multiplatformSettings)
-                implementation(Dependencies.multiplatformSettingsCoroutines)
             }
         }
     }
@@ -129,16 +142,16 @@ kotlin {
 
 buildkonfig {
     packageName = "ml.dev.kotlin.minigames.shared"
-    objectName = "BuildConfiguration"
+    objectName = "ClientBuildConfiguration"
 
     defaultConfigs {
-        buildConfigField<String>("REST_CLIENT_API_SCHEME")
-        buildConfigField<String>("WEBSOCKET_CLIENT_API_SCHEME")
+        buildConfigString("REST_CLIENT_API_SCHEME")
+        buildConfigString("WEBSOCKET_CLIENT_API_SCHEME")
     }
 
     targetConfigs {
         create("android") {
-            buildConfigField<String>("ANDROID_CLIENT_API_HOST")
+            buildConfigString("ANDROID_CLIENT_API_HOST")
         }
         listOf(
             "iosX64",
@@ -146,13 +159,20 @@ buildkonfig {
             "iosSimulatorArm64",
         ).forEach {
             create(it) {
-                buildConfigField<String>("IOS_CLIENT_API_HOST")
+                buildConfigString("IOS_CLIENT_API_HOST")
             }
         }
         create("jvm") {
-            buildConfigField<String>("DESKTOP_CLIENT_API_HOST")
+            buildConfigString("DESKTOP_CLIENT_API_HOST")
+        }
+        create("wasmJs") {
+            buildConfigString("WEB_CLIENT_API_HOST")
         }
     }
+}
+
+compose.experimental {
+    web.application {}
 }
 
 android {
@@ -180,10 +200,7 @@ fun KotlinNativeTarget.configureBinary() = apply {
     }
 }
 
-inline fun <reified T> TargetConfigDsl.buildConfigField(name: String) {
+fun TargetConfigDsl.buildConfigString(name: String) {
     val value = ENV[name] ?: throw IllegalStateException("$name not defined")
-    when (T::class) {
-        String::class -> buildConfigField(STRING, name, value)
-        else -> throw IllegalStateException("Not implemented for ${T::class.java.simpleName}")
-    }
+    buildConfigField(STRING, name, value)
 }

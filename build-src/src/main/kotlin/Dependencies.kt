@@ -4,23 +4,24 @@ object Dependencies {
         val kotlinVersion by System.getProperties()
         val composeVersion by System.getProperties()
         val parcelizeDarwinVersion by System.getProperties()
-        const val ktor = "2.3.7"
+        const val ktor = "3.0.0-wasm2"
         const val kotlinxSerialization = "1.6.2"
         const val exposed = "0.45.0"
         const val simpleMail = "1.3.3"
-        const val decompose = "3.0.0-alpha04"
-        const val essenty = "2.0.0-alpha02"
+        const val decompose = "3.0.0-alpha05"
+        const val essenty = "2.0.0-alpha03"
         const val multiplatformSettings = "1.1.1"
-        const val coroutines = "1.7.3"
+        const val coroutines = " 1.8.0-RC2"
     }
 
     val kotlinxSerializationCbor = "org.jetbrains.kotlinx:kotlinx-serialization-cbor:${Version.kotlinxSerialization}"
     val kotlinxSerializationJson = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Version.kotlinxSerialization}"
-    val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.20.2"
-    val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
-    val uuid = "com.benasher44:uuid:0.7.0"
+    val kotlinxAtomicFu = "org.jetbrains.kotlinx:atomicfu:0.23.2"
+    val kotlinxDateTime = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
+    val uuid = "com.benasher44:uuid:0.8.2"
 
     val ktorServerCore = "io.ktor:ktor-server-core:${Version.ktor}"
+    val ktorServerCors = "io.ktor:ktor-server-cors:${Version.ktor}"
     val ktorServerNetty = "io.ktor:ktor-server-netty:${Version.ktor}"
     val ktorServerSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
     val ktorServerWebsockets = "io.ktor:ktor-server-websockets:${Version.ktor}"
@@ -35,6 +36,7 @@ object Dependencies {
     val ktorClientAndroid = "io.ktor:ktor-client-okhttp:${Version.ktor}"
     val ktorClientDarwin = "io.ktor:ktor-client-darwin:${Version.ktor}"
     val ktorClientDesktop = "io.ktor:ktor-client-okhttp:${Version.ktor}"
+    val ktorClientWeb = "io.ktor:ktor-client-js:${Version.ktor}"
     val ktorClientWebsockets = "io.ktor:ktor-client-websockets:${Version.ktor}"
 
     val logbackClassic = "ch.qos.logback:logback-classic:1.4.6"
@@ -44,10 +46,9 @@ object Dependencies {
 
     val bCrypt = "at.favre.lib:bcrypt:0.9.0"
 
-    val napierLogger = "io.github.aakira:napier:2.6.1"
+    val napierLogger = "io.github.aakira:napier:2.7.1"
 
     val multiplatformSettings = "com.russhwolf:multiplatform-settings:${Version.multiplatformSettings}"
-    val multiplatformSettingsCoroutines = "com.russhwolf:multiplatform-settings-coroutines:${Version.multiplatformSettings}"
     val multiplatformSettingsDatastore = "com.russhwolf:multiplatform-settings-datastore:${Version.multiplatformSettings}"
 
     val kotlinxCoroutinesSwing = "org.jetbrains.kotlinx:kotlinx-coroutines-swing:${Version.coroutines}"
@@ -62,7 +63,7 @@ object Dependencies {
     val stateKeeper = "com.arkivanov.essenty:state-keeper:${Version.essenty}"
     val decomposeExtensions = "com.arkivanov.decompose:extensions-compose:${Version.decompose}"
 
-    val composeUtil = "in.procyk.compose:util:1.5.11.0"
+    val composeUtil = "in.procyk.compose:util:1.6.0-alpha01.0"
 
     val parcelizeDarwinRuntime = "com.arkivanov.parcelize.darwin:runtime:${Version.parcelizeDarwinVersion}"
 

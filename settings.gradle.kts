@@ -5,6 +5,7 @@ pluginManagement {
         mavenCentral()
         maven("https://jitpack.io")
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
 
     plugins {
@@ -27,6 +28,15 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
+    }
+}
+
 plugins {
     val foojayResolverVersion: String by System.getProperties()
     id("org.gradle.toolchains.foojay-resolver-convention") version foojayResolverVersion
@@ -40,4 +50,5 @@ include(":shared")
 include(":shared-client")
 include(":android-app")
 include(":desktop-app")
+include(":web-app")
 include(":server")

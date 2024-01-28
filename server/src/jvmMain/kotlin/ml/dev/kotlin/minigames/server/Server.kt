@@ -1,8 +1,10 @@
 package ml.dev.kotlin.minigames.server
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.plugins.cors.routing.*
 import ml.dev.kotlin.minigames.db.model.UsersTable
 import ml.dev.kotlin.minigames.db.txn
 import ml.dev.kotlin.minigames.server.routes.gameSockets
@@ -29,6 +31,7 @@ fun main() {
 }
 
 private fun Application.gameServiceModule() {
+    installCors()
     installCbor()
     installWebSockets()
     installJWTAuth()

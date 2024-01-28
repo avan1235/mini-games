@@ -5,13 +5,12 @@ import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
 import ml.dev.kotlin.minigames.shared.api.MAIN_SITE
-import ml.dev.kotlin.minigames.util.RoutesCtx
 
 fun Application.webRoutes() = routing {
     get(MAIN_SITE) { respondMainSite() }
 }
 
-private suspend fun RoutesCtx.respondMainSite() {
+private suspend fun RoutingContext.respondMainSite() {
     call.respondHtml {
         head {
             title { +"Mini Games" }

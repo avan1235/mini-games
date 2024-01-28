@@ -1,8 +1,8 @@
 package ml.dev.kotlin.minigames.shared.rest
 
-import ml.dev.kotlin.minigames.shared.BuildConfiguration
+import ml.dev.kotlin.minigames.shared.ClientBuildConfiguration
 
 actual object RestApiConfig {
-    actual val host = BuildConfiguration.DESKTOP_CLIENT_API_HOST
-    actual val scheme = BuildConfiguration.REST_CLIENT_API_SCHEME
+    actual val host = ClientBuildConfiguration.DESKTOP_CLIENT_API_HOST
+    actual val scheme = ClientBuildConfiguration.REST_CLIENT_API_SCHEME
 }

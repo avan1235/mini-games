@@ -3,25 +3,22 @@
 package ml.dev.kotlin.minigames.util
 
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.util.*
-import io.ktor.util.pipeline.*
+import io.ktor.utils.io.*
 import ml.dev.kotlin.minigames.server.Jwt
 import org.slf4j.Logger
 
-typealias RoutesCtx = PipelineContext<Unit, ApplicationCall>
-
-inline fun RoutesCtx.log(): Logger = this.application.environment.log
+inline fun RoutingContext.log(): Logger = this.application.environment.log
 
 @KtorDsl
 inline fun <reified R : Any> Route.authJwtPost(
     path: String,
-    crossinline body: suspend RoutesCtx.(R, Jwt.User) -> Unit,
+    crossinline body: suspend RoutingContext.(R, Jwt.User) -> Unit,
 ): Route = authenticate(Jwt.CONFIG) {
     post(path) {
         val principal = call.principal<Jwt.User>()
@@ -33,7 +30,7 @@ inline fun <reified R : Any> Route.authJwtPost(
 @KtorDsl
 inline fun Route.authJwtGet(
     path: String,
-    crossinline body: suspend RoutesCtx.(Jwt.User) -> Unit,
+    crossinline body: suspend RoutingContext.(Jwt.User) -> Unit,
 ): Route = authenticate(Jwt.CONFIG) {
     get(path) {
         val principal = call.principal<Jwt.User>()

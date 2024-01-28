@@ -1,3 +1,5 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -19,6 +21,7 @@ kotlin {
             implementation(project(":shared"))
 
             implementation(Dependencies.ktorServerCore)
+            implementation(Dependencies.ktorServerCors)
             implementation(Dependencies.ktorServerNetty)
             implementation(Dependencies.ktorServerSerialization)
             implementation(Dependencies.ktorServerWebsockets)
@@ -73,4 +76,9 @@ tasks.create<JavaExec>("run") {
     dependsOn(shadowJarTasks)
     mainClass.set("-jar")
     args = listOf("${buildDir.resolve("libs").resolve("server-$version-all.jar")}")
+}
+
+fun TargetConfigDsl.buildConfigIntOrNull(name: String) {
+    val value = ENV[name]?.toIntOrNull()?.let { "$it" }
+    buildConfigField(FieldSpec.Type.INT, name, value, nullable = true)
 }

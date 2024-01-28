@@ -3,7 +3,7 @@ package ml.dev.kotlin.minigames.server.routes
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
-import io.ktor.util.*
+import io.ktor.utils.io.*
 import io.ktor.websocket.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromByteArray

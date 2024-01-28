@@ -160,16 +160,14 @@ internal class LogInComponentImpl(
         }
     }
 
-    @OptIn(ExperimentalSettingsApi::class)
-    private suspend fun loadLoginScreenData(): Unit = getUserSettings(appContext).run {
+    private fun loadLoginScreenData(): Unit = getUserSettings(appContext).run {
         getStringOrNull(USERNAME_KEY)?.let { _username.value = it }
         getStringOrNull(PASSWORD_KEY)?.let { _password.value = it }
         getStringOrNull(SERVER_NAME_KEY)?.let { _serverName.value = it }
         getBooleanOrNull(REMEMBER_KEY)?.let { _rememberUserLogin.value = it }
     }
 
-    @OptIn(ExperimentalSettingsApi::class)
-    private suspend fun storeLoginScreenData(): Unit = getUserSettings(appContext).run {
+    private fun storeLoginScreenData(): Unit = getUserSettings(appContext).run {
         putString(USERNAME_KEY, if (rememberUserLogin.value) username.value else "")
         putString(PASSWORD_KEY, if (rememberUserLogin.value) password.value else "")
         putString(SERVER_NAME_KEY, storableServerName ?: "")
