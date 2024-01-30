@@ -1,7 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 import com.codingfeline.buildkonfig.gradle.TargetConfigDsl
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
@@ -171,10 +170,6 @@ buildkonfig {
     }
 }
 
-compose.experimental {
-    web.application {}
-}
-
 android {
     compileSdk = Constants.Android.compileSdk
     namespace = "ml.dev.kotlin.minigames.shared.client"
@@ -190,13 +185,6 @@ android {
                 "src/commonMain/res",
             )
         }
-    }
-}
-
-fun KotlinNativeTarget.configureBinary() = apply {
-    binaries.framework {
-        baseName = "shared_client"
-        binaryOption("bundleId", "ml.dev.kotlin.shared.client")
     }
 }
 
