@@ -1,28 +1,35 @@
 # Mini Games
 
-[![Release](https://github.com/avan1235/mini-games/actions/workflows/release.yml/badge.svg)](https://github.com/avan1235/mini-games/releases/latest)
-[![Docker](https://github.com/avan1235/mini-games/actions/workflows/push-docker-image.yml/badge.svg)](https://hub.docker.com/repository/docker/avan1235/mini-games/tags?ordering=last_updated)
+[![Platforms](https://img.shields.io/badge/web-WebAssembly-blue)](https://avan1235.github.io/mini-games/)
+[![Platforms](https://img.shields.io/badge/mobile-Android%20%7C%20iOS-blue)](https://github.com/avan1235/mini-games/releases/latest)
+[![Platforms](https://img.shields.io/badge/desktop-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/avan1235/mini-games/releases/latest)
 
-## News
+[![Build](https://img.shields.io/github/actions/workflow/status/avan1235/mini-games/release.yml?label=Build&color=green)](https://github.com/avan1235/mini-games/actions/workflows/release.yml)
+[![Latest Release](https://img.shields.io/github/v/release/avan1235/mini-games?label=Release&color=green)](https://github.com/avan1235/mini-games/releases/latest)
+[![Google Play](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dml.dev.kotlin.minigames%26l%3DGoogle%2520Play%26m%3D%24version)](https://play.google.com/store/apps/details?id=ml.dev.kotlin.minigames)
+[![Docker](https://img.shields.io/docker/v/avan1235/mini-games?label=Docker%20Hub&color=green)](https://hub.docker.com/repository/docker/avan1235/mini-games/tags?ordering=last_updated)
 
-[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/) just got released as an alpha version.
-I highly encourage you to try to use this project as a starting point for your own multiplatform project.
+[![License: MIT](https://img.shields.io/badge/License-MIT-red.svg)](./LICENSE.md)
+[![GitHub Repo stars](https://img.shields.io/github/stars/avan1235/mini-games?style=social)](https://github.com/avan1235/mini-games/stargazers)
+[![Fork Mini Games](https://img.shields.io/github/forks/avan1235/mini-games?logo=github&style=social)](https://github.com/avan1235/mini-games/fork)
+
+## Introduction
 
 You can find here how to:
 
-- configure build files to build for Android, iOS, Linux, MacOS and Windows
+- configure build files to build for Web, Android, iOS, Linux, MacOS and Windows
 - release your application with GitHub actions
-- write and use multiplatform clients and share model code with the backend of your application
-
-I'm going to publish some blog posts at [my website](https://kotlin-dev.ml/) about the multipaltform project development so stay tuned and give a
-<a class="github-button" href="https://github.com/avan1235/mini-games" data-icon="octicon-star" data-show-count="true" aria-label="Star avan1235/mini-games on GitHub">star</a>
-to this repository to follow the latest changes!
+- write and use multiplatform clients and share model code with the backend of your application with the beauty of Kotlin Multiplatform
 
 ## Project description
 
 You can find project description in [Essay](ESSAY.md).
 
 ## Project presentation
+
+### Web client
+
+You can go directly to the [GitHub Pages](https://avan1235.github.io/mini-games/), where the static client of the application is deployed.
 
 ### Android client
 
@@ -81,7 +88,7 @@ Project contains two parts - client app and the server app.
 recommended when working with server app.
 
 In both cases, open main project directory when importing the project (
-not the `android-app`, `desktop-app` nor `server`) as the main directory contains the
+not the `android-app`, `desktop-app` nor `server` etc.) as the main directory contains the
 configuration common to both projects and has to be loaded.
 
 **Remember:**
@@ -91,7 +98,7 @@ during first push when some other developer also made changes.
 
 ## Compile and run application
 
-To compile client application you need Android SDK as well as JDK 15 (corretto version was used).
+To compile client application you need Android SDK as well as JDK 17 (corretto version was used).
 
 ### Server
 
@@ -181,6 +188,19 @@ Gradle the generated build configuration `android-app`. It should build the debu
 and deploy it on available emulator of android device. This is the only advised method of running the
 client application for android platform.
 
+### Web
+
+#### Run from terminal
+
+The easiest way to run the instance of wev client is to start it from terminal by running
+Gradle
+
+```shell
+./gradlew web-app:wasmJsBrowserProductionRun
+```
+
+from the root directory of project.
+
 ## Project structure
 
 Projects is configured as Gradle modules that may depend on each other.
@@ -198,6 +218,7 @@ file.
   on `build-src` and `shared`
 - `android-app` - targets Android, depends on `shared-client`
 - `desktop-app` - targets any JVM desktop, depends on `shared-client`
+- `web-app` - targets web, depends on `shared-client`
 - `server` - targets JVM, depends on `build-src` and `shared`
 
 ### Extra directories
