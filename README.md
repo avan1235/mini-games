@@ -104,7 +104,7 @@ To compile client application you need Android SDK as well as JDK 17 (corretto v
 
 ### Environment
 
-There is a docker environment configured in [docker-compose.yml](dev-env/docker-compose.yml)
+There is a docker environment configured in [docker-compose.yml](docker-compose.yml)
 required to run server application. It contains Postgres database for server data.
 You can start it with
 
