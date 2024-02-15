@@ -16,7 +16,7 @@ fun mainWebApp() {
         DefaultComponentContext(lifecycle)
     )
     lifecycle.resume()
-    CanvasBasedWindow("MiniGames", canvasElementId = "minigamesCanvas") {
+    CanvasBasedWindow("Mini Games", canvasElementId = "minigamesCanvas") {
         MiniGamesApp(component)
     }
 }
