@@ -296,3 +296,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web-app/build/dist/wasmJs/productionExecutable
           force_orphan: true
+          cname: mini-games.procyk.in

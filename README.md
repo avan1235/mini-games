@@ -1,6 +1,6 @@
 # Mini Games
 
-[![Platforms](https://img.shields.io/badge/web-WebAssembly-blue)](https://avan1235.github.io/mini-games/)
+[![Platforms](https://img.shields.io/badge/web-WebAssembly-blue)](https://mini-games.procyk.in)
 [![Platforms](https://img.shields.io/badge/mobile-Android%20%7C%20iOS-blue)](https://github.com/avan1235/mini-games/releases/latest)
 [![Platforms](https://img.shields.io/badge/desktop-Windows%20%7C%20macOS%20%7C%20Linux-blue)](https://github.com/avan1235/mini-games/releases/latest)
 
@@ -29,7 +29,7 @@ You can find project description in [Essay](ESSAY.md).
 
 ### Web client
 
-You can go directly to the [GitHub Pages](https://avan1235.github.io/mini-games/), where the static client of the application is deployed.
+You can go directly to the [Mini Games website](https://mini-games.procyk.in), where the static client of the application is deployed.
 
 ### Android client
 
