@@ -62,7 +62,7 @@ jobs:
           asset_content_type: application/x-java-archive
 
       - name: Upload jar artifact file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MiniGamesServer-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.jar
           path: server/build/libs/server-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}-all.jar
@@ -103,7 +103,7 @@ jobs:
           VERSION: ${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}
 
       - name: Upload deb artifact file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: runner.os == 'Linux'
         with:
           name: MiniGames-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.deb
@@ -121,7 +121,7 @@ jobs:
           asset_content_type: application/x-deb
 
       - name: Upload msi installer file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: runner.os == 'Windows'
         with:
           name: MiniGames-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.msi
@@ -139,7 +139,7 @@ jobs:
           asset_content_type: application/x-ms-dos-executable
 
       - name: Upload dmg image file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: runner.os == 'macOS'
         with:
           name: MiniGames-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.dmg
@@ -201,19 +201,19 @@ jobs:
           BUMP_FILE_VERSION_CODE: true
 
       - name: Upload debug artifact file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MiniGames-Debug-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           path: android-app/build/outputs/apk/debug/android-app-debug.apk
 
       - name: Upload release artifact file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MiniGames-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.apk
           path: android-app/build/outputs/apk/release/android-app-release.apk
 
       - name: Upload release bundle file to workflow run results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MiniGames-Release-${{ env.MAJOR }}.${{ env.MINOR }}.${{ env.PATCH }}.aab
           path: android-app/build/outputs/bundle/release/android-app-release.aab
