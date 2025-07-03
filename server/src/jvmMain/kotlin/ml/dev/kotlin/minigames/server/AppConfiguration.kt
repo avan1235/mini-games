@@ -8,6 +8,7 @@ import io.ktor.serialization.kotlinx.cbor.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
+import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.websocket.*
@@ -18,6 +19,8 @@ import ml.dev.kotlin.minigames.util.envVar
 fun Application.installCbor() = install(ContentNegotiation) { cbor() }
 
 fun Application.installWebSockets() = install(WebSockets)
+
+fun Application.installAutoHeadResponse() = install(AutoHeadResponse)
 
 fun Application.installCors() {
     val corsPort = envVar<String>("CORS_PORT")

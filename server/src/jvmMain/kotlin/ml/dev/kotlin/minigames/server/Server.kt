@@ -34,6 +34,7 @@ private fun Application.gameServiceModule() {
     installCors()
     installCbor()
     installWebSockets()
+    installAutoHeadResponse()
     installJWTAuth()
 
     userRoutes()

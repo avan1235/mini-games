@@ -28,6 +28,7 @@ kotlin {
             implementation(Dependencies.ktorServerContentNegotiation)
             implementation(Dependencies.ktorServerAuth)
             implementation(Dependencies.ktorServerAuthJwt)
+            implementation(Dependencies.ktorServerAutoHeadResponse)
             implementation(Dependencies.ktorServerHtmlBuilder)
             implementation(Dependencies.logbackClassic)
 

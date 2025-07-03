@@ -28,6 +28,7 @@ object Dependencies {
     val ktorServerContentNegotiation = "io.ktor:ktor-server-content-negotiation:${Version.ktor}"
     val ktorServerAuth = "io.ktor:ktor-server-auth:${Version.ktor}"
     val ktorServerAuthJwt = "io.ktor:ktor-server-auth-jwt:${Version.ktor}"
+    val ktorServerAutoHeadResponse = "io.ktor:ktor-server-auto-head-response:${Version.ktor}"
     val ktorServerHtmlBuilder = "io.ktor:ktor-server-html-builder:${Version.ktor}"
 
     val ktorClientSerialization = "io.ktor:ktor-serialization-kotlinx-cbor:${Version.ktor}"
