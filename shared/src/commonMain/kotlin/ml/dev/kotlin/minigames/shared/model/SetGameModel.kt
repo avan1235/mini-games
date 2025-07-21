@@ -2,6 +2,7 @@ package ml.dev.kotlin.minigames.shared.model
 
 import kotlinx.serialization.Serializable
 import ml.dev.kotlin.minigames.shared.util.everyUnorderedTriple
+import kotlin.math.max
 
 const val SELECT_CARDS: Int = 3
 const val TABLE_CARDS: Int = 12
@@ -64,9 +65,14 @@ data class SetGameUpdate(
 
     override fun update(forUser: Username, gameState: GameState, currMillis: Long): GameState = when {
         gameState !is SetGameState -> gameState
-        gameState.table.cardsById.isValidSetProposal(proposal.cardsIds) -> {
-            val pointsUpdate = forUser to (gameState.points[forUser] ?: 0) + 1
-            val (tableUpdate, deckUpdate) = updateDeckTable(proposal, gameState.table, gameState.deck)
+        else -> {
+            val isValidSetProposal = gameState.table.cardsById.isValidSetProposal(proposal.cardsIds)
+            val pointsChange = if (isValidSetProposal) 1 else -1
+            val pointsUpdate = forUser to max(0, (gameState.points[forUser] ?: 0) + pointsChange)
+            val (tableUpdate, deckUpdate) = when {
+                isValidSetProposal -> updateDeckTable(proposal, gameState.table, gameState.deck)
+                else -> TableDeckUpdate(gameState.table, gameState.deck)
+            }
             when (gameState.table) {
                 tableUpdate -> SetGameState.random(
                     points = gameState.points + pointsUpdate,
@@ -80,8 +86,6 @@ data class SetGameUpdate(
                 )
             }
         }
-
-        else -> gameState
     }
 }
 
