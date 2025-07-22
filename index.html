@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Mini Games</title>
+    <script type="application/javascript" src="skiko.js"></script>
+    <script type="application/javascript" src="minigameswasmapp.js"></script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #353535;
+            overflow: hidden;
+        }
+
+        #loader-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #353535;
+        }
+
+        #minigamesCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+        }
+
+        #warning {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            max-width: 830px;
+            z-index: 100;
+            background-color: white;
+            font-size: initial;
+            display: none;
+        }
+
+        #warning li {
+            padding-bottom: 15px;
+        }
+
+        #warning span.code {
+            font-family: monospace;
+        }
+
+        ul {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            display: inline-block;
+            position: relative;
+            transform: rotate(45deg);
+        }
+
+        .loader::before {
+            content: '';
+            box-sizing: border-box;
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            left: 0;
+            top: -24px;
+            animation: animloader 4s ease infinite;
+        }
+
+        .loader::after {
+            content: '';
+            box-sizing: border-box;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            animation: animloader2 2s ease infinite;
+        }
+
+        @keyframes animloader {
+            0% {
+                box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
+            }
+            12% {
+                box-shadow: 0 24px white, 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
+            }
+            25% {
+                box-shadow: 0 24px white, 24px 24px white, 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
+            }
+            37% {
+                box-shadow: 0 24px white, 24px 24px white, 24px 48px white, 0px 48px rgba(255, 255, 255, 0);
+            }
+            50% {
+                box-shadow: 0 24px white, 24px 24px white, 24px 48px white, 0px 48px white;
+            }
+            62% {
+                box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px white, 24px 48px white, 0px 48px white;
+            }
+            75% {
+                box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px white, 0px 48px white;
+            }
+            87% {
+                box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px white;
+            }
+            100% {
+                box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
+            }
+        }
+
+        @keyframes animloader2 {
+            0% {
+                transform: translate(0, 0) rotateX(0) rotateY(0);
+            }
+            25% {
+                transform: translate(100%, 0) rotateX(0) rotateY(180deg);
+            }
+            50% {
+                transform: translate(100%, 100%) rotateX(-180deg) rotateY(180deg);
+            }
+            75% {
+                transform: translate(0, 100%) rotateX(-180deg) rotateY(360deg);
+            }
+            100% {
+                transform: translate(0, 0) rotateX(0) rotateY(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<canvas id="minigamesCanvas"></canvas>
+<div id="loader-box">
+    <span class="loader"></span>
+</div>
+<div id="warning">
+    ⚠️ Please make sure that your runtime environment supports the latest version of Wasm GC and Exception-Handling proposals.
+    For more information, see <a href="https://kotl.in/wasm-help">https://kotl.in/wasm-help</a>.
+    <br/>
+    <br/>
+    <ul>
+        <li>For <b>Chrome</b> and <b>Chromium-based</b> browsers (Edge, Brave etc.), it <b>should just work</b> since version 119.</li>
+        <li>For <b>Firefox</b> 120 it <b>should just work</b>.</li>
+        <li>For <b>Firefox</b> 119:
+            <ol>
+                <li>Open <span class="code">about:config</span> in the browser.</li>
+                <li>Enable <strong>javascript.options.wasm_gc</strong>.</li>
+                <li>Refresh this page.</li>
+            </ol>
+        </li>
+    </ul>
+</div>
+</body>
+
+<script type="application/javascript">
+    const unhandledError = (event, error) => {
+        if (error instanceof WebAssembly.CompileError) {
+            document.getElementById("warning").style.display = "initial";
+
+            // Hide a Scary Webpack Overlay which is less informative in this case.  
+            const webpackOverlay = document.getElementById("webpack-dev-server-client-overlay");
+            if (webpackOverlay != null) webpackOverlay.style.display = "none";
+        }
+    }
+    addEventListener("error", (event) => unhandledError(event, event.error));
+    addEventListener("unhandledrejection", (event) => unhandledError(event, event.reason));
+</script>
+
+</html>
