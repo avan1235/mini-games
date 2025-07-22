@@ -65,14 +65,14 @@ data class SetGameUpdate(
 
     override fun update(forUser: Username, gameState: GameState, currMillis: Long): GameState = when {
         gameState !is SetGameState -> gameState
-        else -> {
+        else -> run {
             val isValidSetProposal = gameState.table.cardsById.isValidSetProposal(proposal.cardsIds)
             val pointsChange = if (isValidSetProposal) 1 else -1
             val pointsUpdate = forUser to max(0, (gameState.points[forUser] ?: 0) + pointsChange)
-            val (tableUpdate, deckUpdate) = when {
-                isValidSetProposal -> updateDeckTable(proposal, gameState.table, gameState.deck)
-                else -> TableDeckUpdate(gameState.table, gameState.deck)
+            if (!isValidSetProposal) {
+                return@run gameState.copy(points = gameState.points + pointsUpdate)
             }
+            val (tableUpdate, deckUpdate) = updateDeckTable(proposal, gameState.table, gameState.deck)
             when (gameState.table) {
                 tableUpdate -> SetGameState.random(
                     points = gameState.points + pointsUpdate,
